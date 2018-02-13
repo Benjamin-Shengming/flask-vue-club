@@ -1,7 +1,9 @@
+#!/usr/bin/python
+
 from flask import Flask, render_template, jsonify
 from random import *
 from flask_cors import CORS
-import requests
+import requests 
 
 app = Flask(__name__,
             static_folder = "./dist/static",
