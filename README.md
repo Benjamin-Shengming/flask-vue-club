@@ -1,4 +1,4 @@
-# flask-vue-spa
+# flask-vue-club
 Vue.js SPA served over Flask microframework
 
 * Python: 3.6.3
