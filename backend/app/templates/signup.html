@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="zh">
+  {% import "bootstrap/wtf.html" as wtf %}
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Signup Page</title>
+    <!-- Bootstrap core CSS -->
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='vendor/bootstrap/css/bootstrap.min.css') }}" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="{{url_for('static', filename='signin.css')}}">
+  </head>
+  <body>
+    <div class="container">
+      <form class="form-signin" method="POST" action="signup">
+        <h2 class="form-signin-heading">Sign Up</h2>
+        <h3> {{ club_name }}</h3>
+        {{ form.hidden_tag() }}
+        {{ wtf.form_field(form.email) }}
+        {{ wtf.form_field(form.tel) }}
+        {{ wtf.form_field(form.password) }}
+        {{ wtf.form_field(form.confirm_password) }}
+        <button class="btn btn-lg btn-primary btn-block" type="submit">Sign Up</button>
+        <a href="{{ '/{}/login'.format(club.name) }}" class="btn btn-lg btn-primary btn-block" role="button">Login</a>
+      </form>
+    </div> <!-- /container -->
+  </body>
+
+</html>

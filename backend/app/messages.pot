@@ -1,0 +1,95 @@
+# Translations template for PROJECT.
+# Copyright (C) 2018 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2018.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2018-02-08 12:56+1100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.5.3\n"
+
+#: models.py:150
+msgid "could not find the club {}"
+msgstr ""
+
+#: models.py:197 models.py:214
+msgid "Please provide password!"
+msgstr ""
+
+#: models.py:217
+msgid "Did not assign the user role"
+msgstr ""
+
+#: models.py:224
+msgid "Can't find the user roles{} in {}"
+msgstr ""
+
+#: models.py:244
+msgid "Could not find the club {}"
+msgstr ""
+
+#: templates/login.html:16
+msgid "Please sign in"
+msgstr ""
+
+#: templates/login.html:21
+msgid "Sign in"
+msgstr ""
+
+#: views/auth.py:86
+msgid "Please input email and password!"
+msgstr ""
+
+#: views/auth.py:98
+msgid "Invalid email or password!"
+msgstr ""
+
+#: views/forms.py:10
+msgid "Email"
+msgstr ""
+
+#: views/forms.py:11
+msgid "Password"
+msgstr ""
+
+#: views/forms.py:23
+msgid "Wrong user or password!"
+msgstr ""
+
+#: views/forms.py:28
+msgid "email"
+msgstr ""
+
+#: views/forms.py:30
+msgid "Invalid email"
+msgstr ""
+
+#: views/forms.py:32
+msgid "telphone"
+msgstr ""
+
+#: views/forms.py:35
+msgid "password"
+msgstr ""
+
+#: views/forms.py:38
+msgid "confirm_password"
+msgstr ""
+
+#: views/forms.py:38
+msgid "Passwords must match"
+msgstr ""
+
+#: views/forms.py:40
+msgid "confirm"
+msgstr ""
+
