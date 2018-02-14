@@ -1,4 +1,3 @@
-
 <template>
   <div>
   <div> <!-- nav bar -->
@@ -46,8 +45,8 @@
               indicators
               background="#ababab"
               :interval="4000"
-              img-width="1024"
-              img-height="480"
+              img-width="680"
+              img-height="320"
               v-model="slide"
               @sliding-start="onSlideStart"
               @sliding-end="onSlideEnd"
@@ -123,30 +122,6 @@ export default {
   },
   created () {
     this.getRandom()
-  },
-  onSlideStart (slide) {
-    this.sliding = true
-  },
-  onSlideEnd (slide) {
-    this.sliding = false
   }
 }
 </script>
-
-<style>
-  .el-carousel__item h3 {
-    color: #475669;
-    font-size: 14px;
-    opacity: 0.75;
-    line-height: 200px;
-    margin: 0;
-  }
-  
-  .el-carousel__item:nth-child(2n) {
-    background-color: #99a9bf;
-  }
-  
-  .el-carousel__item:nth-child(2n+1) {
-    background-color: #d3dce6;
-  }
-</style>
