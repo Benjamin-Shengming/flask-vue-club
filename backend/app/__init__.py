@@ -32,7 +32,7 @@ babel = Babel(app)
 # create controller object, the central point 
 from .controller import AppController
 app_controller = AppController()
-
+app.config['UPLOAD_FOLDER'] = 'filestore/'
 from .api import ns1
 from .views import  view_pages
 

@@ -1,6 +1,6 @@
 
 #!/usr/bin/python
-
+import os
 from sqlalchemy import UniqueConstraint, ForeignKey, create_engine, Column, Integer, String, Table, DateTime, Boolean
 from sqlalchemy.orm import relationship, scoped_session, sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
@@ -15,6 +15,7 @@ import coloredlogs, logging
 logger = logging.getLogger(__name__)
 coloredlogs.install(level='DEBUG', logger=logger)
 
+FILE_STORE = os.path.join(os.path.dirname(__file__), 'filestore')
 engine = create_engine('sqlite:////tmp/test.db', convert_unicode=True)
 
 db_session = scoped_session(sessionmaker(autocommit=False, 
@@ -135,6 +136,10 @@ class OrderDetail(Base, BaseMixin):
 class AppModel(object):
     def __init__(self, db_session=db_session):
         self.db_session = db_session 
+        self.file_store = FILE_STORE 
+        self.service_file_store = self.file_store + "/service"
+        if not os.path.exists(self.service_file_store):
+            os.makedirs(self.service_file_store)
 
     def _add(self, ob):
         self.db_session.add(ob)
@@ -275,6 +280,15 @@ class AppModel(object):
         Role.query.filter_by(club_id=club.id, name=role_name).delete()
         self._commit()
 
+    # file related 
+    def get_filestore_dir(self):
+        return self.file_store
+
+    def get_filestore_service(self, id):
+        service_path = self.service_file_store + "/id"
+        if not os.path.exists(service_path):
+            os.makedirs(service_path)
+        return service_path
 
 def init_all():
     Base.metadata.drop_all(bind=engine)

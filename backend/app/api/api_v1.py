@@ -1,7 +1,8 @@
 #!/usr/bin/python
 
 from flask_restplus import Namespace, Resource, fields
-from flask import abort
+from flask import abort, request, send_from_directory
+from werkzeug import secure_filename
 from utils import *
 from . import app_controller
 
@@ -173,3 +174,31 @@ class Service(Resource):
     def put(self, club_name, service_name):
         return app_controller.update_club_service(club_name, service_name, get_payload())
 
+
+
+
+url_model= api.model('url_model', {
+    'url': fields.String(required=True, description="url to upload or download"),
+})
+
+@api.route('/filestore/service/<id>/<filename>')
+class ServiceFileDownload(Resource):
+    def get(self, id, filename):
+        return send_from_directory(app_controller.get_filestore_service(id), filename)
+
+@api.route('/FileStore/service/<id>')
+class ServiceFileUpload(Resource):
+    @api.marshal_list_with(url_model)
+    def post(self, id):
+        # Get the name of the uploaded files
+        uploaded_files = request.files.getlist("file[]")
+        filenames = []
+        for file in uploaded_files and app_controller.allow_file(file.filename):
+            # Make the filename safe, remove unsupported chars
+            filename = secure_filename(file.filename)
+            # Move the file form the temporal folder to the upload
+            # folder we setup
+            file_path = os.path.join(app_controller.get_filestore_service(id), filename)
+            file.save(file_path)
+            # Save the filename into a list, we'll use it later
+            filenames.append("/filestore/service/" + id + "/" + filename)

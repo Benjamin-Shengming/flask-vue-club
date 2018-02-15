@@ -95,19 +95,6 @@ class LoginPage(Resource):
             page = render_template('login.html', form=form, club_name=club)
             return page_resp(page)
 
-@view_pages.route('<club_name>/index', '<club_name>')
-class IndexPage(Resource):
-    def get(self, club_name):
-        logger.debug(current_user)
-        club = app_controller.get_club_by_name(club_name)
-        page = render_template('index.html', club=club, user=current_user)
-        return page_resp(page) 
-
-    def post(self, club_name):
-        club = app_controller.get_club_by_name(club_name)
-        page = render_template('index.html', club=club, user=current_user)
-        return page_resp(page) 
-
 @view_pages.route('<club_name>/admin')
 class AdminPage(Resource):
     def _return_render_page(self, club_name):
@@ -140,13 +127,3 @@ class AdminSubPage(Resource):
         logger.debug(caller_info())
         return self._return_render_page(club_name, sub_page)
 
-@view_pages.route('/static/<path>')
-class FileResource(Resource):
-    def get(self, path):
-        logger.debug(path)
-        send_from_directory('static', path)
-
-@view_pages.route('/<club_name>/upload/service/<service_name>')
-class ServiceUpload(Resource):
-    def get(self, club_name):
-        pass

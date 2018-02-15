@@ -1,7 +1,7 @@
 #!/usr/bin/python
 import sys
 import os
-from flask import Flask, render_template, jsonify
+from flask import Flask, render_template, jsonify, abort
 from random import *
 from flask_cors import CORS
 import requests 
@@ -18,7 +18,7 @@ import coloredlogs, logging
 logger = logging.getLogger(__name__)
 coloredlogs.install(level='DEBUG', logger=logger)
 
-from app import app
+from app import app, app_controller
 from app.models import init_all
 
 @app.route('/api/random')
@@ -28,13 +28,18 @@ def random_number():
     }
     return jsonify(response)
 
-@app.route('/<path:path>')
-def catch_all(path):
+@app.route('/<club_name>')
+def catch_index(club_name):
     '''
     if app.debug:
         logger.debug("request frontend page!")
         return requests.get('http://localhost:8080/{}'.format(path)).text
     '''
+    logger.debug(club_name)
+    club =  app_controller.get_club_by_name(club_name)
+    if not club:
+       abort(404) 
+    logger.debug(club)
     return render_template("index.html")
 
 if __name__ == "__main__":

@@ -81,3 +81,13 @@ class AppController(object):
 
     def delete_club_role_by_name(self, club_name, role_name):
         return self.db_model.delete_club_role_by_name(club_name, role_name)
+
+    def get_filestore_dir(self):
+        return self.db_model.get_filestore_dir()
+
+    def get_filestore_service(self, id):
+        return self.db_model.get_filestore_service(id)
+
+    def allow_file(self, filename):
+      allow_ext = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])
+      return '.' in filename and filename.rsplit('.', 1)[1] in allow_ext 
