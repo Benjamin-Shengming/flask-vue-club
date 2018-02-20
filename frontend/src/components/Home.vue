@@ -3,10 +3,10 @@
   <div> <!-- nav bar -->
   <b-navbar toggleable="md" type="dark" variant="info">
   <b-navbar-toggle target="nav_collapse"></b-navbar-toggle>
-  <b-navbar-brand href="#">NavBar</b-navbar-brand>
+  <b-navbar-brand href="#">{{ clubName }}</b-navbar-brand>
   <b-collapse is-nav id="nav_collapse">
     <b-navbar-nav>
-      <b-nav-item href="#">Link</b-nav-item>
+      <b-nav-item :href="url_admin">Admin</b-nav-item>
       <b-nav-item href="#" disabled>Disabled</b-nav-item>
     </b-navbar-nav>
 
@@ -97,6 +97,14 @@ export default {
       randomNumber: 0,
       slide: 0,
       sliding: null
+    }
+  },
+  computed: {
+    clubName: function () {
+      return this.$route.params.club_name
+    },
+    url_admin: function () {
+      return '/' + this.clubName + '/admin'
     }
   },
   methods: {

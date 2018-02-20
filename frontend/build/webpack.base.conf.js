@@ -12,6 +12,14 @@ module.exports = {
   entry: {
     app: './src/main.js'
   },
+  plugins: [
+    new webpack.ProvidePlugin({
+      $: 'jquery',
+      jquery: 'jquery',
+      'widow.jQuery': 'jquery',
+      JQuery: 'jquery'
+    })
+  ],
   output: {
     path: config.build.assetsRoot,
     filename: '[name].js',

@@ -20,7 +20,6 @@
 </template>
 
 <script>
-  import PictureInput from './PictureInput.vue'
   export default {
     name: 'ServiceEdit',
     data () {
@@ -28,8 +27,13 @@
         title: '7 days finishing'
       }
     },
-    components: {
-      'picture-input': PictureInput
+    methods: {
+      getServiceId () {
+        return this.$route.params.service_id
+      },
+      getClubName () {
+        return this.$route.params.club_name
+      }
     }
   }
 </script>
