@@ -63,7 +63,7 @@ class User(Base, BaseMixin, UserMixin):
 
 class Club(Base, BaseMixin):
     __tablename__ = 'club'
-    id = Column(Integer, primary_key=True)
+    id = Column(Integer, primary_key=True) 
     name = Column(String, unique=True)
     description= Column(String)
     # relationship
@@ -86,16 +86,16 @@ class Role(Base, BaseMixin):
 
 class Service(Base, BaseMixin):
     __tablename__ = 'service'
-    id = Column(Integer, primary_key=True)
+    id = Column(String, primary_key=True) # service uuid
     name = Column(String, nullable=False)
     description = Column(String) # 
     price = Column(Integer, nullable=False)
     discount = Column(Integer, nullable=False, default=20)
+    pic_and_text = Column(String)# a list of text and image files
     last_update_time = Column(DateTime)
     major_pic = Column(String) # major picture of this service
     sub_services = Column(String) # a list of sub services
     active = Column(Boolean, default=True) #onine or offline
-    pic_and_text = Column(String)# a list of text and image files
     # link to club
     club_id = Column(Integer, ForeignKey("club.id", ondelete='CASCADE'), nullable=False)
     __table_args__ = (UniqueConstraint('name', 'club_id'),)

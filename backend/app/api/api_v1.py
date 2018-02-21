@@ -141,9 +141,14 @@ class Role(Resource):
         return app_controller.update_club_role(club_name, role_name, get_payload())
 
 service_model = api.model('service', {
-    'name': fields.String(required=True, description="user's email"),
-    'price': fields.Integer(required=True, description="price of this service"),
-    "discount": fields.Integer(required=True, description="discount of this service"),
+    'id': fields.Integer(required=True),
+    'name': fields.String(required=True),
+    'description':fields.String(required=True),
+    'price': fields.Integer(required=True),
+    'discount': fields.Integer(required=True),
+    'major_pic': fields.Integer(required=True), 
+    'pic_and_text' : fields.List(fields.String),
+    'active': fields.Boolean() 
 })
 @api.route('/<club_name>/service')
 class ServiceList(Resource):
