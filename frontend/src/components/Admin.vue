@@ -47,15 +47,28 @@
       <b-row class="service-title">
         <b-col sm="2"><label for="input-large">服务名称</label></b-col>
         <b-col sm="10">
-          <b-form-input id="input-large" size="lg" type="text" placeholder="Enter service title"> {{ title }}</b-form-input>
+          <b-form-input id="input-large" 
+                        size="lg" 
+                        type="text" 
+                        placeholder="请输入服务产品名称" 
+                        v-model="title"> {{ title }}</b-form-input>
         </b-col>
       </b-row>
       <!-- service major picture-->
       <b-row id='service-title-id' class="service-title">
         <b-col sm="2"><label for="input-large">服务主题图片</label></b-col>
         <b-col sm="10">
-          <b-form-file id="majorImgInput" v-model="majorImg" :state="Boolean(majorImg)" placeholder="选择图片..."></b-form-file>
-          <b-img id="majorImgPreview" src="#" fluid-grow alt="Select image to view" />
+          <b-form-file id="majorImgInput" 
+                       v-model="majorImg" 
+                       :state="Boolean(majorImg)" 
+                       placeholder="选择图片..."
+                       visbility="hidden" />
+          <b-img id="majorImgPreview" 
+                 src="#" 
+                 fluid-grow
+                 alt="选择图片..." 
+                 blank-color="#777"
+                 @click="clickMajorImgPreview()"  />
         </b-col>
       </b-row>
 
@@ -64,7 +77,13 @@
         <!--- picture -->
         <b-col sm="2"><label for="input-large" v-if="item.type === 'picture'">精彩图片</label></b-col>
         <b-col sm="10">
-          <b-form-file :id="getId('pic-file-',item.id)" v-model="item.file" :state="Boolean(majorImg)" placeholder="选择图片..." v-if="item.type === 'picture'"> </b-form-file>
+          <b-form-file :id="getId('pic-file-',item.id)" 
+                        v-model="item.file" 
+                        :state="Boolean(majorImg)" 
+                        placeholder="选择图片..." 
+                        v-if="item.type === 'picture'"
+                        @change="onPicChange(item.id)"> 
+          </b-form-file>
           <b-img :id="getId('imgPreview-', item.id)" src="#" fluid-grow v-if="item.type === 'picture'" alt="Select image to view" />
         </b-col>
         <!--- text -->
@@ -78,10 +97,11 @@
           </b-form-textarea>
         </b-col>
       </b-row>
-      <b-button-group>
+    <br/>
+    <b-button-group>
     <b-button variant="info" v-on:click="addPicSection">新增图片</b-button>
     <b-button variant="warning" v-on:click="addTextSection">新增文字</b-button>
-    <b-button variant="primary">确认提交</b-button>
+    <b-button variant="primary" v-on:click="submit">确认提交</b-button>
     </b-button-group>
       </form>
     </b-container>
@@ -135,6 +155,11 @@ export default {
     }
   },
   methods: {
+    submit() {
+      console.log(this.title)
+      console.log(this.majorImgFile)
+      console.log(this.pic_txt_arr)
+    },
     addPicSection() {
       var picObj = {};
       picObj.type = "picture";
@@ -148,6 +173,9 @@ export default {
       txtObj.txt = null;
       txtObj.id = uuidv1();
       this.pic_txt_arr.push(txtObj);
+    },
+    clickMajorImgPreview(){
+      jQuery("#majorImgInput")[0].click()
     },
     showServices() {
       this.service_manage = true;
@@ -196,6 +224,40 @@ export default {
         });
       } else {
         jQuery("#majorImgPreview").attr("src", null);
+      }
+    },
+    onPicChange(itemId) {
+      console.log(itemId)
+      let input = jQuery("#" + this.getId('pic-file-', itemId))[0];
+      let previewImgId = this.getId('imgPreview-', itemId);
+      // preview image
+      if (input.files[0]) {
+        console.log("start preview image")
+        var blobOrFile = input.files[0];
+        //parse meta data
+        loadImage.parseMetaData(blobOrFile, function(data) {
+          // default image orientation
+          var orientation = 0;
+          //if exif data available, update orientation
+          if (data.exif) {
+            orientation = data.exif.get("Orientation");
+          }
+          loadImage(
+            blobOrFile,
+            function(canvas) {
+              //here's the base64 data result
+              var base64data = canvas.toDataURL("image/jpeg");
+              jQuery("#" + previewImgId).attr("src", base64data);
+            },
+            {
+              //should be set to canvas : true to activate auto fix orientation
+              canvas: true,
+              orientation: orientation
+            }
+          );
+        });
+      } else {
+        jQuery("#" + previewImgId).attr("src", null);
       }
     },
     getId(typeInput, uuidInput) {
