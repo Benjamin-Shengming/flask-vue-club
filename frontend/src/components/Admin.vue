@@ -59,14 +59,14 @@
         <b-col sm="2"><label for="input-large">服务主题图片</label></b-col>
         <b-col sm="10">
           <b-form-file id="majorImgInput" 
+                       class='invisible' 
                        v-model="majorImg" 
                        :state="Boolean(majorImg)" 
-                       placeholder="选择图片..."
-                       visbility="hidden" />
+                       placeholder="点击此处选择图片..." />
           <b-img id="majorImgPreview" 
                  src="#" 
                  fluid-grow
-                 alt="选择图片..." 
+                 alt="点击此处选择图片..." 
                  blank-color="#777"
                  @click="clickMajorImgPreview()"  />
         </b-col>
@@ -79,12 +79,18 @@
         <b-col sm="10">
           <b-form-file :id="getId('pic-file-',item.id)" 
                         v-model="item.file" 
+                        class="invisible"
                         :state="Boolean(majorImg)" 
                         placeholder="选择图片..." 
                         v-if="item.type === 'picture'"
                         @change="onPicChange(item.id)"> 
           </b-form-file>
-          <b-img :id="getId('imgPreview-', item.id)" src="#" fluid-grow v-if="item.type === 'picture'" alt="Select image to view" />
+          <b-img :id="getId('imgPreview-', item.id)" 
+                  src="#" 
+                  fluid-grow 
+                  v-if="item.type === 'picture'" 
+                  alt="点击此处选择图片..." 
+                  @click="clickPicPreview(item.id)"/>
         </b-col>
         <!--- text -->
         <b-col sm="2"><label for="input-large" v-if="item.type === 'text'">精彩描述</label></b-col>
@@ -174,7 +180,11 @@ export default {
       txtObj.id = uuidv1();
       this.pic_txt_arr.push(txtObj);
     },
-    clickMajorImgPreview(){
+    clickPicPreview (itemId) {
+      let input = jQuery("#" + this.getId('pic-file-', itemId))[0];
+      input.click()
+    },
+    clickMajorImgPreview() {
       jQuery("#majorImgInput")[0].click()
     },
     showServices() {
