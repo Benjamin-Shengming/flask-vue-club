@@ -128,7 +128,13 @@
 <script>
 import axios from "axios";
 import jQuery from "jquery";
-import { getBackendAPIURI } from "./genlib.js";
+import { getBackendAPIURI,
+         prefixAPIURIPath,
+         prefixClubName,
+         // prefixFileStore,
+         prefixService,
+         getServiceFileStorePath
+        } from "./genlib.js";
 import uuidv1 from "uuid";
 import loadImage from "blueimp-load-image";
 
@@ -182,47 +188,50 @@ export default {
       this.pic_txt_arr.push(txtObj);
     },
     submitNewService() {
-      let service_id = this.id
       let data = new FormData();
 
       data.append('majorimage.jpg', this.majorImgFile, 'majorimage.jpg');
-      let pic_txt_arr = []
+      let picAndTxtArr = []
       for (let i = 0; i < this.pic_txt_arr.length; i++) {
         let item = this.pic_txt_arr[i];
         if (item.type === "text") {
           let content = item.txt
           let blob = new Blob([content], {type: "text/xml"})
           data.append(i + '.txt', blob, i + '.txt')
-          pic_txt_arr.push(i + '.txt')
-        }
-        else {
+          picAndTxtArr.push(i + '.txt')
+        } else {
           data.append(i + '.jpg', item.file, i + '.jpg');
-          pic_txt_arr.push(i + '.jpg')
+          picAndTxtArr.push(i + '.jpg')
         }
       }
+
+      /*
       const config = {
         header: {'content-type': 'multipart/form-data'}
-      }
-      let url = getBackendAPIURI(window.location.href, "/api_v1/filestore/service/" + this.id)
+      } */
+      let url = getBackendAPIURI(window.location.href, getServiceFileStorePath(this.clubName, this.id))
       axios.post(url, data)
       .then((response) => {
         console.log(response);
         // file has been uploaded, time to commit service
-        let service_data = {
+        let serviceData = {
           'id': this.id,
           'name': this.title,
-          'description':this.title,
+          'description': this.title,
           'price': 0,
-          'discount':0,
-          'major_pic':'majorimage.jpg',
-          'pic_and_text': pic_txt_arr.join(";"),
-          'active':true 
+          'discount': 0,
+          'major_pic': 'majorimage.jpg',
+          'pic_and_text': picAndTxtArr.join(";"),
+          'active': true
         }
         console.log("start commit service")
-        let url = getBackendAPIURI(window.location.href, "/" + this.clubName + "/service");
-        axios.post(url, service_data);
+        let servicePath = prefixAPIURIPath(
+                            prefixClubName(this.clubName,
+                            prefixService("")));
+        let url = getBackendAPIURI(window.location.href, servicePath);
+        console.log(url)
+        axios.post(url, serviceData);
       })
-      
     },
     clickPicPreview (itemId) {
       let input = jQuery("#" + this.getId('pic-file-', itemId))[0];
@@ -313,7 +322,11 @@ export default {
       return typeInput + uuidInput;
     }
   },
+  mounted () {
+    console.log("mounted was called");
+  },
   created() {
+    console.log("created was called");
   }
 };
 </script>

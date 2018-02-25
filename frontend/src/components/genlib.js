@@ -12,4 +12,34 @@ function getBackendAPIURI (currentRef, path) {
   return apiURI
 }
 
-export { getBackendAPIURI }
+function prefixAPIURIPath(path) {
+  let prefix = '/api_v1';
+  return prefix + path;
+}
+
+function prefixClubName(clubName, path) {
+  return "/" + clubName + path;
+}
+
+function prefixFileStore(path) {
+  return "/filestore" + path;
+}
+
+function prefixService(path) {
+  return "/service" + path;
+}
+
+function getServiceFileStorePath(clubName, serviceId) {
+  return prefixAPIURIPath(
+              prefixFileStore(
+                prefixClubName(clubName,
+                  prefixService("/" + serviceId))))
+}
+
+export { getBackendAPIURI,
+         prefixAPIURIPath,
+         prefixClubName,
+         prefixFileStore,
+         prefixService,
+         getServiceFileStorePath
+}

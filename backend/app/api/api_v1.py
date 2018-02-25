@@ -1,15 +1,91 @@
 #!/usr/bin/python
 import os
-from flask_restplus import Namespace, Resource, fields, cors
-from flask import abort, request, send_from_directory , Response
+import six 
+import coloredlogs, logging
+from marshmallow import fields, Schema
+from flask_apispec import ResourceMeta, Ref, doc, marshal_with, use_kwargs
+from flask import abort, request, send_from_directory , Response, Blueprint
 from werkzeug import secure_filename
 from utils import *
-from . import app_controller
+from flask_cors import CORS 
 
-import coloredlogs, logging
+from . import app_controller
+from .. import app 
+from .. import docs 
+
 logger = logging.getLogger(__name__)
 coloredlogs.install(level='DEBUG', logger=logger)
 
+API_NAME = 'api_v1'
+API_PREFIX = '/' + API_NAME
+api_v1_blueprint = Blueprint(API_NAME, API_NAME)
+api = api_v1_blueprint
+
+CORS(api_v1_blueprint)
+
+class UrlSchema(Schema):
+    class Meta:
+        fields = ['url']
+
+@api.route('/filestore/<club_name>/service/<id>/<filename>')
+def get_service_file(club_name, id, filename):
+    return send_from_directory(app_controller.get_filestore_service(id), filename)
+
+@api.route('/filestore/<club_name>/service/<service_id>', methods=['POST'])
+@doc(params={'club_name': {'description': 'club name which provide the service'}})
+@doc(params={'service_id': {'description': 'unique id for service'}})
+@marshal_with(UrlSchema(many=True))
+def post_service_file(club_name, service_id):
+    logger.debug("called service upload files: "+ str(service_id))
+    # Get the name of the uploaded files
+    logger.debug(request.files)
+    uploaded_files = request.files
+    logger.debug(uploaded_files)
+    filenames = []
+    for key, value in uploaded_files.items():
+        logger.debug(key)
+        logger.debug(value)
+        if (not app_controller.allow_file(value.filename)):
+            continue
+        # Make the filename safe, remove unsupported chars
+        filename = secure_filename(value.filename)
+        # Move the file form the temporal folder to the upload
+        # folder we setup
+        file_path = os.path.join(app_controller.get_filestore_service(club_name, service_id), filename)
+        value.save(file_path)
+        # Save the filename into a list, we'll use it later
+        filenames.append({'url': "/filestore/service/" + service_id + "/" + filename})
+    return filenames
+
+
+class ServiceSchema(Schema):
+    class Meta:
+        fields = ['id', 
+                  'name', 
+                  'description', 
+                  'price', 
+                  'discount', 
+                  'major_pic',
+                  'pic_and_text',
+                  'active']
+
+@api.route('/<club_name>/service', methods=['GET', 'POST'])
+@marshal_with(ServiceSchema(many=True))
+def service_op(club_name): 
+    if request.method == 'GET':
+        return app_controller.get_club_service_list(club_name)
+    elif request.method == 'POST':
+        logger.debug("calling create an new service")
+        logger.debug(request.get_json())
+        return app_controller.create_club_service(club_name, request.get_json())
+        
+
+# register api and doc
+app.register_blueprint(api_v1_blueprint, url_prefix=API_PREFIX)
+docs.register(get_service_file, blueprint='api_v1')
+docs.register(post_service_file, blueprint='api_v1')
+
+'''
 api = Namespace('api_v1', description='API version 1')
 
 def get_payload():
@@ -144,80 +220,7 @@ class Role(Resource):
     def put(self, club_name, role_name):
         return app_controller.update_club_role(club_name, role_name, get_payload())
 
-service_model = api.model('service', {
-    'id': fields.Integer(required=True),
-    'name': fields.String(required=True), # name of this service
-    'description':fields.String(required=True), # major Title for service
-    'price': fields.Integer(required=True), # price of this service
-    'discount': fields.Integer(required=True),
-    'major_pic': fields.Integer(required=True), 
-    'pic_and_text' : fields.List(fields.String),
-    'active': fields.Boolean() 
-})
-@api.route('/<club_name>/service')
-class ServiceList(Resource):
-    @api.doc('List club services')
-    @api.marshal_list_with(role_model)
-    def get(self, club_name):
-        return app_controller.get_club_service_list(club_name)
-
-    @api.expect(role_model)
-    @api.marshal_with(role_model)
-    def post(self):
-        logger.debug("calling create an new service")
-        logger.debug(get_payload())
-        return app_controller.create_club_service(club_name, get_payload())
-
-@api.route('/<club_name>/service/<service_name>')
-@api.param('club_name', 'the name of a club')
-@api.response(404, 'club not found')
-class Service(Resource):
-    @api.doc('get one club service detail')
-    @api.marshal_with(role_model)
-    def get(self, club_name, service_name):
-        return app_controller.get_club_service_by_name(club_name, service_name)
-
-    def delete(self, club_name, service_name):
-        return app_controller.delete_club_service_by_name(club_name, service_name)
-    
-    @api.expect(club_model)
-    @api.marshal_with(club_model)
-    def put(self, club_name, service_name):
-        return app_controller.update_club_service(club_name, service_name, get_payload())
 
 
 
-
-url_model= api.model('url_model', {
-    'url': fields.String(required=True, description="url to upload or download"),
-})
-
-@api.route('/filestore/service/<id>/<filename>')
-class ServiceFileDownload(Resource):
-    def get(self, id, filename):
-        return send_from_directory(app_controller.get_filestore_service(id), filename)
-
-@api.route('/filestore/service/<service_id>')
-class ServiceFileUpload(Resource):
-    @api.marshal_list_with(url_model)
-    def post(self, service_id):
-        logger.debug("called service upload files: "+ str(service_id))
-        # Get the name of the uploaded files
-        logger.debug(request.files)
-        uploaded_files = request.files
-        logger.debug(uploaded_files)
-        filenames = []
-        for key, value in uploaded_files.items():
-            logger.debug(key)
-            logger.debug(value)
-            if (not app_controller.allow_file(value.filename)):
-                continue
-            # Make the filename safe, remove unsupported chars
-            filename = secure_filename(value.filename)
-            # Move the file form the temporal folder to the upload
-            # folder we setup
-            file_path = os.path.join(app_controller.get_filestore_service(service_id), filename)
-            value.save(file_path)
-            # Save the filename into a list, we'll use it later
-            filenames.append({'url': "/filestore/service/" + service_id + "/" + filename})
-        return Response(filenames)
+'''

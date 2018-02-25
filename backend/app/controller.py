@@ -85,9 +85,18 @@ class AppController(object):
     def get_filestore_dir(self):
         return self.db_model.get_filestore_dir()
 
-    def get_filestore_service(self, id):
-        return self.db_model.get_filestore_service(id)
+    def get_filestore_service(self, club_name, id):
+        return self.db_model.get_filestore_service(club_name, id)
 
     def allow_file(self, filename):
       allow_ext = set(['txt','png', 'jpg', 'jpeg', 'gif'])
       return '.' in filename and filename.rsplit('.', 1)[1] in allow_ext 
+
+    # service related funcitons
+    def create_club_service(self, club_name, service_data):
+        logger.debug(service_data)
+        return self.db_model.create_club_service(club_name, service_data)
+    
+    def get_club_service_list(self, club_name):
+        logger.debug(club_name)
+        return self.db_model.get_club_service_list(club_name)

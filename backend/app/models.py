@@ -69,7 +69,7 @@ class Club(Base, BaseMixin):
     # relationship
     users = relationship("User", backref="club")
     roles = relationship("Role", backref="club")
-    Services = relationship("Service", backref="club")
+    services = relationship("Service", backref="club")
 
 class Role(Base, BaseMixin):
     __tablename__ = 'role'
@@ -137,9 +137,8 @@ class AppModel(object):
     def __init__(self, db_session=db_session):
         self.db_session = db_session 
         self.file_store = FILE_STORE 
-        self.service_file_store = self.file_store + "/service"
-        if not os.path.exists(self.service_file_store):
-            os.makedirs(self.service_file_store)
+        if not os.path.exists(self.file_store):
+            os.makedirs(self.file_store)
 
     def _add(self, ob):
         self.db_session.add(ob)
@@ -149,7 +148,12 @@ class AppModel(object):
 
     def _add_commit(self, ob):
         self._add(ob)
-        self._commit()
+        try:
+            self._commit()
+        except Exception as e:
+            logger.debug(str(e))
+            self.db_session.rollback()
+            raise e 
 
     def _find_club_and_error(self, club_name):
         club = Club.query.filter_by(name=club_name).first()
@@ -284,11 +288,22 @@ class AppModel(object):
     def get_filestore_dir(self):
         return self.file_store
 
-    def get_filestore_service(self, id):
-        service_path = self.service_file_store + "/{}".format(id)
+    def get_filestore_service(self, club_name, id):
+        service_path = self.file_store + "/{}/service/{}".format(club_name, id)
         if not os.path.exists(service_path):
             os.makedirs(service_path)
         return service_path
+
+    # service related functions
+    def create_club_service(self, club_name, service_data):
+        club = self._find_club_and_error(club_name)
+        new_service = Service(**service_data)
+        new_service.club_id = club.id 
+        self._add_commit(new_service)
+
+    def get_club_service_list(self, club_name):
+        club = self._find_club_and_error(club_name)
+        return club.services
 
 def init_all():
     Base.metadata.drop_all(bind=engine)
