@@ -285,7 +285,7 @@ class AppModel(object):
         return self.file_store
 
     def get_filestore_service(self, id):
-        service_path = self.service_file_store + "/id"
+        service_path = self.service_file_store + "/{}".format(id)
         if not os.path.exists(service_path):
             os.makedirs(service_path)
         return service_path

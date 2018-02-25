@@ -21,13 +21,20 @@ coloredlogs.install(level='DEBUG', logger=logger)
 from app import app, app_controller
 from app.models import init_all
 
+@app.after_request
+def after_request(response):
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
+    response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE')
+    return response
+'''
 @app.route('/api/random')
 def random_number():
     response = {
         'randomNumber': randint(1, 100)
     }
     return jsonify(response)
-
+'''
 @app.route('/<club_name>')
 def catch_index(club_name):
     '''

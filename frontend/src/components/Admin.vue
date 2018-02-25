@@ -107,7 +107,7 @@
     <b-button-group>
     <b-button variant="info" v-on:click="addPicSection">新增图片</b-button>
     <b-button variant="warning" v-on:click="addTextSection">新增文字</b-button>
-    <b-button variant="primary" v-on:click="submit">确认提交</b-button>
+    <b-button variant="primary" v-on:click="submitNewService">确认提交</b-button>
     </b-button-group>
       </form>
     </b-container>
@@ -135,6 +135,7 @@ import loadImage from "blueimp-load-image";
 export default {
   data() {
     return {
+      id: uuidv1(),
       title: null,
       service_manage: true,
       user_manage: false,
@@ -180,6 +181,49 @@ export default {
       txtObj.id = uuidv1();
       this.pic_txt_arr.push(txtObj);
     },
+    submitNewService() {
+      let service_id = this.id
+      let data = new FormData();
+
+      data.append('majorimage.jpg', this.majorImgFile, 'majorimage.jpg');
+      let pic_txt_arr = []
+      for (let i = 0; i < this.pic_txt_arr.length; i++) {
+        let item = this.pic_txt_arr[i];
+        if (item.type === "text") {
+          let content = item.txt
+          let blob = new Blob([content], {type: "text/xml"})
+          data.append(i + '.txt', blob, i + '.txt')
+          pic_txt_arr.push(i + '.txt')
+        }
+        else {
+          data.append(i + '.jpg', item.file, i + '.jpg');
+          pic_txt_arr.push(i + '.jpg')
+        }
+      }
+      const config = {
+        header: {'content-type': 'multipart/form-data'}
+      }
+      let url = getBackendAPIURI(window.location.href, "/api_v1/filestore/service/" + this.id)
+      axios.post(url, data)
+      .then((response) => {
+        console.log(response);
+        // file has been uploaded, time to commit service
+        let service_data = {
+          'id': this.id,
+          'name': this.title,
+          'description':this.title,
+          'price': 0,
+          'discount':0,
+          'major_pic':'majorimage.jpg',
+          'pic_and_text': pic_txt_arr.join(";"),
+          'active':true 
+        }
+        console.log("start commit service")
+        let url = getBackendAPIURI(window.location.href, "/" + this.clubName + "/service");
+        axios.post(url, service_data);
+      })
+      
+    },
     clickPicPreview (itemId) {
       let input = jQuery("#" + this.getId('pic-file-', itemId))[0];
       input.click()
@@ -218,11 +262,6 @@ export default {
             function(canvas) {
               //here's the base64 data result
               var base64data = canvas.toDataURL("image/jpeg");
-              //here's example to show it as on imae preview
-              //var img_src = base64data.replace(
-              //  /^data\:image\/\w+\;base64\,/,
-              //  ""
-              //);
               jQuery("#majorImgPreview").attr("src", base64data);
             },
             {
@@ -272,29 +311,9 @@ export default {
     },
     getId(typeInput, uuidInput) {
       return typeInput + uuidInput;
-    },
-    getRandomInt(min, max) {
-      min = Math.ceil(min);
-      max = Math.floor(max);
-      return Math.floor(Math.random() * (max - min + 1)) + min;
-    },
-    getRandom() {
-      this.randomNumber = this.getRandomFromBackend();
-    },
-    getRandomFromBackend() {
-      const path = getBackendAPIURI(window.location.href, "/api/random");
-      axios
-        .get(path)
-        .then(response => {
-          this.randomNumber = response.data.randomNumber;
-        })
-        .catch(error => {
-          console.log(error);
-        });
     }
   },
   created() {
-    this.getRandom();
   }
 };
 </script>

@@ -1,10 +1,14 @@
 #!/usr/bin/python
-
-from flask_restplus import Namespace, Resource, fields
-from flask import abort, request, send_from_directory
+import os
+from flask_restplus import Namespace, Resource, fields, cors
+from flask import abort, request, send_from_directory , Response
 from werkzeug import secure_filename
 from utils import *
 from . import app_controller
+
+import coloredlogs, logging
+logger = logging.getLogger(__name__)
+coloredlogs.install(level='DEBUG', logger=logger)
 
 api = Namespace('api_v1', description='API version 1')
 
@@ -142,9 +146,9 @@ class Role(Resource):
 
 service_model = api.model('service', {
     'id': fields.Integer(required=True),
-    'name': fields.String(required=True),
-    'description':fields.String(required=True),
-    'price': fields.Integer(required=True),
+    'name': fields.String(required=True), # name of this service
+    'description':fields.String(required=True), # major Title for service
+    'price': fields.Integer(required=True), # price of this service
     'discount': fields.Integer(required=True),
     'major_pic': fields.Integer(required=True), 
     'pic_and_text' : fields.List(fields.String),
@@ -160,6 +164,8 @@ class ServiceList(Resource):
     @api.expect(role_model)
     @api.marshal_with(role_model)
     def post(self):
+        logger.debug("calling create an new service")
+        logger.debug(get_payload())
         return app_controller.create_club_service(club_name, get_payload())
 
 @api.route('/<club_name>/service/<service_name>')
@@ -191,19 +197,27 @@ class ServiceFileDownload(Resource):
     def get(self, id, filename):
         return send_from_directory(app_controller.get_filestore_service(id), filename)
 
-@api.route('/FileStore/service/<id>')
+@api.route('/filestore/service/<service_id>')
 class ServiceFileUpload(Resource):
     @api.marshal_list_with(url_model)
-    def post(self, id):
+    def post(self, service_id):
+        logger.debug("called service upload files: "+ str(service_id))
         # Get the name of the uploaded files
-        uploaded_files = request.files.getlist("file[]")
+        logger.debug(request.files)
+        uploaded_files = request.files
+        logger.debug(uploaded_files)
         filenames = []
-        for file in uploaded_files and app_controller.allow_file(file.filename):
+        for key, value in uploaded_files.items():
+            logger.debug(key)
+            logger.debug(value)
+            if (not app_controller.allow_file(value.filename)):
+                continue
             # Make the filename safe, remove unsupported chars
-            filename = secure_filename(file.filename)
+            filename = secure_filename(value.filename)
             # Move the file form the temporal folder to the upload
             # folder we setup
-            file_path = os.path.join(app_controller.get_filestore_service(id), filename)
-            file.save(file_path)
+            file_path = os.path.join(app_controller.get_filestore_service(service_id), filename)
+            value.save(file_path)
             # Save the filename into a list, we'll use it later
-            filenames.append("/filestore/service/" + id + "/" + filename)
+            filenames.append({'url': "/filestore/service/" + service_id + "/" + filename})
+        return Response(filenames)

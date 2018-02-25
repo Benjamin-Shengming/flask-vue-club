@@ -89,5 +89,5 @@ class AppController(object):
         return self.db_model.get_filestore_service(id)
 
     def allow_file(self, filename):
-      allow_ext = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])
+      allow_ext = set(['txt','png', 'jpg', 'jpeg', 'gif'])
       return '.' in filename and filename.rsplit('.', 1)[1] in allow_ext 
