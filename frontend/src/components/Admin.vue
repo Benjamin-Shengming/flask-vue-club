@@ -54,6 +54,17 @@
                         v-model="title"> {{ title }}</b-form-input>
         </b-col>
       </b-row>
+      <b-row id='service-description-id' >
+        <b-col sm="2"><label for="input-large">服务综述</label></b-col>
+        <b-col sm="10" >
+          <b-form-textarea id="serviceDescription" 
+                     v-model="description"
+                     placeholder="Enter something"
+                     :rows="3"
+                     :max-rows="6">
+          </b-form-textarea>
+        </b-col>
+      </b-row>
       <!-- service major picture-->
       <b-row id='service-title-id' class="service-title">
         <b-col sm="2"><label for="input-large">服务主题图片</label></b-col>
@@ -71,7 +82,24 @@
                  @click="clickMajorImgPreview()"  />
         </b-col>
       </b-row>
-
+      <b-row id='service-price' >
+        <b-col sm="2"><label for="input-large">价格</label></b-col>
+        <b-col cols="10" align-h="start">
+          <!-- Using props -->
+          <b-input-group size="lg" prepend="人民币" >
+            <b-form-input v-model="price"></b-form-input>
+          </b-input-group>
+        </b-col>
+      </b-row >
+      <b-row id='service-discount' >
+        <b-col sm="2"><label for="input-large">折扣</label></b-col>
+        <b-col cols="10" align-h="start">
+          <!-- Using props -->
+          <b-input-group size="lg" prepend="%" >
+            <b-form-input v-model="discount"></b-form-input>
+          </b-input-group>
+        </b-col>
+      </b-row>
       <!--  pictures and text -->
       <b-row class="service-pic-txt" v-for="item in pic_txt_arr" v-bind:key="item.id">
         <!--- picture -->
@@ -104,6 +132,7 @@
         </b-col>
       </b-row>
     <br/>
+    <b-alert :show='alertMsg != null' variant="warning">{{ alertMsg }}</b-alert>
     <b-button-group>
     <b-button variant="info" v-on:click="addPicSection">新增图片</b-button>
     <b-button variant="warning" v-on:click="addTextSection">新增文字</b-button>
@@ -141,13 +170,19 @@ import loadImage from "blueimp-load-image";
 export default {
   data() {
     return {
+      alertMsg: null,
       id: uuidv1(),
       title: null,
+      description: null,
       service_manage: true,
       user_manage: false,
       service_new: false,
       majorImgFile: null,
-      pic_txt_arr: []
+      pic_txt_arr: [],
+      price: 500,
+      discount: 100,
+      active: true,
+      slide: true
     };
   },
   computed: {
@@ -168,11 +203,6 @@ export default {
     }
   },
   methods: {
-    submit() {
-      console.log(this.title)
-      console.log(this.majorImgFile)
-      console.log(this.pic_txt_arr)
-    },
     addPicSection() {
       var picObj = {};
       picObj.type = "picture";
@@ -187,10 +217,36 @@ export default {
       txtObj.id = uuidv1();
       this.pic_txt_arr.push(txtObj);
     },
-    submitNewService() {
-      let data = new FormData();
+    validSubmitData() {
+      this.alertMsg = null;
+      if (this.title === null) {
+        this.alertMsg = "   请输入服务产品名称   "
+      }
+      if (this.majorImgFile === null) {
+        this.alertMsg += "  请选择服务产品图片   "
+      }
+      if (this.description === null) {
+        this.alertMsg += "   请选择服务产品综述   "
+      }
 
-      data.append('majorimage.jpg', this.majorImgFile, 'majorimage.jpg');
+      if (this.price === null || this.price < 0) {
+        this.alertMsg += "   请输入合理服务产品价格  "
+      }
+      if (this.discount === null || this.discount < 0 || this.discount > 100) {
+        this.alertMsg += "   请输入合理折扣  "
+      }
+      return (this.alertMsg === null)
+    },
+    submitNewService() {
+      if (!this.validSubmitData()) {
+        return
+      }
+      let data = new FormData();
+      let inputMajorFileName = jQuery("#majorImgInput")[0].value;
+      console.log(inputMajorFileName)
+      let majorExt = inputMajorFileName.split('.').pop();
+      let majorFilename = 'majorimage.' + majorExt;
+      data.append(majorFilename, this.majorImgFile, majorFilename);
       let picAndTxtArr = []
       for (let i = 0; i < this.pic_txt_arr.length; i++) {
         let item = this.pic_txt_arr[i];
@@ -200,8 +256,12 @@ export default {
           data.append(i + '.txt', blob, i + '.txt')
           picAndTxtArr.push(i + '.txt')
         } else {
-          data.append(i + '.jpg', item.file, i + '.jpg');
-          picAndTxtArr.push(i + '.jpg')
+          let input = jQuery("#" + this.getId('pic-file-', item.id))[0];
+          let fileExt = input.value.split('.').pop();
+          let fileName = i + "." + fileExt;
+          console.log(fileName)
+          data.append(fileName, item.file, fileName);
+          picAndTxtArr.push(fileName)
         }
       }
 
@@ -217,12 +277,13 @@ export default {
         let serviceData = {
           'id': this.id,
           'name': this.title,
-          'description': this.title,
-          'price': 0,
-          'discount': 0,
+          'description': this.description,
+          'price': this.price,
+          'discount': this.discount,
           'major_pic': 'majorimage.jpg',
           'pic_and_text': picAndTxtArr.join(";"),
-          'active': true
+          'active': true,
+          'slide': true
         }
         console.log("start commit service")
         let servicePath = prefixAPIURIPath(

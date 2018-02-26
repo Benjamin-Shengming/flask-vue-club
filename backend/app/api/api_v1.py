@@ -67,7 +67,8 @@ class ServiceSchema(Schema):
                   'discount', 
                   'major_pic',
                   'pic_and_text',
-                  'active']
+                  'active',
+                  'slide']
 
 @api.route('/<club_name>/service', methods=['GET', 'POST'])
 @marshal_with(ServiceSchema(many=True))
