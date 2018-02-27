@@ -27,9 +27,10 @@ class UrlSchema(Schema):
     class Meta:
         fields = ['url']
 
-@api.route('/filestore/<club_name>/service/<id>/<filename>')
+@api.route('/filestore/<club_name>/service/<id>/<filename>', methods=['GET'])
 def get_service_file(club_name, id, filename):
-    return send_from_directory(app_controller.get_filestore_service(id), filename)
+    logger.debug("get file")
+    return send_from_directory(app_controller.get_filestore_service(club_name,id), filename)
 
 @api.route('/filestore/<club_name>/service/<service_id>', methods=['POST'])
 @doc(params={'club_name': {'description': 'club name which provide the service'}})
@@ -85,7 +86,7 @@ def service_op(club_name):
 app.register_blueprint(api_v1_blueprint, url_prefix=API_PREFIX)
 docs.register(get_service_file, blueprint='api_v1')
 docs.register(post_service_file, blueprint='api_v1')
-
+docs.register(service_op, blueprint='api_v1')
 '''
 api = Namespace('api_v1', description='API version 1')
 

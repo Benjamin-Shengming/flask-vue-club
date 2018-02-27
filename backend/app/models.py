@@ -1,6 +1,7 @@
 
 #!/usr/bin/python
 import os
+import datetime
 from sqlalchemy import UniqueConstraint, ForeignKey, create_engine, Column, Integer, String, Table, DateTime, Boolean
 from sqlalchemy.orm import relationship, scoped_session, sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
@@ -16,7 +17,7 @@ logger = logging.getLogger(__name__)
 coloredlogs.install(level='DEBUG', logger=logger)
 
 FILE_STORE = os.path.join(os.path.dirname(__file__), 'filestore')
-engine = create_engine('sqlite:////tmp/test.db', convert_unicode=True)
+engine = create_engine('sqlite:////home/ubuntu/test.db', convert_unicode=True)
 
 db_session = scoped_session(sessionmaker(autocommit=False, 
                                          autoflush=False,
@@ -69,7 +70,7 @@ class Club(Base, BaseMixin):
     # relationship
     users = relationship("User", backref="club")
     roles = relationship("Role", backref="club")
-    services = relationship("Service", backref="club")
+    services = relationship("Service", backref="club", order_by="desc(Service.last_update_time)")
 
 class Role(Base, BaseMixin):
     __tablename__ = 'role'
@@ -92,7 +93,7 @@ class Service(Base, BaseMixin):
     price = Column(Integer, nullable=False)
     discount = Column(Integer, nullable=False, default=20)
     pic_and_text = Column(String)# a list of text and image files
-    last_update_time = Column(DateTime)
+    last_update_time = Column(DateTime, default=datetime.datetime.utcnow)
     major_pic = Column(String) # major picture of this service
     sub_services = Column(String) # a list of sub services
     active = Column(Boolean, default=True) #onine or offline
@@ -306,6 +307,15 @@ class AppModel(object):
     def get_club_service_list(self, club_name):
         club = self._find_club_and_error(club_name)
         return club.services
+
+    def get_club_headline_service(self, club_name):
+        club = self._find_club_and_error(club_name)
+        return [item for item in club.services if item.slide]
+
+    def get_club_service_paginate_date(self, club_name, start, numbers=20):
+        club = self._find_club_and_error(club_name)
+        total = len(club.services)
+        return club.services[start : min(start+numbers, total)]
 
 def init_all():
     Base.metadata.drop_all(bind=engine)

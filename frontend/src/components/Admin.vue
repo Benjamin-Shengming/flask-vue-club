@@ -100,6 +100,28 @@
           </b-input-group>
         </b-col>
       </b-row>
+      <b-row id='service-active'>
+        <b-col sm="2"><label for="input-large">其它设置</label></b-col>
+        <b-col cols="5" align-h="start">
+          <!-- Using props -->
+          <b-form-checkbox id="service-active-checkbox"
+                      v-model="active"
+                      value="true"
+                      unchecked-value="false">
+                      该服务产品上线
+        </b-form-checkbox>
+        </b-col>
+        <b-col cols="5" align-h="start">
+          <!-- Using props -->
+          <b-form-checkbox id="service-slide-checkbox"
+                      v-model="slide"
+                      value="true"
+                      unchecked-value="false">
+                      该服务作为头条滚动服务 
+        </b-form-checkbox>
+        </b-col>
+      </b-row>
+
       <!--  pictures and text -->
       <b-row class="service-pic-txt" v-for="item in pic_txt_arr" v-bind:key="item.id">
         <!--- picture -->
@@ -280,7 +302,7 @@ export default {
           'description': this.description,
           'price': this.price,
           'discount': this.discount,
-          'major_pic': 'majorimage.jpg',
+          'major_pic': majorFilename,
           'pic_and_text': picAndTxtArr.join(";"),
           'active': true,
           'slide': true

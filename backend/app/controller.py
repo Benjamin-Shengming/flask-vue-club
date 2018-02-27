@@ -1,5 +1,5 @@
 #!/usr/bin/python
-
+import os
 from flask import Blueprint, render_template, abort 
 from jinja2 import TemplateNotFound
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
@@ -86,7 +86,9 @@ class AppController(object):
         return self.db_model.get_filestore_dir()
 
     def get_filestore_service(self, club_name, id):
-        return self.db_model.get_filestore_service(club_name, id)
+        directory = self.db_model.get_filestore_service(club_name, id)
+        logger.debug(directory)
+        return os.path.abspath(directory)
 
     def allow_file(self, filename):
       allow_ext = set(['txt','png', 'jpg', 'jpeg', 'gif'])
@@ -100,3 +102,9 @@ class AppController(object):
     def get_club_service_list(self, club_name):
         logger.debug(club_name)
         return self.db_model.get_club_service_list(club_name)
+
+    def get_club_headline_service(self, club_name):
+        return self.db_model.get_club_headline_service(club_name)
+
+    def get_club_service_paginate_date(self, club_name, start, numbers=20):
+        return self.db_model.get_club_service_paginate_date(club_name, start, numbers)

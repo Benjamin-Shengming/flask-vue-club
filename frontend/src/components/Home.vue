@@ -38,106 +38,56 @@
                 background="#ababab"
                 :interval="4000"
                 img-width="1024"
-                img-height="480"
+                img-height="360"
                 v-model="slide"
                 @sliding-start="onSlideStart"
                 @sliding-end="onSlideEnd" >
-      <!-- Text slides with image -->
-      <b-carousel-slide caption="First slide"
-                        text="Nulla vitae elit libero, a pharetra augue mollis interdum."
-                        img-src="https://lorempixel.com/1024/480/technics/2/" />
-
-      <!-- Slides with custom text -->
-      <b-carousel-slide img-src="https://lorempixel.com/1024/480/technics/4/">
-        <h1>Hello world!</h1>
-      </b-carousel-slide>
-
-      <!-- Slides with image only -->
-      <b-carousel-slide img-src="https://lorempixel.com/1024/480/technics/8/">
-      </b-carousel-slide>
-
-      <!-- Slides with img slot -->
-      <!-- Note the classes .d-block and .img-fluid to prevent browser default image alignment -->
-      <b-carousel-slide>
-        <img slot="img" class="d-block img-fluid w-100" width="1024" height="480"
-             src="https://lorempixel.com/1024/480/technics/5/" alt="image slot">
-      </b-carousel-slide>
-
       <!-- Slide with blank fluid image to maintain slide aspect ratio -->
-      <b-carousel-slide caption="Blank Image" img-blank img-alt="Blank image">
-        <p>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse
-          eros felis, tincidunt a tincidunt eget, convallis vel est. Ut pellentesque
-          ut lacus vel interdum.
-        </p>
-      </b-carousel-slide>
+      <b-carousel-slide 
+          v-for="item in headlineServiceArray"
+          v-bind:key="item.id"
+          :caption="item.name"  
+          :text="item.description"
+          :img-src="getServiceMajorPic(item)" 
+          :img-alt="item.description" />
     </b-carousel>
-
-    <p class="mt-4">
+    <p class="mt-4 invisible">
       Slide #: {{ slide }}<br>
       Sliding: {{ sliding }}
     </p>
-
     <div class="card">
       <ul class="list-group list-group-flush">
-        <li class="list-group-item">
-          <b-card> <b-media>
-            <b-img src="https://lorempixel.com/1024/480/technics/5/" 
+        <li class="list-group-item" v-for="(item, index) in serviceArray" v-bind:key="item.id">
+          <b-card @click="gotoService(item)"> 
+            <b-media v-if="index % 2== 0"> 
+              <b-img :src="getServiceMajorPic(item)" 
                   slot="aside" 
                   blank-color="#ccc" 
-                  width="256" height='256' alt="placeholder" />
-            <h5 class="mt-0">远岛七日游</h5>
-            <p>
-              Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante
-              sollicitudin. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis.
-              Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis
-              in faucibus.
-            </p>
-            <b-button href="#" variant="primary">我要去...</b-button>
-          </b-media> </b-card>
-
-        </li>
-
-        <li class="list-group-item">
-          <b-card> <b-media right-align vertical-align="center">
-            <b-img src="https://lorempixel.com/1024/480/technics/5/" 
+                  width="256" height='256' :alt="item.name" />
+              <h5 class="mt-0">{{ item.name }}</h5>
+              <p>
+                {{ item.description }}
+             </p>
+             <b-button href="#" variant="primary">我要去...</b-button>
+            </b-media> 
+            <b-media v-else right-align vertical-align="center">
+              <b-img :src="getServiceMajorPic(item)" 
                   slot="aside" 
                   blank-color="#ccc" 
-                  width="256" height='256' alt="placeholder" />
-            <h5 class="mt-0">远岛七日游</h5>
-            <p>
-              Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante
-              sollicitudin. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis.
-              Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis
-              in faucibus.
-            </p>
-            <b-button href="#" variant="primary">我要去...</b-button>
-          </b-media> </b-card>
+                  width="256" height='256' :alt="item.name" />
+              <h5 class="mt-0">{{ item.name }}</h5>
+              <p>
+                {{ item.description }}
+             </p>
+             <b-button href="#" variant="primary">我要去...</b-button>
+          </b-media>
+          </b-card>
         </li>
-
-        <li class="list-group-item">
-          <b-card> <b-media >
-            <b-img src="https://lorempixel.com/1024/480/technics/5/" 
-                  slot="aside" 
-                  blank-color="#ccc" 
-                  width="256" height='256' alt="placeholder" />
-            <h5 class="mt-0">远岛七日游</h5>
-            <p>
-              Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante
-              sollicitudin. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis.
-              Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis
-              in faucibus.
-            </p>
-            <b-button href="#" variant="primary">我要去...</b-button>
-          </b-media> </b-card>
-        </li>
-
         <li> 
           <b-button variant="primary" @click="viewMoreService()">查看更多...</b-button>
         </li>
       </ul>
     </div>
-    <p> {{ endIndex }} </p>
   </div>
 </template>
 
@@ -147,7 +97,7 @@ import axios from "axios";
 import { getBackendAPIURI,
          prefixAPIURIPath,
          prefixClubName,
-         // prefixFileStore,
+         prefixFileStore,
          prefixService
          //getServiceFileStorePath
         } from "./genlib.js";
@@ -155,8 +105,8 @@ import { getBackendAPIURI,
 export default {
   data () {
     return {
-      endIndex: 0,
       serviceArray: [],
+      headlineServiceArray: [],
       slide: 0,
       sliding: null
     };
@@ -179,14 +129,35 @@ export default {
     viewMoreService() {
       console.log("viewMoreService");
     },
+    gotoService(item) {
+      console.log(item)
+      console.log("show service " + item.id)
+    },
+    getServiceMajorPic(item) {
+      let url = prefixAPIURIPath(prefixFileStore(
+                                prefixClubName(this.clubName,
+                                    prefixService("/" + item.id + "/" + item.major_pic)
+                            )))
+      url = getBackendAPIURI(window.location.href, url);
+      console.log(url)
+      return url;
+    },
     getService() {
       let servicePath = prefixAPIURIPath(
                             prefixClubName(this.clubName,
                             prefixService("")));
       let url = getBackendAPIURI(window.location.href, servicePath);
       console.log(url)
-      axios.get(url).then((reponse) => {
-        console.log(reponse)
+      axios.get(url).then((response) => {
+        this.serviceArray = response.data
+        for (let item of this.serviceArray) {
+          if (item.slide) {
+            console.log(item)
+            this.headlineServiceArray.push(item)
+          }
+        }
+        console.log(this.serviceArray)
+        console.log(this.headlineServiceArray)
       });
     }
   },
@@ -199,3 +170,11 @@ export default {
   }
 };
 </script>
+
+<style>
+.carousel-inner > .carouse-item > .img-fluid {
+  width: auto;
+  height:360px;
+  max-height: 360px;
+}
+</style>
