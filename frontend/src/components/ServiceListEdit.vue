@@ -1,23 +1,26 @@
 <template>
   <div fluid> 
     <b-container fluid>
-      <b-row fluid>
-      <b-col v-for="item in serviceArray" v-bind:key="item.id" >
-      <b-card  
-              :img-src="getServiceMajorPic(item)"
-              :img-alt="item.name"
-              style="max-width: 20rem;"
-              class="mb-2"
-              
-              @click="gotoService(item)"> 
-          <p class="card-text">
-            {{ item.description }}
-          </p>
-          <b-button href="#" variant="primary">Delete</b-button>
-          <b-button href="#" variant="primary">Edit...</b-button>
-      </b-card>
-      </b-col>
-      </b-row>
+    <div class="card">
+      <ul class="list-group list-group-flush">
+        <li class="list-group-item" v-for="item in serviceArray" v-bind:key="item.id">
+          <b-card @click="gotoService(item)"> 
+            <b-media > 
+              <b-img :src="getServiceMajorPic(item)" 
+                  slot="aside" 
+                  blank-color="#ccc" 
+                  width="200" height='200' :alt="item.name" />
+              <h5 class="mt-0">{{ item.name }}</h5>
+              <p>
+                {{ item.description }}
+             </p>
+            </b-media> 
+             <b-button href="#" variant="primary" fluid-grow>删除此服务产品</b-button>
+             <b-button href="#" variant="primary" fluid-grow>修改服务产品...</b-button>
+          </b-card>
+        </li>
+      </ul>
+    </div>
     </b-container>
 
   </div>

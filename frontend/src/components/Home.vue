@@ -57,34 +57,20 @@
     </p>
     <div class="card">
       <ul class="list-group list-group-flush">
-        <li class="list-group-item" v-for="(item, index) in serviceArray" v-bind:key="item.id">
+        <li class="list-group-item" v-for="item in serviceArray" v-bind:key="item.id">
           <b-card @click="gotoService(item)"> 
-            <b-media v-if="index % 2== 0"> 
+            <b-media > 
               <b-img :src="getServiceMajorPic(item)" 
                   slot="aside" 
                   blank-color="#ccc" 
-                  width="256" height='256' :alt="item.name" />
+                  width="200" height='200' :alt="item.name" />
               <h5 class="mt-0">{{ item.name }}</h5>
               <p>
                 {{ item.description }}
              </p>
              <b-button href="#" variant="primary">我要去...</b-button>
             </b-media> 
-            <b-media v-else right-align vertical-align="center">
-              <b-img :src="getServiceMajorPic(item)" 
-                  slot="aside" 
-                  blank-color="#ccc" 
-                  width="256" height='256' :alt="item.name" />
-              <h5 class="mt-0">{{ item.name }}</h5>
-              <p>
-                {{ item.description }}
-             </p>
-             <b-button href="#" variant="primary">我要去...</b-button>
-          </b-media>
           </b-card>
-        </li>
-        <li> 
-          <b-button variant="primary" @click="viewMoreService()">查看更多...</b-button>
         </li>
       </ul>
     </div>

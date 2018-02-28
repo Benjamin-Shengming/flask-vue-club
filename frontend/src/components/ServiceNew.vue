@@ -38,10 +38,11 @@
                           placeholder="点击此处选择图片..." />
               <b-img id="majorImgPreview" 
                     src="#" 
-                    fluid-grow
+                    fluid
                     alt="点击此处选择图片..." 
                     blank-color="#777"
-                    @click="clickMajorImgPreview()"  />
+                    @click="clickMajorImgPreview()"  
+                    />
             </b-col>
           </b-row>
           <!-- service price -->
@@ -291,7 +292,7 @@ export default {
             blobOrFile,
             function(canvas) {
               //here's the base64 data result
-              var base64data = canvas.toDataURL("image/jpeg");
+              var base64data = canvas.toDataURL();
               jQuery("#majorImgPreview").attr("src", base64data);
             },
             {
