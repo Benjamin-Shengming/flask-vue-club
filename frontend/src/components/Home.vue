@@ -13,12 +13,6 @@
           <b-form-input size="sm" class="mr-sm-2" type="text" placeholder="Search"/>
           <b-button size="sm" class="my-2 my-sm-0" type="submit">Search</b-button>
         </b-nav-form>
-        <b-nav-item-dropdown text="Lang" right>
-          <b-dropdown-item href="#">EN</b-dropdown-item>
-          <b-dropdown-item href="#">ES</b-dropdown-item>
-          <b-dropdown-item href="#">RU</b-dropdown-item>
-          <b-dropdown-item href="#">FA</b-dropdown-item>
-        </b-nav-item-dropdown>
         <b-nav-item-dropdown right>
           <!-- Using button-content slot -->
           <template slot="button-content">
@@ -31,6 +25,10 @@
     </b-collapse>
     </b-navbar>
 
+    <div v-if="serviceBook">
+      <ServiceBook :service="singleService"></ServiceBook>
+    </div>
+    <div v-else>
     <b-carousel id="carousel1"
                 style="text-shadow: 1px 1px 2px #333;"
                 controls
@@ -47,9 +45,12 @@
           v-for="item in headlineServiceArray"
           v-bind:key="item.id"
           :caption="item.name"  
-          :text="item.description"
-          :img-src="getServiceMajorPic(item)" 
-          :img-alt="item.description" />
+          :text="item.description">
+          <img slot="img" class="d-block img-fluid w-100" width="1024" height="480"
+             :src="getServiceMajorPic(item)" 
+             :alt="item.description"
+             @click="bookService(item)">
+      </b-carousel-slide>
     </b-carousel>
     <p class="mt-4 invisible">
       Slide #: {{ slide }}<br>
@@ -58,7 +59,7 @@
     <div class="card">
       <ul class="list-group list-group-flush">
         <li class="list-group-item" v-for="item in serviceArray" v-bind:key="item.id">
-          <b-card @click="gotoService(item)"> 
+          <b-card @click="bookService(item)"> 
             <b-media > 
               <b-img :src="getServiceMajorPic(item)" 
                   slot="aside" 
@@ -74,11 +75,13 @@
         </li>
       </ul>
     </div>
+    </div>
   </div>
 </template>
 
 <script>
 import axios from "axios";
+import ServiceBook from "./ServiceBook.vue"
 // import jQuery from "jquery";
 import { getBackendAPIURI,
          prefixAPIURIPath,
@@ -89,8 +92,13 @@ import { getBackendAPIURI,
         } from "./genlib.js";
 
 export default {
+  components: {
+    ServiceBook
+  },
   data () {
     return {
+      serviceBook: false,
+      singleService: null,
       serviceArray: [],
       headlineServiceArray: [],
       slide: 0,
@@ -115,9 +123,11 @@ export default {
     viewMoreService() {
       console.log("viewMoreService");
     },
-    gotoService(item) {
-      console.log(item)
-      console.log("show service " + item.id)
+    bookService(item) {
+      console.log(item);
+      console.log("show service " + item.id);
+      this.singleService = item;
+      this.serviceBook = true;
     },
     getServiceMajorPic(item) {
       let url = prefixAPIURIPath(prefixFileStore(

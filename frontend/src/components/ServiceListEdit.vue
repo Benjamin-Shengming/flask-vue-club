@@ -4,7 +4,7 @@
     <div class="card">
       <ul class="list-group list-group-flush">
         <li class="list-group-item" v-for="item in serviceArray" v-bind:key="item.id">
-          <b-card @click="gotoService(item)"> 
+          <b-card @click="modifyService(item)"> 
             <b-media > 
               <b-img :src="getServiceMajorPic(item)" 
                   slot="aside" 
@@ -15,8 +15,8 @@
                 {{ item.description }}
              </p>
             </b-media> 
-             <b-button href="#" variant="primary" fluid-grow>删除此服务产品</b-button>
-             <b-button href="#" variant="primary" fluid-grow>修改服务产品...</b-button>
+             <b-button variant="primary" fluid-grow @click.stop="deleteService(item)">删除此服务产品</b-button>
+             <b-button variant="primary" fluid-grow @click.stop='modifyService(item)'>修改服务产品...</b-button>
           </b-card>
         </li>
       </ul>
@@ -53,12 +53,14 @@ export default {
     }
   },
   methods: {
+    deleteService(item) {
+      this.$emit("event-service-delete", item)
+    },
+    modifyService(item) {
+      this.$emit("event-service-modify", item)
+    },
     viewMoreService() {
       console.log("viewMoreService");
-    },
-    gotoService(item) {
-      console.log(item);
-      console.log("show service " + item.id);
     },
     getServiceMajorPic(item) {
       let url = prefixAPIURIPath(

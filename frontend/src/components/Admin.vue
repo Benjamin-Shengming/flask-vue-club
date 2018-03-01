@@ -36,14 +36,24 @@
   <!-- services manage button-->
   <div v-if="serviceNew"> 
     <b-container fluid>
-      <ServiceNew> </ServiceNew>
+      <ServiceNew @event-service-created="showServices"> </ServiceNew>
     </b-container>
   </div>
 
   <!-- service view page -->
   <div v-if="serviceView">
     <b-container fluid>
-      <ServiceListEdit> </ServiceListEdit>
+      <ServiceListEdit @event-service-delete="deleteService" :msg='item'
+                       @event-service-modify="modifyService"  > 
+      </ServiceListEdit>
+    </b-container>
+  </div>
+
+  <!-- single service edit -->
+  <div v-if="serviceEdit">
+    <b-container fluid>
+      <ServiceEdit :service="singleService" > 
+      </ServiceEdit>
     </b-container>
   </div>
 
@@ -60,16 +70,22 @@
 <script>
 import ServiceNew from "./ServiceNew.vue"
 import ServiceListEdit from "./ServiceListEdit.vue"
+import ServiceEdit from "./ServiceEdit.vue"
 export default {
   components: {
     ServiceNew,
-    ServiceListEdit
+    ServiceListEdit,
+    ServiceEdit
   },
   data() {
     return {
       serviceView: true,
       serviceNew: false,
-      userView: false
+      serviceEdit: false,
+      userView: false,
+
+      // editing service
+      singleService: null
     };
   },
   computed: {
@@ -90,15 +106,31 @@ export default {
     }
   },
   methods: {
-    showServices() {
+    deleteService(item) {
+      console.log("need to delete")
+      console.log(item)
+    },
+    modifyService(item) {
+      console.log("need to modify")
+      this.singleService = item;
+      this.serviceView = false;
+
       this.serviceNew = false;
-      this.serviceView = true;
       this.userView = false;
+      this.serviceEdit = true;
+    },
+    showServices() {
+      this.serviceView = true;
+
+      this.serviceNew = false;
+      this.userView = false;
+      this.serviceEdit = false;
     },
     createService() {
       this.serviceView = false;
       this.serviceNew = true;
       this.userView = false;
+      this.serviceEdit = false;
     },
     showUsers() {
       this.serviceNew = false;

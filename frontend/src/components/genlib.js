@@ -36,10 +36,21 @@ function getServiceFileStorePath(clubName, serviceId) {
                   prefixService("/" + serviceId))))
 }
 
+function getServiceMajorPic(href, clubName, item) {
+  let url = prefixAPIURIPath(prefixFileStore(
+                            prefixClubName(clubName,
+                                prefixService("/" + item.id + "/" + item.major_pic)
+                        )))
+  url = getBackendAPIURI(href, url);
+  console.log(url)
+  return url;
+}
+
 export { getBackendAPIURI,
          prefixAPIURIPath,
          prefixClubName,
          prefixFileStore,
          prefixService,
-         getServiceFileStorePath
+         getServiceFileStorePath,
+         getServiceMajorPic
 }

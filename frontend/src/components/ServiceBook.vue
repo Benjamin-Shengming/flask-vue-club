@@ -3,90 +3,17 @@
     <b-container fluid>
       <div class="serviceedit">
         <b-container fluid>
-        <form id='new_service_form'>
-          <!-- service title -->
-          <b-row class="service-title">
-            <b-col sm="2"><label for="input-large">服务名称</label></b-col>
-            <b-col sm="10">
-              <b-form-input id="input-large" 
-                            size="lg" 
-                            type="text" 
-                            placeholder="请输入服务产品名称" 
-                            v-model="title"> {{ title }}</b-form-input>
-            </b-col>
-          </b-row>
-          <!-- service description -->
-          <b-row id='service-description-id' >
-            <b-col sm="2"><label for="input-large">服务综述</label></b-col>
-            <b-col sm="10" >
-              <b-form-textarea id="serviceDescription" 
-                        v-model="description"
-                        placeholder="Enter something"
-                        :rows="3"
-                        :max-rows="6">
-              </b-form-textarea>
-            </b-col>
-          </b-row>
-          <!-- service major picture-->
-          <b-row id='service-title-id' class="service-title">
-            <b-col sm="2"><label for="input-large">服务主题图片</label></b-col>
-            <b-col sm="10">
-              <b-form-file id="majorImgInput" 
-                          class='invisible' 
-                          v-model="majorImg" 
-                          :state="Boolean(majorImg)" 
-                          placeholder="点击此处选择图片..." />
-              <b-img id="majorImgPreview" 
-                    src="#" 
+        <H1> {{ service.name }} </H1>
+        <p> {{ service.description}} </p>
+        <b-img id="majorImgPreview" 
+                    :src="getServiceMajorPicUrl()" 
                     fluid
-                    alt="点击此处选择图片..." 
-                    blank-color="#777"
-                    @click="clickMajorImgPreview()"  
-                    />
-            </b-col>
-          </b-row>
-          <!-- service price -->
-          <b-row id='service-price' >
-            <b-col sm="2"><label for="input-large">价格</label></b-col>
-            <b-col cols="10" align-h="start">
-              <!-- Using props -->
-              <b-input-group size="lg" prepend="人民币" >
-                <b-form-input v-model="price"></b-form-input>
-              </b-input-group>
-            </b-col>
-          </b-row >
-          <!-- service discount-->
-          <b-row id='service-discount' >
-            <b-col sm="2"><label for="input-large">折扣</label></b-col>
-            <b-col cols="10" align-h="start">
-              <!-- Using props -->
-              <b-input-group size="lg" prepend="%" >
-                <b-form-input v-model="discount"></b-form-input>
-              </b-input-group>
-            </b-col>
-          </b-row>
-          <!-- serivce other settings-->
-          <b-row id='service-settings'>
-            <b-col sm="2"><label for="input-large">其它设置</label></b-col>
-            <b-col cols="5" align-h="start">
-              <!-- Using props -->
-              <b-form-checkbox id="service-active-checkbox"
-                          v-model="active"
-                          value="true"
-                          unchecked-value="false">
-                          该服务产品上线
-            </b-form-checkbox>
-            </b-col>
-            <b-col cols="5" align-h="start">
-              <!-- Using props -->
-              <b-form-checkbox id="service-slide-checkbox"
-                          v-model="slide"
-                          value="true"
-                          unchecked-value="false">
-                          该服务作为头条滚动服务 
-            </b-form-checkbox>
-            </b-col>
-          </b-row>
+                    :alt="service.name" 
+                    blank-color="#777" />
+            <br/>
+            <label for="input-large">价格 {{ service.price }}</label>
+            <br/>
+            <label for="input-large">折扣 {{ service.discount }} </label>
           <!--  pictures and text -->
           <b-row class="service-pic-txt" v-for="item in pic_txt_arr" v-bind:key="item.id">
             <!--- picture -->
@@ -140,12 +67,16 @@ import { getBackendAPIURI,
          prefixClubName,
          // prefixFileStore,
          prefixService,
-         getServiceFileStorePath
+         getServiceFileStorePath,
+         getServiceMajorPic
         } from "./genlib.js";
 import uuidv1 from "uuid";
 import loadImage from "blueimp-load-image";
 
 export default {
+  props: {
+    service: Object
+  },
   data() {
     return {
       alertMsg: null,
@@ -178,6 +109,9 @@ export default {
     }
   },
   methods: {
+    getServiceMajorPicUrl() {
+      return getServiceMajorPic(window.location.href, this.clubName, this.service);
+    },
     addPicSection() {
       var picObj = {};
       picObj.type = "picture";
@@ -191,26 +125,6 @@ export default {
       txtObj.txt = null;
       txtObj.id = uuidv1();
       this.pic_txt_arr.push(txtObj);
-    },
-    validSubmitData() {
-      this.alertMsg = null;
-      if (this.title === null) {
-        this.alertMsg = "   请输入服务产品名称   "
-      }
-      if (this.majorImgFile === null) {
-        this.alertMsg += "  请选择服务产品图片   "
-      }
-      if (this.description === null) {
-        this.alertMsg += "   请选择服务产品综述   "
-      }
-
-      if (this.price === null || this.price < 0) {
-        this.alertMsg += "   请输入合理服务产品价格  "
-      }
-      if (this.discount === null || this.discount < 0 || this.discount > 100) {
-        this.alertMsg += "   请输入合理折扣  "
-      }
-      return (this.alertMsg === null)
     },
     submitNewService() {
       if (!this.validSubmitData()) {
@@ -262,9 +176,7 @@ export default {
                             prefixService("")));
         let url = getBackendAPIURI(window.location.href, servicePath);
         console.log(url)
-        axios.post(url, serviceData).then((response) => {
-          this.$emit("event-service-created", response.data)
-        });
+        axios.post(url, serviceData);
       })
     },
     clickPicPreview (itemId) {
@@ -349,6 +261,8 @@ export default {
   },
   mounted () {
     console.log("mounted was called");
+    console.log("edit");
+    console.log(this.service);
   },
   created() {
     console.log("created was called");
