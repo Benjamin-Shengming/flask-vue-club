@@ -82,6 +82,13 @@ def service_op(club_name):
         return app_controller.create_club_service(club_name, request.get_json())
         
 
+@api.route('/<club_name>/service/<service_id>/delete', methods=['POST'])
+def single_service_del(club_name, service_id):
+    logger.debug("single service delete ")
+    if request.method == 'POST':
+        app_controller.delete_club_service(club_name, service_id)
+        return Response(400)
+
 # register api and doc
 app.register_blueprint(api_v1_blueprint, url_prefix=API_PREFIX)
 docs.register(get_service_file, blueprint='api_v1')

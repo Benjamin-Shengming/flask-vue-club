@@ -46,11 +46,24 @@ function getServiceMajorPic(href, clubName, item) {
   return url;
 }
 
+function isTxtFile(item) {
+  return item.indexOf("txt") >= 0
+}
+
+function isPicFile(item) {
+  return (item.indexOf('jpg') >= 0) ||
+    (item.indexOf('jpeg') >= 0) ||
+    (item.indexOf('gif') >= 0) ||
+    (item.indexOf('png') >= 0)
+}
+
 export { getBackendAPIURI,
          prefixAPIURIPath,
          prefixClubName,
          prefixFileStore,
          prefixService,
          getServiceFileStorePath,
-         getServiceMajorPic
+         getServiceMajorPic,
+         isTxtFile,
+         isPicFile
 }

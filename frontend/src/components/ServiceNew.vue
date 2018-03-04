@@ -90,14 +90,22 @@
           <!--  pictures and text -->
           <b-row class="service-pic-txt" v-for="item in pic_txt_arr" v-bind:key="item.id">
             <!--- picture -->
-            <b-col sm="2"><label for="input-large" v-if="item.type === 'picture'">精彩图片</label></b-col>
+            <b-col sm="2" >
+              <div >
+              <label  v-if="item.type === 'picture'" for="input-large" >精彩图片</label>
+              <label for="input-large" v-if="item.type === 'text'" >精彩描述</label>
+              <br/>
+              <b-button variant="info" v-on:click="delSection(item)">删除</b-button>
+              </div>
+              </b-col>
             <b-col sm="10">
+              <!-- picture -->
+              <div v-if="item.type === 'picture'">
               <b-form-file :id="getId('pic-file-',item.id)" 
                             v-model="item.file" 
                             class="invisible"
                             :state="Boolean(majorImg)" 
                             placeholder="选择图片..." 
-                            v-if="item.type === 'picture'"
                             @change="onPicChange(item.id)"> 
               </b-form-file>
               <b-img :id="getId('imgPreview-', item.id)" 
@@ -106,16 +114,17 @@
                       v-if="item.type === 'picture'" 
                       alt="点击此处选择图片..." 
                       @click="clickPicPreview(item.id)"/>
-            </b-col>
-            <!--- text -->
-            <b-col sm="2"><label for="input-large" v-if="item.type === 'text'">精彩描述</label></b-col>
-            <b-col sm="10" v-if="item.type === 'text'">
+              </div>
+
+              <!--- text -->
+              <div v-if="item.type === 'text'">
               <b-form-textarea :id="getId('txt-input-', item.id)" 
                         v-model="item.txt"
                         placeholder="Enter something"
                         :rows="3"
                         :max-rows="6">
               </b-form-textarea>
+              </div>
             </b-col>
           </b-row>
           <br/>
@@ -178,6 +187,12 @@ export default {
     }
   },
   methods: {
+    delSection(item) {
+      let index = this.pic_txt_arr.indexOf(item);
+      if (index > -1) {
+        this.pic_txt_arr.splice(index, 1);
+      }
+    },
     addPicSection() {
       var picObj = {};
       picObj.type = "picture";

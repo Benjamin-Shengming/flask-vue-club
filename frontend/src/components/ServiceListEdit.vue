@@ -55,6 +55,15 @@ export default {
   methods: {
     deleteService(item) {
       this.$emit("event-service-delete", item)
+      let path = "/" + this.clubName + "/" + "service/" + item.id + "/delete"
+
+      let url = getBackendAPIURI(window.location.href, prefixAPIURIPath(path))
+      axios.post(url).then((response) => {
+        let index = this.serviceArray.indexOf(item);
+        if (index > -1) {
+          this.serviceArray.splice(index, 1);
+        }
+      })
     },
     modifyService(item) {
       this.$emit("event-service-modify", item)
@@ -86,11 +95,9 @@ export default {
         for (let item of this.serviceArray) {
           if (item.slide) {
             console.log(item);
-            this.headlineServiceArray.push(item);
           }
         }
         console.log(this.serviceArray);
-        console.log(this.headlineServiceArray);
       });
     }
   },

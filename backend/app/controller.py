@@ -108,3 +108,6 @@ class AppController(object):
 
     def get_club_service_paginate_date(self, club_name, start, numbers=20):
         return self.db_model.get_club_service_paginate_date(club_name, start, numbers)
+
+    def delete_club_service(self, club_name, service_id):
+        return self.db_model.delete_club_service(club_name, service_id)

@@ -5,6 +5,7 @@
     <b-navbar-brand href="#">{{ clubName }}</b-navbar-brand>
     <b-collapse is-nav id="nav_collapse">
       <b-navbar-nav>
+        <b-nav-item :href="urlHome">首页</b-nav-item>
         <b-nav-item :href="urlAdmin">管理</b-nav-item>
       </b-navbar-nav>
       <!-- Right aligned nav items -->
@@ -111,6 +112,9 @@ export default {
     },
     urlAdmin: function () {
       return '/' + this.clubName + '/admin'
+    },
+    urlHome: function() {
+      return "/" + this.clubName;
     }
   },
   methods: {

@@ -12,7 +12,7 @@
                             size="lg" 
                             type="text" 
                             placeholder="请输入服务产品名称" 
-                            v-model="service.name"> {{ service.name }}</b-form-input>
+                            v-model="title"> {{ title }}</b-form-input>
             </b-col>
           </b-row>
           <!-- service description -->
@@ -20,7 +20,7 @@
             <b-col sm="2"><label for="input-large">服务综述</label></b-col>
             <b-col sm="10" >
               <b-form-textarea id="serviceDescription" 
-                        v-model="service.description"
+                        v-model="description"
                         placeholder="Enter something"
                         :rows="3"
                         :max-rows="6">
@@ -90,32 +90,41 @@
           <!--  pictures and text -->
           <b-row class="service-pic-txt" v-for="item in pic_txt_arr" v-bind:key="item.id">
             <!--- picture -->
-            <b-col sm="2"><label for="input-large" v-if="item.type === 'picture'">精彩图片</label></b-col>
+            <b-col sm="2" >
+              <div >
+              <label  v-if="item.type === 'picture'" for="input-large" >精彩图片</label>
+              <label for="input-large" v-if="item.type === 'text'" >精彩描述</label>
+              <br/>
+              <b-button variant="info" v-on:click="delSection(item)">删除</b-button>
+              </div>
+              </b-col>
             <b-col sm="10">
+              <!-- picture -->
+              <div v-if="item.type === 'picture'">
               <b-form-file :id="getId('pic-file-',item.id)" 
                             v-model="item.file" 
                             class="invisible"
                             :state="Boolean(majorImg)" 
                             placeholder="选择图片..." 
-                            v-if="item.type === 'picture'"
                             @change="onPicChange(item.id)"> 
               </b-form-file>
               <b-img :id="getId('imgPreview-', item.id)" 
-                      src="#" 
+                      :src="item.url" 
                       fluid-grow 
                       v-if="item.type === 'picture'" 
                       alt="点击此处选择图片..." 
                       @click="clickPicPreview(item.id)"/>
-            </b-col>
-            <!--- text -->
-            <b-col sm="2"><label for="input-large" v-if="item.type === 'text'">精彩描述</label></b-col>
-            <b-col sm="10" v-if="item.type === 'text'">
+              </div>
+
+              <!--- text -->
+              <div v-if="item.type === 'text'">
               <b-form-textarea :id="getId('txt-input-', item.id)" 
                         v-model="item.txt"
                         placeholder="Enter something"
                         :rows="3"
                         :max-rows="6">
               </b-form-textarea>
+              </div>
             </b-col>
           </b-row>
           <br/>
@@ -141,7 +150,9 @@ import { getBackendAPIURI,
          // prefixFileStore,
          prefixService,
          getServiceFileStorePath,
-         getServiceMajorPic
+         getServiceMajorPic,
+         isTxtFile,
+         isPicFile
         } from "./genlib.js";
 import uuidv1 from "uuid";
 import loadImage from "blueimp-load-image";
@@ -153,15 +164,15 @@ export default {
   data() {
     return {
       alertMsg: null,
-      id: uuidv1(),
-      title: null,
-      description: null,
-      majorImgFile: null,
+      id: this.service.id,
+      title: this.service.name,
+      description: this.service.description,
+      majorImgFile: this.service.majorImgFile,
       pic_txt_arr: [],
-      price: 500,
-      discount: 100,
-      active: true,
-      slide: true
+      price: this.service.price,
+      discount: this.service.discount,
+      active: this.service.active,
+      slide: this.service.slide
     };
   },
   computed: {
@@ -184,6 +195,40 @@ export default {
   methods: {
     getServiceMajorPicUrl() {
       return getServiceMajorPic(window.location.href, this.clubName, this.service);
+    },
+    updateFromService() {
+      // update pic and text
+      console.log(this.service)
+      let res = this.service.pic_and_text.split(";")
+      for (let item of res) {
+        let url = getBackendAPIURI(window.location.href, getServiceFileStorePath(this.clubName, this.service.id) + "/" + item)
+        let obj = {}
+        if (isTxtFile(item)) {
+          obj.type = "text"
+        } 
+        else if (isPicFile(item)) {
+          obj.type = "picture"
+        }
+        obj.id = uuidv1();
+        obj.url = url
+        this.pic_txt_arr.push(obj)
+        
+        if (isTxtFile(item)) {
+          axios.get(url).then((response) => {
+            let objInArray = this.pic_txt_arr.find((obj) => { return obj.url == url})
+            let index = this.pic_txt_arr.indexOf(objInArray)
+            objInArray.txt = response.data;
+            this.$set(this.pic_txt_arr, index, objInArray)
+            console.log(objInArray.txt)
+          })
+        }
+      }
+    },
+    delSection(item) {
+      let index = this.pic_txt_arr.indexOf(item);
+      if (index > -1) {
+        this.pic_txt_arr.splice(index, 1);
+      }
     },
     addPicSection() {
       var picObj = {};
@@ -269,7 +314,9 @@ export default {
                             prefixService("")));
         let url = getBackendAPIURI(window.location.href, servicePath);
         console.log(url)
-        axios.post(url, serviceData);
+        axios.post(url, serviceData).then((response) => {
+          this.$emit("event-service-created", response.data)
+        });
       })
     },
     clickPicPreview (itemId) {
@@ -354,11 +401,10 @@ export default {
   },
   mounted () {
     console.log("mounted was called");
-    console.log("edit");
-    console.log(this.service);
   },
   created() {
     console.log("created was called");
+    this.updateFromService()
   }
 };
 </script>

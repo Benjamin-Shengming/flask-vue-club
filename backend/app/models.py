@@ -317,6 +317,13 @@ class AppModel(object):
         total = len(club.services)
         return club.services[start : min(start+numbers, total)]
 
+    def delete_club_service(self, club_name, service_id):
+        club= self._find_club_and_error(club_name)
+        Service.query.filter_by(id=service_id).delete()
+        self._commit()
+
+
+
 def init_all():
     Base.metadata.drop_all(bind=engine)
     Base.metadata.create_all(bind=engine) 
