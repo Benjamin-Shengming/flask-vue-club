@@ -55,8 +55,10 @@ def service_files_upload(club_name, service_id):
         # folder we setup
         file_path = os.path.join(app_controller.get_filestore_service(club_name, service_id), filename)
         value.save(file_path)
+        logger.debug("saving file {}".format(filename))
         # Save the filename into a list, we'll use it later
         filenames.append({'url': "/filestore/service/" + service_id + "/" + filename})
+    logger.debug(filenames)
     return filenames
 
 

@@ -328,15 +328,16 @@ class AppModel(object):
     def update_club_service(self, club_name, service_id, service_data):
         club= self._find_club_and_error(club_name)
         service = Service.query.filter_by(id=service_id).first()
-        logger.debug("before update service ")
+        logger.debug("data used to update service")
         logger.debug(service_data)
+        logger.debug("service before upated")
         logger.debug(service.to_dict())
+
+        logger.debug("starting update service")
         service.from_dict(service_data)
         logger.debug("after update service ")
-        logger.debug("before commit update service ")
         logger.debug(service.to_dict())
-        service.pic_and_text = service_data['pic_and_text']
-        logger.debug("3 commit")
+        logger.debug("start commiting")
         self._add_commit(service)
         logger.debug("after commit update service ")
         logger.debug(service.to_dict())

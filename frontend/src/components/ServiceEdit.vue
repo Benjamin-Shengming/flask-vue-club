@@ -215,7 +215,7 @@ export default {
         
         if (isTxtFile(item)) {
           axios.get(url).then((response) => {
-            let objInArray = this.pic_txt_arr.find((obj) => { return obj.url == url})
+            let objInArray = this.pic_txt_arr.find((obj) => { return obj.url === url})
             let index = this.pic_txt_arr.indexOf(objInArray)
             objInArray.txt = response.data;
             this.$set(this.pic_txt_arr, index, objInArray)
@@ -279,16 +279,23 @@ export default {
           'slide': this.slide 
         }
       let data = new FormData();
+      // if major image is not changed, then this.majorImgFile would be 
+      // a string, not blob, if it is a blob, we will save to majorimage to server
       let inputMajor = jQuery("#majorImgInput")[0] 
       if (this.majorImgFile instanceof Blob) {
         let majorExt = inputMajor.value.split('.').pop();
         let majorFilename = 'majorimage.' + majorExt;
+        // remember the majorfile name and later update service
         serviceData['major_pic'] = majorFilename
+        // append the file to form data
         data.append(majorFilename, this.majorImgFile, majorFilename);
       }
+
+      // now hanle the pic and text array
       let picAndTxtArr = []
       for (let i = 0; i < this.pic_txt_arr.length; i++) {
         let item = this.pic_txt_arr[i];
+        // if item is text, always append txt to data form and commit to server
         if (item.type === "text") {
           let content = item.txt
           let blob = new Blob([content], {type: "text/xml"})
@@ -296,18 +303,23 @@ export default {
           picAndTxtArr.push(i + '.txt')
         } else if(item.type === 'picture'){
           let input = jQuery("#" + this.getId('pic-file-', item.id))[0];
+          // input has value means that use has choosen some pictures
           if (input.value) {
             let fileExt = input.value.split('.').pop();
             let fileName = i + "." + fileExt;
             data.append(fileName, item.file, fileName);
             picAndTxtArr.push(fileName)
+          } else { // user did not choose any picture
+            // we just figout the file name
+            let fileName = item.url.substring(item.url.lastIndexOf('/') + 1)
+            picAndTxtArr.push(fileName)
           }
         }
       }
-      console.log(picAndTxtArr)
       if (picAndTxtArr.length > 0) {
         serviceData['pic_and_text'] = picAndTxtArr.join(';')
       }
+      console.log(serviceData['pic_and_text'])
       let url = getBackendAPIURI(window.location.href, getServiceFileStorePath(this.clubName, this.id))
       axios.post(url, data)
       .then((response) => {
