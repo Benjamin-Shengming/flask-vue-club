@@ -153,6 +153,7 @@ import { getBackendAPIURI,
          getServiceMajorPic,
          isTxtFile,
          isPicFile
+         // prefixFileStore
         } from "./genlib.js";
 import uuidv1 from "uuid";
 import loadImage from "blueimp-load-image";
@@ -167,7 +168,7 @@ export default {
       id: this.service.id,
       title: this.service.name,
       description: this.service.description,
-      majorImgFile: this.service.majorImgFile,
+      majorImgFile: this.getServiceMajorPicUrl(),
       pic_txt_arr: [],
       price: this.service.price,
       discount: this.service.discount,
@@ -197,16 +198,15 @@ export default {
       return getServiceMajorPic(window.location.href, this.clubName, this.service);
     },
     updateFromService() {
-      // update pic and text
       console.log(this.service)
+      // update pic and text
       let res = this.service.pic_and_text.split(";")
       for (let item of res) {
         let url = getBackendAPIURI(window.location.href, getServiceFileStorePath(this.clubName, this.service.id) + "/" + item)
         let obj = {}
         if (isTxtFile(item)) {
           obj.type = "text"
-        } 
-        else if (isPicFile(item)) {
+        } else if (isPicFile(item)) {
           obj.type = "picture"
         }
         obj.id = uuidv1();
@@ -219,7 +219,6 @@ export default {
             let index = this.pic_txt_arr.indexOf(objInArray)
             objInArray.txt = response.data;
             this.$set(this.pic_txt_arr, index, objInArray)
-            console.log(objInArray.txt)
           })
         }
       }
@@ -268,12 +267,25 @@ export default {
       if (!this.validSubmitData()) {
         return
       }
+        // file has been uploaded, time to commit service
+      let serviceData = {
+          'id': this.id,
+          'name': this.title,
+          'description': this.description,
+          'price': this.price,
+          'discount': this.discount,
+          'pic_and_text': null,
+          'active': this.active,
+          'slide': this.slide 
+        }
       let data = new FormData();
-      let inputMajorFileName = jQuery("#majorImgInput")[0].value;
-      console.log(inputMajorFileName)
-      let majorExt = inputMajorFileName.split('.').pop();
-      let majorFilename = 'majorimage.' + majorExt;
-      data.append(majorFilename, this.majorImgFile, majorFilename);
+      let inputMajor = jQuery("#majorImgInput")[0] 
+      if (this.majorImgFile instanceof Blob) {
+        let majorExt = inputMajor.value.split('.').pop();
+        let majorFilename = 'majorimage.' + majorExt;
+        serviceData['major_pic'] = majorFilename
+        data.append(majorFilename, this.majorImgFile, majorFilename);
+      }
       let picAndTxtArr = []
       for (let i = 0; i < this.pic_txt_arr.length; i++) {
         let item = this.pic_txt_arr[i];
@@ -282,38 +294,28 @@ export default {
           let blob = new Blob([content], {type: "text/xml"})
           data.append(i + '.txt', blob, i + '.txt')
           picAndTxtArr.push(i + '.txt')
-        } else {
+        } else if(item.type === 'picture'){
           let input = jQuery("#" + this.getId('pic-file-', item.id))[0];
-          let fileExt = input.value.split('.').pop();
-          let fileName = i + "." + fileExt;
-          console.log(fileName)
-          data.append(fileName, item.file, fileName);
-          picAndTxtArr.push(fileName)
+          if (input.value) {
+            let fileExt = input.value.split('.').pop();
+            let fileName = i + "." + fileExt;
+            data.append(fileName, item.file, fileName);
+            picAndTxtArr.push(fileName)
+          }
         }
       }
-
+      console.log(picAndTxtArr)
+      if (picAndTxtArr.length > 0) {
+        serviceData['pic_and_text'] = picAndTxtArr.join(';')
+      }
       let url = getBackendAPIURI(window.location.href, getServiceFileStorePath(this.clubName, this.id))
       axios.post(url, data)
       .then((response) => {
-        console.log(response);
-        // file has been uploaded, time to commit service
-        let serviceData = {
-          'id': this.id,
-          'name': this.title,
-          'description': this.description,
-          'price': this.price,
-          'discount': this.discount,
-          'major_pic': majorFilename,
-          'pic_and_text': picAndTxtArr.join(";"),
-          'active': true,
-          'slide': true
-        }
-        console.log("start commit service")
         let servicePath = prefixAPIURIPath(
                             prefixClubName(this.clubName,
-                            prefixService("")));
+                            prefixService("/" +  this.service.id + "/update")));
         let url = getBackendAPIURI(window.location.href, servicePath);
-        console.log(url)
+        console.log(serviceData)
         axios.post(url, serviceData).then((response) => {
           this.$emit("event-service-created", response.data)
         });
@@ -362,12 +364,10 @@ export default {
       }
     },
     onPicChange(itemId) {
-      console.log(itemId)
       let input = jQuery("#" + this.getId('pic-file-', itemId))[0];
       let previewImgId = this.getId('imgPreview-', itemId);
       // preview image
       if (input.files[0]) {
-        console.log("start preview image")
         var blobOrFile = input.files[0];
         //parse meta data
         loadImage.parseMetaData(blobOrFile, function(data) {
@@ -400,10 +400,8 @@ export default {
     }
   },
   mounted () {
-    console.log("mounted was called");
   },
   created() {
-    console.log("created was called");
     this.updateFromService()
   }
 };

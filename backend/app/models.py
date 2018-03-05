@@ -1,6 +1,6 @@
-
 #!/usr/bin/python
 import os
+import shutil
 import datetime
 from sqlalchemy import UniqueConstraint, ForeignKey, create_engine, Column, Integer, String, Table, DateTime, Boolean
 from sqlalchemy.orm import relationship, scoped_session, sessionmaker
@@ -92,7 +92,7 @@ class Service(Base, BaseMixin):
     description = Column(String) #  summary text of service
     price = Column(Integer, nullable=False)
     discount = Column(Integer, nullable=False, default=20)
-    pic_and_text = Column(String)# a list of text and image files
+    pic_and_text = Column(String) # a list of text and image files
     last_update_time = Column(DateTime, default=datetime.datetime.utcnow)
     major_pic = Column(String) # major picture of this service
     sub_services = Column(String) # a list of sub services
@@ -313,16 +313,33 @@ class AppModel(object):
         return [item for item in club.services if item.slide]
 
     def get_club_service_paginate_date(self, club_name, start, numbers=20):
-        club = self._find_club_and_error(club_name)
+        club = self._find_club_and_error(club_name);
         total = len(club.services)
         return club.services[start : min(start+numbers, total)]
-
     def delete_club_service(self, club_name, service_id):
+
         club= self._find_club_and_error(club_name)
         Service.query.filter_by(id=service_id).delete()
         self._commit()
+        #no delete service related reource folder 
+        service_path = self.get_filestore_service(club.name, service_id)
+        shutil.rmtree(service_path, ignore_errors=True) 
 
-
+    def update_club_service(self, club_name, service_id, service_data):
+        club= self._find_club_and_error(club_name)
+        service = Service.query.filter_by(id=service_id).first()
+        logger.debug("before update service ")
+        logger.debug(service_data)
+        logger.debug(service.to_dict())
+        service.from_dict(service_data)
+        logger.debug("after update service ")
+        logger.debug("before commit update service ")
+        logger.debug(service.to_dict())
+        service.pic_and_text = service_data['pic_and_text']
+        logger.debug("3 commit")
+        self._add_commit(service)
+        logger.debug("after commit update service ")
+        logger.debug(service.to_dict())
 
 def init_all():
     Base.metadata.drop_all(bind=engine)

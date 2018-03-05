@@ -107,11 +107,11 @@ export default {
   },
   methods: {
     deleteService(item) {
-      console.log("need to delete")
       console.log(item)
     },
     modifyService(item) {
       console.log("need to modify")
+      console.log(item)
       this.singleService = item;
       this.serviceView = false;
 

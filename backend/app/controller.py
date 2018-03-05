@@ -98,7 +98,10 @@ class AppController(object):
     def create_club_service(self, club_name, service_data):
         logger.debug(service_data)
         return self.db_model.create_club_service(club_name, service_data)
-    
+
+    def update_club_service(self, club_name, service_id, service_data):
+        return self.db_model.update_club_service(club_name, service_id, service_data)
+
     def get_club_service_list(self, club_name):
         logger.debug(club_name)
         return self.db_model.get_club_service_list(club_name)

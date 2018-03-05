@@ -81,7 +81,6 @@ export default {
         )
       );
       url = getBackendAPIURI(window.location.href, url);
-      console.log(url);
       return url;
     },
     getService() {
@@ -89,23 +88,18 @@ export default {
         prefixClubName(this.clubName, prefixService(""))
       );
       let url = getBackendAPIURI(window.location.href, servicePath);
-      console.log(url);
       axios.get(url).then(response => {
         this.serviceArray = response.data;
         for (let item of this.serviceArray) {
-          if (item.slide) {
-            console.log(item);
-          }
+          console.log(item);
         }
         console.log(this.serviceArray);
       });
     }
   },
   mounted() {
-    console.log("mounted");
   },
   created() {
-    console.log("created");
     this.getService();
   }
 };
