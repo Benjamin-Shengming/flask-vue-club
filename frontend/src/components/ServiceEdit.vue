@@ -212,7 +212,6 @@ export default {
         obj.id = uuidv1();
         obj.url = url
         this.pic_txt_arr.push(obj)
-        
         if (isTxtFile(item)) {
           axios.get(url).then((response) => {
             let objInArray = this.pic_txt_arr.find((obj) => { return obj.url === url})
@@ -269,19 +268,19 @@ export default {
       }
         // file has been uploaded, time to commit service
       let serviceData = {
-          'id': this.id,
-          'name': this.title,
-          'description': this.description,
-          'price': this.price,
-          'discount': this.discount,
-          'pic_and_text': null,
-          'active': this.active,
-          'slide': this.slide 
-        }
+        'id': this.id,
+        'name': this.title,
+        'description': this.description,
+        'price': this.price,
+        'discount': this.discount,
+        'pic_and_text': null,
+        'active': this.active,
+        'slide': this.slide
+      }
       let data = new FormData();
-      // if major image is not changed, then this.majorImgFile would be 
+      // if major image is not changed, then this.majorImgFile would be
       // a string, not blob, if it is a blob, we will save to majorimage to server
-      let inputMajor = jQuery("#majorImgInput")[0] 
+      let inputMajor = jQuery("#majorImgInput")[0]
       if (this.majorImgFile instanceof Blob) {
         let majorExt = inputMajor.value.split('.').pop();
         let majorFilename = 'majorimage.' + majorExt;
@@ -301,7 +300,7 @@ export default {
           let blob = new Blob([content], {type: "text/xml"})
           data.append(i + '.txt', blob, i + '.txt')
           picAndTxtArr.push(i + '.txt')
-        } else if(item.type === 'picture'){
+        } else if (item.type === 'picture') {
           let input = jQuery("#" + this.getId('pic-file-', item.id))[0];
           // input has value means that use has choosen some pictures
           if (input.value) {
@@ -325,7 +324,7 @@ export default {
       .then((response) => {
         let servicePath = prefixAPIURIPath(
                             prefixClubName(this.clubName,
-                            prefixService("/" +  this.service.id + "/update")));
+                            prefixService("/" + this.service.id + "/update")));
         let url = getBackendAPIURI(window.location.href, servicePath);
         console.log(serviceData)
         axios.post(url, serviceData).then((response) => {
