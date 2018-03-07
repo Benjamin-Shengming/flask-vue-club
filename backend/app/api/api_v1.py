@@ -4,7 +4,7 @@ import six
 import coloredlogs, logging
 from marshmallow import fields, Schema
 from flask_apispec import ResourceMeta, Ref, doc, marshal_with, use_kwargs
-from flask import abort, request, send_from_directory , Response, Blueprint
+from flask import abort, request, send_from_directory , Response, Blueprint, make_response
 from werkzeug import secure_filename
 from utils import *
 from flask_cors import CORS 
@@ -22,6 +22,12 @@ api_v1_blueprint = Blueprint(API_NAME, API_NAME)
 api = api_v1_blueprint
 
 CORS(api_v1_blueprint)
+
+@api.route('/<club_name>/wechat', methods=['GET', 'POST'])
+def wechat(club_name):
+    logger.debug(club_name)
+    return make_response("return for wechat") 
+
 
 class UrlSchema(Schema):
     class Meta:
