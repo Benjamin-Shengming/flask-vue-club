@@ -57,7 +57,7 @@ def check_signature(request_args):
     #echostr = query.get('echostr', '')
     s = [timestamp, nonce, TOKEN]
     s.sort()
-    s = ''.join(s)
+    s = ''.join(s).encode('utf-8')
     return hashlib.sha1(s).hexdigest() == signature
 
 @api.route('/<club_name>/wechat', methods=['GET', 'POST'])
