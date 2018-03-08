@@ -2,6 +2,7 @@
 import os
 import six 
 import coloredlogs, logging
+from .WeiXinCore.weixin_handler import *
 from marshmallow import fields, Schema
 from flask_apispec import ResourceMeta, Ref, doc, marshal_with, use_kwargs
 from flask import abort, request, send_from_directory , Response, Blueprint, make_response
@@ -23,7 +24,6 @@ api_v1_blueprint = Blueprint(API_NAME, API_NAME)
 api = api_v1_blueprint
 
 CORS(api_v1_blueprint)
-from .WeiXinCore.weixin_handler import *
 #from index import app
 #from WeiXin.weixin_handler import *
 
