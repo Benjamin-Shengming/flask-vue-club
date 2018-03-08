@@ -22,7 +22,7 @@ def getJson(url):
 
 def youdao(text):
     url = 'http://fanyi.youdao.com/openapi.do?keyfrom=onHomeward&key=2010176806&type=data&doctype=json&version=1.1&q=%s' \
-    % quote_plus(text.encode('utf-8'))
+    % url.parse.quote(text.encode('utf-8'))
 
     description = getJson(url)# json.loads(html)
 
@@ -41,7 +41,7 @@ def youdao(text):
 
 
 def douban_dianying(text):
-    url = 'http://api.douban.com/v2/movie/search?q=%s' % quote_plus(text.encode('utf-8'))
+    url = 'http://api.douban.com/v2/movie/search?q=%s' % urllib.parse.quote(text.encode('utf-8'))
     description = getJson(url)
 
     if description['total'] is 0:
