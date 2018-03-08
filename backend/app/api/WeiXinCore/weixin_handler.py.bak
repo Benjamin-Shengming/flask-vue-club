@@ -11,8 +11,8 @@ def onText(wxmsg):
     
     if inTxt.lower().startswith('fy'):    
         return wxmsg.resp_text(youdao(inTxt[2:]))   
-    elif inTxt.startswith('?') or inTxt.startswith('？'): 
-        return wxmsg.resp_text('''通过发送以下列字符开头的消息可查询相关信息：
+    elif inTxt.startswith('?') or inTxt.startswith(u'？'): 
+        return wxmsg.resp_text(u'''通过发送以下列字符开头的消息可查询相关信息：
 fy  翻译（来自有道）
 dy  电影（来自豆瓣）
 无前缀默认为查询电影''')
@@ -37,7 +37,7 @@ dy  电影（来自豆瓣）
         if inTxt.startswith('dy'):
             inTxt = inTxt[2:]
         newsItems = douban_dianying(inTxt)
-        return wxmsg.resp_text('找不到') if not newsItems else wxmsg.resp_news(newsItems)
+        return wxmsg.resp_text(u'找不到') if not newsItems else wxmsg.resp_news(newsItems)
 	
     #news1 = NewsItem(wxmsg.Content,youdao(wxmsg.Content),"","")
     #news2 = NewsItem("title2","yyyyyyyyyyy","picurl","url")
@@ -49,24 +49,24 @@ def onImage(wxmsg):
     PicUrl	图片链接
 	MediaId	图片消息媒体id，可以调用多媒体文件下载接口拉取数据。'''
     #return wxmsg.resp_music('Sorry','对不起，我还识别不了，来听首歌吧。',r'http://7s1r1i.com1.z0.glb.clouddn.com/小皮%20-%20村庄.mp3','')
-    return wxmsg.resp_text('对不起，我还识别不了……')
+    return wxmsg.resp_text(u'对不起，我还识别不了……')
 
 def onVoice(wxmsg): 
     '''收到语音
     MediaId	语音消息媒体id，可以调用多媒体文件下载接口拉取数据。
 	Format	语音格式，如amr，speex等
 	Recognition为语音识别结果'''
-    return wxmsg.resp_text(wxmsg.Recognition if wxmsg.Recognition is not 'None' else "没听懂……")
+    return wxmsg.resp_text(wxmsg.Recognition if wxmsg.Recognition is not 'None' else u"没听懂……")
 
 def onVideo(wxmsg):
     '''收到视频
     MediaId	视频消息媒体id，可以调用多媒体文件下载接口拉取数据。
 	ThumbMediaId	视频消息缩略图的媒体id，可以调用多媒体文件下载接口拉取数据。'''
-    return wxmsg.resp_text('对不起，我还识别不了……')
+    return wxmsg.resp_text(u'对不起，我还识别不了……')
 
 def onShortVideo(wxmsg):
     '''收到小视频'''
-    return wxmsg.resp_text('对不起，我还识别不了……')
+    return wxmsg.resp_text(u'对不起，我还识别不了……')
 
 def onLocation(wxmsg):
     '''收到位置信息
@@ -74,7 +74,7 @@ def onLocation(wxmsg):
 	Location_Y	地理位置经度
 	Scale	地图缩放大小
 	Label	地理位置信息'''
-    txt = "这是您所在位置：\nX:%s\nY:%s" % (wxmsg['Location_X'],wxmsg['Location_Y'])    
+    txt = u"这是您所在位置：\nX:%s\nY:%s" % (wxmsg['Location_X'],wxmsg['Location_Y'])    
     return wxmsg.resp_text(txt)
 
 def onLink(wxmsg):
@@ -86,11 +86,11 @@ def onLink(wxmsg):
  
 def onSubscribe(wxmsg):
     '''关注'''
-    return wxmsg.resp_text('感谢您的关注。你可以发“?”给我查看帮助。')
+    return wxmsg.resp_text(u'感谢您的关注。你可以发“?”给我查看帮助。')
 
 def onUnsubscribe(wxmsg):
     '''取消关注'''
-    return wxmsg.resp_text('oh，漏，你还没说为什么！')
+    return wxmsg.resp_text(u'oh，漏，你还没说为什么！')
 
 def onScan(wxmsg):
     '''扫描二维码'''
