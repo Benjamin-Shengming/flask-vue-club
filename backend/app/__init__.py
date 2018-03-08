@@ -2,7 +2,6 @@
 import os 
 import sys
 from flask import Flask
-from flask_restplus import Api, Resource, fields
 from werkzeug.contrib.fixers import ProxyFix
 from flask_restplus import Api 
 from flask_bootstrap import Bootstrap
