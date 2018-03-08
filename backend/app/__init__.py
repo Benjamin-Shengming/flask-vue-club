@@ -3,7 +3,6 @@ import os
 import sys
 from flask import Flask
 from werkzeug.contrib.fixers import ProxyFix
-from flask_restplus import Api 
 from flask_bootstrap import Bootstrap
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from flask_babel import Babel 
