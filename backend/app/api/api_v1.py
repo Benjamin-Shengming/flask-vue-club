@@ -8,6 +8,7 @@ from flask import abort, request, send_from_directory , Response, Blueprint, mak
 from werkzeug import secure_filename
 from utils import *
 from flask_cors import CORS 
+import hashlib
 
 from . import app_controller
 from .. import app 
@@ -22,11 +23,57 @@ api_v1_blueprint = Blueprint(API_NAME, API_NAME)
 api = api_v1_blueprint
 
 CORS(api_v1_blueprint)
+from .WeiXinCore.weixin_handler import *
+#from index import app
+#from WeiXin.weixin_handler import *
+
+EventType ={
+    "subscribe":onSubscribe,
+    "unsubscribe":onUnsubscribe,
+    "scan":onScan,
+    "location":onEventLocation,
+    "click":onClick,
+    "view":onView
+}
+#def onEvent(wxmsg):
+#    return EventType[wxmsg.Event](wxmsg) if EventType.has_key(wxmsg.Event) else ''
+Response = {
+    "event":lambda wxmsg:EventType[wxmsg.Event](wxmsg) \
+            if EventType.has_key(wxmsg.Event) else '',
+    "text":onText,
+    "voice":onVoice,
+    "image":onImage,
+    "video":onVideo,
+    "shortvideo":onShortVideo,
+    "location":onLocation,
+    "link":onLink,
+    }    
+    
+def check_signature(request_args):    
+    query = request.args
+    signature = query.get('signature', '')
+    timestamp = query.get('timestamp', '')
+    nonce = query.get('nonce', '')
+    #echostr = query.get('echostr', '')
+    s = [timestamp, nonce, TOKEN]
+    s.sort()
+    s = ''.join(s)
+    return hashlib.sha1(s).hexdigest() == signature
 
 @api.route('/<club_name>/wechat', methods=['GET', 'POST'])
 def wechat(club_name):
-    logger.debug(club_name)
-    return make_response("return for wechat") 
+    if not check_signature(request.args):
+        return ""
+    if request.method == 'GET':
+        return make_response(request.args.get('echostr', ''))
+    else:
+        logger.debug(club_name)
+        wxmsg = WeiXinMsg(request.data)        
+        respXml = Response[wxmsg.MsgType](wxmsg) if wxmsg.MsgType in Response else ''
+        #return respXml
+        response = make_response(respXml)
+        response.content_type = 'application/xml'
+        return response    
 
 
 class UrlSchema(Schema):
