@@ -2,7 +2,7 @@ import URI from 'urijs'
 
 function getBackendAPIURI (currentRef, path) {
   let fullPath = URI(currentRef)
-  let apiURI = fullPath.origin().toString().replace(fullPath.port().toString(), '5000') + path
+  let apiURI = fullPath.origin().toString() + path
   return apiURI
 }
 

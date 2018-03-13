@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 import sys
 import os
 from flask import Flask, render_template, jsonify, abort
@@ -24,12 +24,6 @@ from app.models import init_all
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
 def catch_all(path):
-    '''
-    if app.debug:
-        logger.debug("request frontend page!")
-        return requests.get('http://localhost:8080/{}'.format(path)).text
-    '''
-    logger.debug(path)
     return render_template("index.html")
 
 if __name__ == "__main__":
@@ -51,6 +45,3 @@ if __name__ == "__main__":
             cherrypy.engine.start()
         except KeyboardInterrupt:
             cherrypy.engine.stop()
-        #'''
-        #app.run(host='0.0.0.0', port=80, debug=True)
-    

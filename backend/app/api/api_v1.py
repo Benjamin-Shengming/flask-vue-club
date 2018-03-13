@@ -8,6 +8,7 @@ from flask_apispec import ResourceMeta, Ref, doc, marshal_with, use_kwargs
 from flask import abort, request, send_from_directory , Response, Blueprint, make_response
 from werkzeug import secure_filename
 from utils import *
+from PIL import Image
 from flask_cors import CORS 
 import hashlib
 
@@ -90,13 +91,10 @@ def service_single_file_download(club_name, id, file_name):
 @doc(params={'service_id': {'description': 'unique id for service'}})
 @marshal_with(UrlSchema(many=True))
 def service_files_upload(club_name, service_id):
-    logger.debug("called service upload files: "+ str(service_id))
     # Get the name of the uploaded files
-    logger.debug(request.files)
     uploaded_files = request.files
-    logger.debug(uploaded_files)
-    logger.debug("upload file number: {}".format(len(uploaded_files)))
     filenames = []
+    size = 1024, 1024
     for key, value in uploaded_files.items():
         logger.debug(key)
         logger.debug(value)
@@ -108,6 +106,10 @@ def service_files_upload(club_name, service_id):
         # folder we setup
         file_path = os.path.join(app_controller.get_filestore_service(club_name, service_id), filename)
         value.save(file_path)
+        if '.txt' not in file_path: # adjust image size to same
+            im = Image.open(file_path)
+            im.thumbnail(size)
+            im.save(file_path)
         logger.debug("saving file {}".format(filename))
         # Save the filename into a list, we'll use it later
         filenames.append({'url': "/filestore/service/" + service_id + "/" + filename})
@@ -148,7 +150,7 @@ def single_service_del(club_name, service_id):
     logger.debug("single service delete ")
     if request.method == 'POST':
         app_controller.delete_club_service(club_name, service_id)
-        return Response(400)
+        return make_response("delete successfully", 400)
 
 # register api and doc
 app.register_blueprint(api_v1_blueprint, url_prefix=API_PREFIX)
