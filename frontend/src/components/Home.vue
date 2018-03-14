@@ -149,6 +149,7 @@ export default {
       let url = getBackendAPIURI(window.location.href, servicePath);
       console.log(url)
       axios.get(url).then((response) => {
+        console.log(response)
         this.serviceArray = response.data
         for (let item of this.serviceArray) {
           if (item.slide) {
@@ -158,6 +159,10 @@ export default {
         }
         console.log(this.serviceArray)
         console.log(this.headlineServiceArray)
+      }).catch((error) => {
+        console.log(error)
+        console.log('redirect to not found page')
+        this.$router.push('no_found/404');
       });
     }
   },
@@ -170,11 +175,3 @@ export default {
   }
 };
 </script>
-
-<style>
-.carousel-inner > .carouse-item > .img-fluid {
-  width: auto;
-  height:360px;
-  max-height: 360px;
-}
-</style>

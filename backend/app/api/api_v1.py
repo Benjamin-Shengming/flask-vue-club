@@ -133,7 +133,11 @@ class ServiceSchema(Schema):
 @marshal_with(ServiceSchema(many=True))
 def service_list(club_name): 
     if request.method == 'GET':
-        return app_controller.get_club_service_list(club_name)
+        try:
+            return app_controller.get_club_service_list(club_name)
+        except Exception as e:
+            return make_response("not found", 404)
+
     elif request.method == 'POST':
         logger.debug("calling create an new service")
         logger.debug(request.get_json())

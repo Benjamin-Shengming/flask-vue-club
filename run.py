@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 import sys
 import os
-from flask import Flask, render_template, jsonify, abort
+from flask import Flask, render_template, jsonify, abort, make_response
 from random import *
 from flask_cors import CORS
 import requests 
@@ -24,6 +24,9 @@ from app.models import init_all
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
 def catch_all(path):
+    logger.debug(path)
+    if 'NotFound'.lower() in path:
+        return make_response("Not found", 404)
     return render_template("index.html")
 
 if __name__ == "__main__":
