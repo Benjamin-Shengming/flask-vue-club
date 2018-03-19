@@ -59,8 +59,6 @@ Response = {
     "link":onLink,
     }    
     
-def check_sig(request_args):    
-
 @api.route('/<club_name>/wechat', methods=['GET', 'POST'])
 def wechat(club_name):
     logger.debug(club_name)
