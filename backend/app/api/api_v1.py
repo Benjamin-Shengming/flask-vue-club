@@ -62,6 +62,7 @@ Response = {
 @api.route('/<club_name>/wechat', methods=['GET', 'POST'])
 def wechat(club_name):
     logger.debug(club_name)
+    logger.debug(request.args)
     query = request.args
     signature = query.get('signature', '')
     timestamp = query.get('timestamp', '')
