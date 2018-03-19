@@ -1,6 +1,6 @@
 #coding:utf-8
 import json
-import urllib2
+import urllib.request, urllib.error, urllib.parse
 import zlib
 from urllib import *
 
@@ -8,9 +8,9 @@ from WeiXinCore.WeiXinMsg import *
 
 
 def getJson(url):
-    request = urllib2.Request(url)
+    request = urllib.request.Request(url)
     request.add_header('Accept-encoding', 'gzip')
-    opener = urllib2.build_opener()
+    opener = urllib.request.build_opener()
     response = opener.open(request)
     html = response.read()#.decode('gbk').encode('utf-8')
     gzipped = response.headers.get('Content-Encoding')
@@ -22,7 +22,7 @@ def getJson(url):
 
 def youdao(text):
     url = 'http://fanyi.youdao.com/openapi.do?keyfrom=onHomeward&key=2010176806&type=data&doctype=json&version=1.1&q=%s' \
-    % quote_plus(text.encode('utf-8'))
+    % urllib.parse.quote(text.encode('utf-8'))
 
     description = getJson(url)# json.loads(html)
 

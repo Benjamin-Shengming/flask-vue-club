@@ -114,3 +114,29 @@ class AppController(object):
 
     def delete_club_service(self, club_name, service_id):
         return self.db_model.delete_club_service(club_name, service_id)
+
+    # check one service has special keywords
+    def _service_has_keyword(self, service, key_words):
+        #check name
+        for key in key_words:
+            if key in service.name:
+                return True
+        #check description 
+        for key in key_words:
+            if key in service.description:
+                return True
+        return False
+    def service_to_article(self, service):
+        article = {}
+        article['title'] = service.name 
+        article['description'] = service.description 
+        article['url'] = ""
+        article['image'] = ""
+        return article
+    # given a set of keywords and search the service contains the key word
+    # if keyword is empty, just return most important 
+    def search_club_service_article(self, club_name, key_words):
+        services = self.get_club_service_list(club_name)
+        ret = [item for item in services if self._service_has_keyword(item , key_words)]
+        return [self.service_to_article(item) for item in ret]
+         

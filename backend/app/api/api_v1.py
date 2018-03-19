@@ -11,6 +11,11 @@ from utils import *
 from PIL import Image
 from flask_cors import CORS 
 import hashlib
+from wechatpy.utils import check_signature 
+from wechatpy.exceptions import InvalidSignatureException 
+from wechatpy import parse_message
+from wechatpy.replies import TextReply, VoiceReply, create_reply, ImageReply, ArticlesReply
+from wechatpy.crypto import WeChatCrypto 
 
 from . import app_controller
 from .. import app 
@@ -25,8 +30,12 @@ api_v1_blueprint = Blueprint(API_NAME, API_NAME)
 api = api_v1_blueprint
 
 CORS(api_v1_blueprint)
-#from index import app
-#from WeiXin.weixin_handler import *
+
+# one wechat service number should have exact one token, AES_KEY, APP_ID
+# wechat token
+TOKEN = '1234567890google.com'
+AES_KEY = '1234567890'
+APP_ID = '1234567890'
 
 EventType ={
     "subscribe":onSubscribe,
@@ -50,31 +59,53 @@ Response = {
     "link":onLink,
     }    
     
-def check_signature(request_args):    
+def check_sig(request_args):    
+
+@api.route('/<club_name>/wechat', methods=['GET', 'POST'])
+def wechat(club_name):
+    logger.debug(club_name)
     query = request.args
     signature = query.get('signature', '')
     timestamp = query.get('timestamp', '')
     nonce = query.get('nonce', '')
-    #echostr = query.get('echostr', '')
-    s = [timestamp, nonce, TOKEN]
-    s.sort()
-    s = ''.join(s).encode('utf-8')
-    return hashlib.sha1(s).hexdigest() == signature
+    try:
+        check_signature(TOKEN, signature, timestamp, nonce)
+        return True
+    except Exception as e:
+        logger.debug("invalid request!")
+        abort(403)
 
-@api.route('/<club_name>/wechat', methods=['GET', 'POST'])
-def wechat(club_name):
-    if not check_signature(request.args):
-        return ""
     if request.method == 'GET':
         return make_response(request.args.get('echostr', ''))
     else:
-        logger.debug(club_name)
-        wxmsg = WeiXinMsg(request.data)        
-        respXml = Response[wxmsg.MsgType](wxmsg) if wxmsg.MsgType in Response else ''
-        #return respXml
-        response = make_response(respXml)
-        response.content_type = 'application/xml'
-        return response    
+        encrypt_type = request.args.get('encrypt_type', 'raw')
+        xml = request.data
+        msg = None
+        if encrypt_type == 'raw':
+            # plain mode
+            msg = parse_message(xml)
+        else:
+            try:
+                # encrypt mode
+                crypto = WeChatCrypto(TOKEN, AES_KEY, APP_ID)
+                msg = parse_message(crypto.decrypt_message(xml, signature, timestamp, nonce))
+            except Exception as e:
+                abort(403)
+
+        reply_xml = None
+        if msg.type == 'text':
+            key_words = [item.strip() for item in str(msg.content).split(" ")]
+            reply =  ArticlesReply(message=msg, 
+                app_controller.search_club_service_article(club_name, key_words))
+            reply_xml = reply.render() 
+        else:
+            reply = TextReply(content='Not supported!', message=msg)
+            reply_xml = reply.render() 
+        
+        if encrypt_type == "raw":
+            return reply_xml
+        else:
+            return crypto.encrypt_message(reply_xml, nonce, timestamp)
 
 
 class UrlSchema(Schema):
