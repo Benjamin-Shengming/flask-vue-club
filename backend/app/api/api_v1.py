@@ -62,11 +62,12 @@ Response = {
 @api.route('/<club_name>/wechat', methods=['GET', 'POST'])
 def wechat(club_name):
     logger.debug(club_name)
-    logger.debug(request.args)
     query = request.args
+    logger.debug(query)
     signature = query.get('signature', '')
     timestamp = query.get('timestamp', '')
     nonce = query.get('nonce', '')
+    logger.debug(request.args)
     try:
         check_signature(TOKEN, signature, timestamp, nonce)
         return True
