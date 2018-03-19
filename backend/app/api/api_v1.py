@@ -93,8 +93,8 @@ def wechat(club_name):
         reply_xml = None
         if msg.type == 'text':
             key_words = [item.strip() for item in str(msg.content).split(" ")]
-            reply =  ArticlesReply(message=msg, 
-                app_controller.search_club_service_article(club_name, key_words))
+            articles = app_controller.search_club_service_article(club_name, key_words)
+            reply =  ArticlesReply(articles=articles, message=msg) 
             reply_xml = reply.render() 
         else:
             reply = TextReply(content='Not supported!', message=msg)
