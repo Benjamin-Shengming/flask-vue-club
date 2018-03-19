@@ -76,11 +76,13 @@ def wechat(club_name):
     if request.method == 'GET':
         return make_response(request.args.get('echostr', ''))
     else:
+        logger.debug("start make response")
         encrypt_type = request.args.get('encrypt_type', 'raw')
         xml = request.data
         msg = None
         if encrypt_type == 'raw':
             # plain mode
+            logger.debug("plain mode")
             msg = parse_message(xml)
         else:
             try:
@@ -99,7 +101,8 @@ def wechat(club_name):
         else:
             reply = TextReply(content='Not supported!', message=msg)
             reply_xml = reply.render() 
-        
+
+        logger.debug("xml:" + reply_xml) 
         if encrypt_type == "raw":
             return reply_xml
         else:
