@@ -70,7 +70,6 @@ def wechat(club_name):
     logger.debug(request.args)
     try:
         check_signature(TOKEN, signature, timestamp, nonce)
-        return True
     except Exception as e:
         logger.debug("invalid request!")
         abort(403)
