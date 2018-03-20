@@ -126,12 +126,12 @@ class AppController(object):
             if key in service.description:
                 return True
         return False
-    def service_to_article(self, service, club_name, prefix):
+    def service_to_article(self, service, club_name):
         article = {}
         article['title'] = service.name 
         article['description'] = service.description 
         article['url'] = "/{}".format(club_name)
-        article['image'] = "/{}/filestore/{}/service/{}/{}".format(prefix, club_name, service.id, service.major_pic)
+        article['image'] = "/filestore/{}/service/{}/{}".format(club_name, service.id, service.major_pic)
         return article
     # given a set of keywords and search the service contains the key word
     # if keyword is empty, just return most important 
