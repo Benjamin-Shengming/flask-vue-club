@@ -37,6 +37,9 @@ TOKEN = '1234567890google.com'
 AES_KEY = '1234567890'
 APP_ID = '1234567890'
 
+def get_host():
+    return "http://35.198.210.78"
+
 EventType ={
     "subscribe":onSubscribe,
     "unsubscribe":onUnsubscribe,
@@ -98,7 +101,7 @@ def wechat(club_name):
             key_words = [item.strip() for item in str(msg.content).split(" ")]
             articles = app_controller.search_club_service_article(club_name, key_words)
             for article in articles:
-                article['image'] = '/api_v1/' + article['image']
+                article['image'] = get_host() + '/api_v1' + article['image']
             reply =  ArticlesReply(articles=articles, message=msg) 
             reply_xml = reply.render() 
         else:
