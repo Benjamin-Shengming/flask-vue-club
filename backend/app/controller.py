@@ -138,5 +138,5 @@ class AppController(object):
     def search_club_service_article(self, club_name, key_words):
         services = self.get_club_service_list(club_name)
         ret = [item for item in services if self._service_has_keyword(item , key_words)]
-        return [self.service_to_article(item) for item in ret]
+        return [self.service_to_article(item, club_name) for item in ret]
          
