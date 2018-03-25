@@ -8,7 +8,10 @@ from flask_login import LoginManager, UserMixin, login_user, login_required, log
 from flask_babel import Babel 
 from flask_cors import CORS
 from flask_apispec import FlaskApiSpec
-
+from flask_jwt_extended import (
+    JWTManager, jwt_required, create_access_token,
+    get_jwt_identity
+)
 
 app = Flask(__name__,
             static_folder = "../../dist/static",
@@ -19,11 +22,14 @@ app.wsgi_app = ProxyFix(app.wsgi_app)
 app.config['SECRET_KEY'] = 'Thisissupposedtobesecret!'
 app.config['BABEL_DEFAULT_LOCALE'] = 'zh_Hans_CN'
 app.config['UPLOAD_FOLDER'] = 'filestore/'
-
+app.config['JWT_SECRET_KEY'] = 'super-secret'  # Change this!
 
 babel = Babel(app)
 cors =CORS(app)
 docs = FlaskApiSpec(app)
+
+# create jwt 
+jwt = JWTManager(app)
 
 # create controller object, the central point 
 from .controller import AppController

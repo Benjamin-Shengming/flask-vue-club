@@ -21,6 +21,7 @@ coloredlogs.install(level='DEBUG', logger=logger)
 from app import app, app_controller
 from app.models import init_all
 
+
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
 def catch_all(path):

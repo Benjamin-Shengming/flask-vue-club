@@ -4,7 +4,7 @@ import six
 import coloredlogs, logging
 from marshmallow import fields, Schema
 from flask_apispec import ResourceMeta, Ref, doc, marshal_with, use_kwargs
-from flask import abort, request, send_from_directory , Response, Blueprint, make_response
+from flask import abort, request, send_from_directory , Response, Blueprint, make_response, jsonify
 from werkzeug import secure_filename
 from utils import *
 from PIL import Image
@@ -15,6 +15,10 @@ from wechatpy.exceptions import InvalidSignatureException
 from wechatpy import parse_message
 from wechatpy.replies import TextReply, VoiceReply, create_reply, ImageReply, ArticlesReply
 from wechatpy.crypto import WeChatCrypto 
+from flask_jwt_extended import (
+    JWTManager, jwt_required, create_access_token,
+    get_jwt_identity
+)
 
 from . import app_controller
 from .. import app 
@@ -92,6 +96,16 @@ def wechat(club_name):
         else:
             return crypto.encrypt_message(reply_xml, nonce, timestamp)
 
+@api.route("/<club_name>/login")
+def login(club_name):
+    user_data = {}
+    user_data['email'] = request.json.get("email")
+    user_data['password'] = request.json.get("password")
+
+    user = app_controller.verify_club_user(club_name, user_data)
+    if user:
+        access_token = create_access_token(identity=user)
+        return jsonify(access_tken=access_token), 200
 
 class UrlSchema(Schema):
     class Meta:
