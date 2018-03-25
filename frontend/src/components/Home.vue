@@ -82,7 +82,8 @@
 
 <script>
 import axios from "axios";
-import ServiceBook from "./ServiceBook.vue"
+import ServiceBook from "./ServiceBook.vue";
+import UserLogin from "./UserLogin.vue";
 // import jQuery from "jquery";
 import { getBackendAPIURI,
          prefixAPIURIPath,
@@ -94,7 +95,8 @@ import { getBackendAPIURI,
 
 export default {
   components: {
-    ServiceBook
+    ServiceBook,
+    UserLogin
   },
   data () {
     return {

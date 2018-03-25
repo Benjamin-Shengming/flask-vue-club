@@ -2,7 +2,6 @@
 import os
 import six 
 import coloredlogs, logging
-from .WeiXinCore.weixin_handler import *
 from marshmallow import fields, Schema
 from flask_apispec import ResourceMeta, Ref, doc, marshal_with, use_kwargs
 from flask import abort, request, send_from_directory , Response, Blueprint, make_response
@@ -40,28 +39,6 @@ APP_ID = '1234567890'
 def get_host():
     return "http://35.198.210.78"
 
-EventType ={
-    "subscribe":onSubscribe,
-    "unsubscribe":onUnsubscribe,
-    "scan":onScan,
-    "location":onEventLocation,
-    "click":onClick,
-    "view":onView
-}
-#def onEvent(wxmsg):
-#    return EventType[wxmsg.Event](wxmsg) if EventType.has_key(wxmsg.Event) else ''
-Response = {
-    "event":lambda wxmsg:EventType[wxmsg.Event](wxmsg) \
-            if EventType.has_key(wxmsg.Event) else '',
-    "text":onText,
-    "voice":onVoice,
-    "image":onImage,
-    "video":onVideo,
-    "shortvideo":onShortVideo,
-    "location":onLocation,
-    "link":onLink,
-    }    
-    
 @api.route('/<club_name>/wechat', methods=['GET', 'POST'])
 def wechat(club_name):
     logger.debug(club_name)
