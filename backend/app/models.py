@@ -55,6 +55,8 @@ class User(Base, BaseMixin, UserMixin):
     email = Column(String, unique=False)
     tel = Column(String, unique=False)
     password_hash = Column(String, nullable=False)
+    email_confirmed = Column(Boolean, default=False)
+    tel_confirmed = Column(Boolean, default=False)
     club_id = Column(Integer, ForeignKey('club.id', ondelete='CASCADE'), nullable=False)
     __table_args__ = (UniqueConstraint('email', 'club_id'),)
     roles = relationship("Role", 
@@ -67,6 +69,8 @@ class Club(Base, BaseMixin):
     id = Column(Integer, primary_key=True) 
     name = Column(String, unique=True)
     description= Column(String)
+    email = Column(String, unique=False)
+    tel = Column(String, unique=False)
     # relationship
     users = relationship("User", backref="club")
     roles = relationship("Role", backref="club")

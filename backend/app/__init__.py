@@ -12,17 +12,18 @@ from flask_jwt_extended import (
     JWTManager, jwt_required, create_access_token,
     get_jwt_identity
 )
+from magic_defines import * 
 
 app = Flask(__name__,
             static_folder = "../../dist/static",
             template_folder = "../../dist")
 app.wsgi_app = ProxyFix(app.wsgi_app)
 
+app.config['SECRET_KEY'] = SECRET_KEY 
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER 
+app.config['JWT_SECRET_KEY'] = JWT_SECRET_KEY  
 
-app.config['SECRET_KEY'] = 'Thisissupposedtobesecret!'
 app.config['BABEL_DEFAULT_LOCALE'] = 'zh_Hans_CN'
-app.config['UPLOAD_FOLDER'] = 'filestore/'
-app.config['JWT_SECRET_KEY'] = 'super-secret'  # Change this!
 
 babel = Babel(app)
 cors =CORS(app)

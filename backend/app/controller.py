@@ -5,12 +5,14 @@ from jinja2 import TemplateNotFound
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from .models import AppModel 
 from werkzeug.security import generate_password_hash, check_password_hash
-
+from itsdangerous import TimestampSigner, Serializer, URLSafeSerializer, URLSafeTimedSerializer
 from .models import AppModel
 from json import loads
-
+from magic_defines import *
 from utils import caller_info 
 import coloredlogs, logging
+from datetime import datetime, timedelta
+import jwt
 logger = logging.getLogger(__name__)
 coloredlogs.install(level='DEBUG', logger=logger)
 
@@ -44,6 +46,27 @@ class AppController(object):
     def get_club_user_list(self, club_name):
         user_list = self.db_model.get_club_user_list(club_name)
         return user_list
+
+    def generate_user_jwt(self, club_name, user):
+        payload = {
+            'user_id': user.id,
+            'exp':datetime.utcnow() + timedelta(hours=JWT_EXP_DELTA_HOURS)
+        }
+        jwt_token = jwt.encode(payload, JWT_SECRET_KEY, JWT_ALGORITHM)
+        return jwt_token
+
+    def activate_club_user_by_email(self, club_name, token):
+        confirm_serializer = URLSafeTimedSerializer(SECRET_KEY)
+        email = confirm_serializer.loads(token, salt=EMAIL_SALT, max_age=36000)
+        user = self.get_club_user_by_email(email)
+        user.email_confirmed = True
+        self.db_model._add_commit(user)
+        return user
+
+    def generate_club_user_email_activate_link(self, club_name, user):
+        confirm_serializer = URLSafeTimedSerializer(SECRET_KEY)
+        token = confirm_serializer.dumps(user.email, salt=EMAIL_SALT)
+        return ("/{}/activate/email/{}".format(club_name, token))
 
     def create_club_user(self, club_name, user_data):
         if not user_data.get('roles', None): 

@@ -19,7 +19,7 @@ from flask_jwt_extended import (
     JWTManager, jwt_required, create_access_token,
     get_jwt_identity
 )
-
+import jwt
 from . import app_controller
 from .. import app 
 from .. import docs 
@@ -95,17 +95,49 @@ def wechat(club_name):
             return reply_xml
         else:
             return crypto.encrypt_message(reply_xml, nonce, timestamp)
+@api.route("/<club_name>/register")
+def register(club_name):
+    user_data = {}
+    user_data['email'] = request.json.get("email", None)
+    user_data['tel'] = request.json.get('tel', None)
+    if not user_data.get('email', None) and not user_data.get('tel', None):
+        return make_response("please provide tel or emial", 400)
+
+    user_data['password'] = request.json.get("password", None)
+    user_data['roles'] = request.json.get('role', None)
+    user = app_controller.create_club_user(club_name, user_data)
+    if user.tel:
+        # send passcode to user
+        pass
+    if user:
+        # send activate link to user's email
+        return make_response("user create successfully", 200)
+
+@api.route("/<club_name>/activate/email/<token>")
+def email_activate(club_name, token):
+    try:
+        user = app_controller.activate_club_user_by_email(club_name, token)
+        jwt_token = app_controller.generate_user_jwt(club_name, user)
+        return jsonify(jwt_token=jwt_token), 200
+    except Exception as e:
+        return make_response("Activation invalid or has expired", 200)
+
+@api.route("<club_name>/activate/tel/")    
+def tel_activate(club_name, token):
+    return make_response("activate successfully", 200)
 
 @api.route("/<club_name>/login")
 def login(club_name):
     user_data = {}
-    user_data['email'] = request.json.get("email")
-    user_data['password'] = request.json.get("password")
-
+    user_data['email'] = request.json.get("email", None)
+    user_data['tel'] = request.json.get('tel', None)
+    user_data['password'] = request.json.get("password", None)
     user = app_controller.verify_club_user(club_name, user_data)
     if user:
-        access_token = create_access_token(identity=user)
-        return jsonify(access_tken=access_token), 200
+        access_token = app_controller.generate_user_jwt(club_name, user) 
+        return jsonify(jwt_token=access_token), 200
+    else:
+        make_response("login failed!", 400)
 
 class UrlSchema(Schema):
     class Meta:
