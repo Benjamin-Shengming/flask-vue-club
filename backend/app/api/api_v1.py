@@ -1,6 +1,7 @@
 #!/usr/bin/python
 import os
-import six 
+import json
+import six
 import coloredlogs, logging
 from marshmallow import fields, Schema
 from flask_apispec import ResourceMeta, Ref, doc, marshal_with, use_kwargs
@@ -8,21 +9,21 @@ from flask import abort, request, send_from_directory , Response, Blueprint, mak
 from werkzeug import secure_filename
 from utils import *
 from PIL import Image
-from flask_cors import CORS 
+from flask_cors import CORS
 import hashlib
-from wechatpy.utils import check_signature 
-from wechatpy.exceptions import InvalidSignatureException 
+from wechatpy.utils import check_signature
+from wechatpy.exceptions import InvalidSignatureException
 from wechatpy import parse_message
 from wechatpy.replies import TextReply, VoiceReply, create_reply, ImageReply, ArticlesReply
-from wechatpy.crypto import WeChatCrypto 
+from wechatpy.crypto import WeChatCrypto
 from flask_jwt_extended import (
     JWTManager, jwt_required, create_access_token,
     get_jwt_identity
 )
 import jwt
 from . import app_controller
-from .. import app 
-from .. import docs 
+from .. import app
+from .. import docs
 
 logger = logging.getLogger(__name__)
 coloredlogs.install(level='DEBUG', logger=logger)
@@ -84,36 +85,57 @@ def wechat(club_name):
             for article in articles:
                 article['image'] = get_host() + '/api_v1' + article['image']
                 article['url'] = get_host() + article['url']
-            reply =  ArticlesReply(articles=articles, message=msg) 
-            reply_xml = reply.render() 
+            reply =  ArticlesReply(articles=articles, message=msg)
+            reply_xml = reply.render()
         else:
             reply = TextReply(content='Not supported!', message=msg)
-            reply_xml = reply.render() 
+            reply_xml = reply.render()
 
-        logger.debug("xml:" + reply_xml) 
+        logger.debug("xml:" + reply_xml)
         if encrypt_type == "raw":
             return reply_xml
         else:
             return crypto.encrypt_message(reply_xml, nonce, timestamp)
-@api.route("/<club_name>/register")
+
+
+class UserInfo(Schema):
+    class Meta:
+        fields = ['email',
+                  'tel',
+                  'password',
+                  'roles']
+
+@api.route("/<club_name>/register", methods=['POST'])
+@marshal_with(UserInfo(many=False))
 def register(club_name):
-    user_data = {}
-    user_data['email'] = request.json.get("email", None)
-    user_data['tel'] = request.json.get('tel', None)
-    if not user_data.get('email', None) and not user_data.get('tel', None):
-        return make_response("please provide tel or emial", 400)
+    if request.method == 'POST':
+        print(club_name)
+        user_data = {}
+        user_data['email'] = request.json.get("email", None)
+        user_data['tel'] = request.json.get('tel', None)
+        if not user_data.get('email', None) and not user_data.get('tel', None):
+            return make_response("please provide tel or email", 400)
 
-    user_data['password'] = request.json.get("password", None)
-    user_data['roles'] = request.json.get('role', None)
-    user = app_controller.create_club_user(club_name, user_data)
-    if user.tel:
-        # send passcode to user
-        pass
-    if user:
-        # send activate link to user's email
-        return make_response("user create successfully", 200)
+        user_data['password'] = request.json.get("password", None)
+        user_data['roles'] = request.json.get('role', None)
 
-@api.route("/<club_name>/activate/email/<token>")
+        user = app_controller.create_club_user(club_name, user_data)
+        if user.tel:
+            # send passcode to user
+            pass
+        if user.email:
+            app_controller.resend_active_link_by_email(club_name, user.email)
+            # send activate link to user's email
+            return make_response("user create successfully", 200)
+
+@api.route("/<club_name>/email/activate-resend/<email_address>", methods=['POST'])
+def email_resend_activate_link(club_name, email_address):
+        logger.debug(email_address)
+        app_controller.resend_active_link_by_email(club_name, email_address)
+        return make_response("Check your email and activate your account!", 200)
+
+
+@api.route("/<club_name>/email/activate/<token>")
 def email_activate(club_name, token):
     try:
         user = app_controller.activate_club_user_by_email(club_name, token)
@@ -122,7 +144,7 @@ def email_activate(club_name, token):
     except Exception as e:
         return make_response("Activation invalid or has expired", 200)
 
-@api.route("<club_name>/activate/tel/")    
+@api.route("/<club_name>/activate/tel/")
 def tel_activate(club_name, token):
     return make_response("activate successfully", 200)
 
@@ -134,7 +156,7 @@ def login(club_name):
     user_data['password'] = request.json.get("password", None)
     user = app_controller.verify_club_user(club_name, user_data)
     if user:
-        access_token = app_controller.generate_user_jwt(club_name, user) 
+        access_token = app_controller.generate_user_jwt(club_name, user)
         return jsonify(jwt_token=access_token), 200
     else:
         make_response("login failed!", 400)
@@ -181,11 +203,11 @@ def service_files_upload(club_name, service_id):
 
 class ServiceSchema(Schema):
     class Meta:
-        fields = ['id', 
-                  'name', 
-                  'description', 
-                  'price', 
-                  'discount', 
+        fields = ['id',
+                  'name',
+                  'description',
+                  'price',
+                  'discount',
                   'major_pic',
                   'pic_and_text',
                   'active',
@@ -193,7 +215,7 @@ class ServiceSchema(Schema):
 
 @api.route('/<club_name>/service', methods=['GET', 'POST'])
 @marshal_with(ServiceSchema(many=True))
-def service_list(club_name): 
+def service_list(club_name):
     if request.method == 'GET':
         try:
             return app_controller.get_club_service_list(club_name)
@@ -224,6 +246,7 @@ docs.register(service_single_file_download, blueprint='api_v1')
 docs.register(service_files_upload, blueprint='api_v1')
 docs.register(service_list, blueprint='api_v1')
 docs.register(single_service_del, blueprint='api_v1')
+docs.register(register, blueprint='api_v1')
 '''
 api = Namespace('api_v1', description='API version 1')
 
@@ -353,7 +376,7 @@ class Role(Resource):
 
     def delete(self, club_name, role_name):
         return app_controller.delete_club_role_by_name(club_name, role_name)
-    
+
     @api.expect(club_model)
     @api.marshal_with(club_model)
     def put(self, club_name, role_name):

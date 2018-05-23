@@ -19,7 +19,7 @@ coloredlogs.install(level='DEBUG', logger=logger)
 FILE_STORE = os.path.join(os.path.dirname(__file__), 'filestore')
 engine = create_engine('sqlite:////home/ubuntu/test.db', convert_unicode=True)
 
-db_session = scoped_session(sessionmaker(autocommit=False, 
+db_session = scoped_session(sessionmaker(autocommit=False,
                                          autoflush=False,
                                          bind=engine))
 
@@ -44,9 +44,9 @@ class BaseMixin(object):
         dict_value = {}
         logger.debug(self.__table__.columns)
         for key in self.__table__.columns.keys():
-            # remove table name 
+            # remove table name
             col_name = key.split(".")[-1]
-            dict_value[key] = getattr(self, col_name) 
+            dict_value[key] = getattr(self, col_name)
         return dict_value
 
 class User(Base, BaseMixin, UserMixin):
@@ -59,17 +59,21 @@ class User(Base, BaseMixin, UserMixin):
     tel_confirmed = Column(Boolean, default=False)
     club_id = Column(Integer, ForeignKey('club.id', ondelete='CASCADE'), nullable=False)
     __table_args__ = (UniqueConstraint('email', 'club_id'),)
-    roles = relationship("Role", 
+    roles = relationship("Role",
                          secondary=association_user_role,
                          back_populates="users")
 
 
 class Club(Base, BaseMixin):
     __tablename__ = 'club'
-    id = Column(Integer, primary_key=True) 
+    id = Column(Integer, primary_key=True)
     name = Column(String, unique=True)
-    description= Column(String)
+    description = Column(String)
+    smtp_server = Column(String)
+    smtp_port = Column(String)
+    smtp_encryption = Column(String)
     email = Column(String, unique=False)
+    email_pwd = Column(String, unique=False)
     tel = Column(String, unique=False)
     # relationship
     users = relationship("User", backref="club")
@@ -86,7 +90,7 @@ class Role(Base, BaseMixin):
     users = relationship(
         "User",
         secondary=association_user_role,
-        back_populates="roles" 
+        back_populates="roles"
     )
 
 class Service(Base, BaseMixin):
@@ -135,15 +139,15 @@ class OrderDetail(Base, BaseMixin):
     discount = Column(Integer, nullable=False, default=20)
     last_update_time = Column(DateTime)
     major_pic = Column(String) # major picture of this service
-    description = Column(String) # msxing picture path and text descriptions 
+    description = Column(String) # msxing picture path and text descriptions
 
     # relation to the order
     order_id = Column(Integer, ForeignKey('order.id'), nullable=False)
 
 class AppModel(object):
     def __init__(self, db_session=db_session):
-        self.db_session = db_session 
-        self.file_store = FILE_STORE 
+        self.db_session = db_session
+        self.file_store = FILE_STORE
         if not os.path.exists(self.file_store):
             os.makedirs(self.file_store)
 
@@ -160,7 +164,7 @@ class AppModel(object):
         except Exception as e:
             logger.debug(str(e))
             self.db_session.rollback()
-            raise e 
+            raise e
 
     def _find_club_and_error(self, club_name):
         club = Club.query.filter_by(name=club_name).first()
@@ -175,7 +179,7 @@ class AppModel(object):
     def create_club(self, club_data):
         new_club = Club(**club_data)
         self._add_commit(new_club)
-        return new_club 
+        return new_club
 
     def delete_club_by_name(self, club_name):
         Club.query.filter_by(name=club_name).delete()
@@ -186,7 +190,7 @@ class AppModel(object):
         return club
 
     def update_club(self, club_name, club_data):
-        old_club = self._find_club_and_error(club_name) 
+        old_club = self._find_club_and_error(club_name)
         old_club.from_dict(club_data)
         #logger.debug(old_club.to_dict())
         self._add_commit(old_club)
@@ -204,8 +208,12 @@ class AppModel(object):
         return user_list
 
     def get_club_user_by_email(self, club_name, email):
+        logger.debug("get user by email")
         club = self._find_club_and_error(club_name)
+        logger.debug(club.name)
+        logger.debug("search email: " + email)
         user = User.query.filter_by(email=email, club_id=club.id).first()
+        # logger.debug(user.email)
         return user
 
     def verify_club_user(self, club_name, user_data):
@@ -226,8 +234,15 @@ class AppModel(object):
         return user
 
     def create_club_user(self, club_name, user_dict):
-        club = self._find_club_and_error(club_name) 
-        #check password
+        club = self._find_club_and_error(club_name)
+        if user_dict['email']:
+            # check whether user already exist or email, tel has been used
+            user = self.get_club_user_by_email(club_name, user_dict['email'])
+            if user:
+                logger.debug(user.email)
+                logger.debug(user.id)
+                raise AlreadyExist(_("Your email address already has been used!"))
+        # check password
         if not user_dict['password']:
             raise RespExcept(404, _("Please provide password!"))
         # check roles
@@ -241,7 +256,7 @@ class AppModel(object):
         if not role_list:
             raise RespExcept(404, _("Can't find the user roles{} in {}").format(user_dict['roles'], club_name))
         hashed_password = user_dict['password']
-        new_user = User(email=user_dict['email'], 
+        new_user = User(email=user_dict['email'],
                         tel= user_dict['tel'],
                         password_hash=hashed_password)
         new_user.club = club
@@ -255,7 +270,7 @@ class AppModel(object):
         user.from_dict(user_dict)
         self._add_commit(user)
         return user
-        
+
     def delete_club_user(self, club_name, user_email):
         club = self.get_club_by_name(club_name)
         if not club:
@@ -280,7 +295,7 @@ class AppModel(object):
         role = Role.query.filter_by(name=role_name, club_id=club.id).first()
         role.from_dict(role_data)
         self._add_commit(role)
-        return role 
+        return role
 
     def get_club_role_by_name(self, club_name, role_name):
         club = self._find_club_and_error(club_name)
@@ -291,7 +306,7 @@ class AppModel(object):
         Role.query.filter_by(club_id=club.id, name=role_name).delete()
         self._commit()
 
-    # file related 
+    # file related
     def get_filestore_dir(self):
         return self.file_store
 
@@ -305,7 +320,7 @@ class AppModel(object):
     def create_club_service(self, club_name, service_data):
         club = self._find_club_and_error(club_name)
         new_service = Service(**service_data)
-        new_service.club_id = club.id 
+        new_service.club_id = club.id
         self._add_commit(new_service)
 
     def get_club_service_list(self, club_name):
@@ -325,9 +340,9 @@ class AppModel(object):
         club= self._find_club_and_error(club_name)
         Service.query.filter_by(id=service_id).delete()
         self._commit()
-        #no delete service related reource folder 
+        #no delete service related reource folder
         service_path = self.get_filestore_service(club.name, service_id)
-        shutil.rmtree(service_path, ignore_errors=True) 
+        shutil.rmtree(service_path, ignore_errors=True)
 
     def update_club_service(self, club_name, service_id, service_data):
         club= self._find_club_and_error(club_name)
@@ -348,9 +363,17 @@ class AppModel(object):
 
 def init_all():
     Base.metadata.drop_all(bind=engine)
-    Base.metadata.create_all(bind=engine) 
+    Base.metadata.create_all(bind=engine)
     m = AppModel()
-    haoduoyu = m.create_club({'name': 'haoduoyu', 'description':"haoduoyu club"})
+    haoduoyu = m.create_club({'name': 'haoduoyu',
+                              'description':"haoduoyu club",
+                              'smtp_server':'smtp.gmail.com',
+                              'smtp_port':'587',
+                              'smtp_encryption': 'starttls',
+                              'email':"shengming.hu@gmail.com",
+                              'email_pwd':"xidian96faa98002",
+                              'tel':'13379506367'
+                            })
     haoduomao = m.create_club({'name': 'haoduomao', 'description':"haoduomao club"})
     role_user1 = m.create_club_role(haoduoyu.name, {'name':'user', 'description':"normal usr"})
     role_user2 = m.create_club_role(haoduomao.name, {'name':'user', 'description':"normal usr"})
@@ -359,7 +382,7 @@ def init_all():
     user1.email = "abc@abc.com"
     user1.tel = '13311111'
     user1.password_hash = "abc"
-    user1.roles.append(role_user1) 
+    user1.roles.append(role_user1)
 
     user2 = User()
     user2.club_id = haoduomao.id
