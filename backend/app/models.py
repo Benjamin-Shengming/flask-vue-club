@@ -57,6 +57,7 @@ class User(Base, BaseMixin, UserMixin):
     password_hash = Column(String, nullable=False)
     email_confirmed = Column(Boolean, default=False)
     tel_confirmed = Column(Boolean, default=False)
+    activate_code = Column(String)
     club_id = Column(Integer, ForeignKey('club.id', ondelete='CASCADE'), nullable=False)
     __table_args__ = (UniqueConstraint('email', 'club_id'),)
     roles = relationship("Role",

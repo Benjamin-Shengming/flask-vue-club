@@ -3,6 +3,7 @@ import os
 from flask import Blueprint, render_template, abort
 from jinja2 import TemplateNotFound
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
+from random import randint
 from .models import AppModel
 from werkzeug.security import generate_password_hash, check_password_hash
 from itsdangerous import TimestampSigner, Serializer, URLSafeSerializer, URLSafeTimedSerializer
@@ -57,15 +58,20 @@ class AppController(object):
         jwt_token = jwt.encode(payload, JWT_SECRET_KEY, JWT_ALGORITHM)
         return jwt_token
 
-    def activate_club_user_by_email(self, club_name, token):
+    def activate_club_user_by_email(self, club_name, email, activate_code):
+        '''
         confirm_serializer = URLSafeTimedSerializer(SECRET_KEY)
         email = confirm_serializer.loads(token, salt=EMAIL_SALT, max_age=36000)
-        user = self.get_club_user_by_email(email)
-        user.email_confirmed = True
-        self.db_model._add_commit(user)
+        '''
+        user = self.get_club_user_by_email(club_name, email)
+        if user.activate_code == activate_code:
+            user.email_confirmed = True
+            self.db_model._add_commit(user)
+        else:
+            raise RespExcept("Activation code is not right!")
         return user
 
-    def resend_active_link_by_email(self, club_name, email_address):
+    def resend_active_code_by_email(self, club_name, email_address):
         logger.debug("resend link")
         logger.debug("club_name")
         logger.debug(email_address)
@@ -74,7 +80,7 @@ class AppController(object):
             raise RespExcept("User does not exist")
         if user.email_confirmed:
             raise RespExcept("user already activated!")
-        url_link = self.generate_club_user_email_activate_link(club_name, user)
+        code = self.generate_club_user_activate_code(club_name, user)
         club = user.club
         EmailClientSMTP(club.smtp_server,
                         club.smtp_port,
@@ -83,12 +89,22 @@ class AppController(object):
                         club.email_pwd).send_email(
                             user.email,
                             subject="activate account",
-                            body=url_link)
-    def generate_club_user_email_activate_link(self, club_name, user):
+                            body=code)
+
+    def generate_club_user_activate_code(self, club_name, user):
+        code = ""
+        length = 5
+        for i in range(0, length):
+            code += str(randint(0, 9))
+        logger.debug(code)
+        user.activate_code = code
+        self.db_model._add_commit(user)
+        return code
+        '''
         confirm_serializer = URLSafeTimedSerializer(SECRET_KEY)
         token = confirm_serializer.dumps(user.email, salt=EMAIL_SALT)
         return ("/{}/email/activate/{}".format(club_name, token))
-
+        '''
     def create_club_user(self, club_name, user_data):
         logger.debug(user_data)
         if not user_data.get('roles', None):
@@ -139,7 +155,7 @@ class AppController(object):
       allow_ext = set(['txt','png', 'jpg', 'jpeg', 'gif'])
       return '.' in filename and filename.rsplit('.', 1)[1] in allow_ext
 
-    # service related funcitons
+    # service related functions
     def create_club_service(self, club_name, service_data):
         logger.debug(service_data)
         return self.db_model.create_club_service(club_name, service_data)

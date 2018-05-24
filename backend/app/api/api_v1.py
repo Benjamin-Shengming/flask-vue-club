@@ -124,31 +124,38 @@ def register(club_name):
             # send passcode to user
             pass
         if user.email:
-            app_controller.resend_active_link_by_email(club_name, user.email)
-            # send activate link to user's email
+            # send activate code to user's email
+            app_controller.resend_active_code_by_email(club_name, user.email)
             return make_response("user create successfully", 200)
 
-@api.route("/<club_name>/email/activate-resend/<email_address>", methods=['POST'])
-def email_resend_activate_link(club_name, email_address):
+@api.route("/<club_name>/user/email/activate-resend/<email_address>", methods=['POST'])
+def email_resend_activate_code(club_name, email_address):
         logger.debug(email_address)
-        app_controller.resend_active_link_by_email(club_name, email_address)
+        app_controller.resend_active_code_by_email(club_name, email_address)
         return make_response("Check your email and activate your account!", 200)
 
 
-@api.route("/<club_name>/email/activate/<token>")
-def email_activate(club_name, token):
+@api.route("/<club_name>/user/email/activate", methods=['POST'])
+def email_activate(club_name):
     try:
-        user = app_controller.activate_club_user_by_email(club_name, token)
-        jwt_token = app_controller.generate_user_jwt(club_name, user)
-        return jsonify(jwt_token=jwt_token), 200
+        if request.method == 'POST':
+            data_dict={}
+            data_dict['email'] = request.json.get("email")
+            data_dict['code'] = request.json.get("code")
+            user = app_controller.activate_club_user_by_email(club_name,
+                                                              data_dict['email'],
+                                                              data_dict['code'])
+            jwt_token = app_controller.generate_user_jwt(club_name, user)
+            return jsonify(jwt_token=jwt_token), 200
     except Exception as e:
+        logger.debug(e)
         return make_response("Activation invalid or has expired", 200)
 
 @api.route("/<club_name>/activate/tel/")
 def tel_activate(club_name, token):
     return make_response("activate successfully", 200)
 
-@api.route("/<club_name>/login")
+@api.route("/<club_name>/user/login", methods=['POST'])
 def login(club_name):
     user_data = {}
     user_data['email'] = request.json.get("email", None)

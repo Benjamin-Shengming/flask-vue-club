@@ -19,8 +19,12 @@
           <template slot="button-content">
             <em>User</em>
           </template>
-          <b-dropdown-item href="#">Profile</b-dropdown-item>
-          <b-dropdown-item href="#">Signout</b-dropdown-item>
+            <div v-if="isLoggedIn">
+          <b-dropdown-item href="#" @click="logout()"<</b-dropdown-item>
+            </div>
+            <div v-else>
+          <b-dropdown-item :href="urlLogin">Signin</b-dropdown-item>
+          </div>
         </b-nav-item-dropdown>
       </b-navbar-nav>
     </b-collapse>
@@ -117,7 +121,17 @@ export default {
     },
     urlHome: function() {
       return "/" + this.clubName;
+    },
+    urlLogin: function() {
+      return "/" + this.clubName + '/user/login'
+    },
+    urlLogout: function() {
+      return "/" + this.clubName + '/user/logout'
+    },
+    isLoggedIn: function() {
+      localStorage.getItem('usertoken')
     }
+
   },
   methods: {
     onSlideStart (slide) {
@@ -134,6 +148,9 @@ export default {
       console.log("show service " + item.id);
       this.singleService = item;
       this.serviceBook = true;
+    },
+    logout() {
+      localStorage.removeItem('usertoken')
     },
     getServiceMajorPic(item) {
       let url = prefixAPIURIPath(prefixFileStore(
