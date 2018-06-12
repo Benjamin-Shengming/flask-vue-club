@@ -24,7 +24,13 @@ coloredlogs.install(level='DEBUG', logger=logger)
 
 from app import app_controller
 from app.models import init_all
-from navbar import nav_bar, nav_bar_links
+from navbar import NavBarDropMenu
+
+
+nav_bar = NavBarDropMenu("HaoDuoYu")
+nav_bar.add_drop_menu("Home", ["Contact"])
+nav_bar.add_drop_menu("Service", ["List", "New"])
+nav_bar.add_drop_menu("Users", ["List"])
 
 
 app = dash.Dash()
@@ -43,10 +49,12 @@ app.scripts.append_script({"external_url":
                     "https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"})
 app.scripts.append_script({"external_url":
                     "https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"})
+
 app.layout = html.Div([
     # This "header" will persist across pages
-    nav_bar,
 
+    # Each "page" will modify this element
+    nav_bar.components_tree(),
     # This Location component represents the URL bar
     dcc.Location(id='url', refresh=False),
 
@@ -57,16 +65,12 @@ app.layout = html.Div([
 ], className="container")
 
 
+
 @app.callback(
     Output('content-container-root', 'children'),
     [Input('url', 'pathname')])
 def display_page(pathname):
-    if pathname == "/home":
-        return "home"
-    elif pathname == "/orders":
-        return "orders"
-    elif  pathname == "/profile":
-        return "profile"
+    return pathname
 
 
 

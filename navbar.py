@@ -33,7 +33,7 @@ import dash_core_components as dcc
   </div>
 </nav>
 '''
-class NavBar(object):
+class NavBarLinks(object):
     def __init__(self, brand_name="HaoduoYu", bg_color="bg-primary", navbar_color="navbar-dark"):
         self.brand_name = brand_name
         self.bg_color = bg_color
@@ -61,10 +61,9 @@ class NavBar(object):
 
         nav_bar_links = html.Ul(className="navbar-nav mr-auto",
                             children=[
-                                html.Li(className="nav-item", children=dcc.Link(key, href=value, className="nav-link"))
+                                html.Li(className="nav-item", children=dcc.Link(key, href=value, className="nav-link", style={"cursor":"pointer"}))
                                 for key, value in self.links.items()
                             ])
-
         nav_bar_collapse = html.Div(className="navbar-collapse collapse", id=self.collapse_id,
                                     children=[nav_bar_links])
 
@@ -76,3 +75,52 @@ class NavBar(object):
                                     nav_bar_collapse,
                                     ])
         return nav_bar
+
+class NavBarDropMenu(object):
+    def __init__(self, brand_name="HaoduoYu", bg_color="bg-primary", navbar_color="navbar-dark"):
+        self.brand_name = brand_name
+        self.bg_color = bg_color
+        self.navbar_color = navbar_color
+        self.links = OrderedDict()
+        self.collapse_id = str(uuid1())
+        self.drop_menus  = []
+
+    def add_drop_menu(self, menu_name, menu_items):
+        menu= html.Div(className="btn-group", children=[
+            html.Button(menu_name, **{"data-toggle":"dropdown","aria-haspopup":"true","aria-expanded":"false"},className="btn btn-primary dropdown-toggle"),
+            html.Div(className="dropdown-menu", children=[
+                dcc.Link(item, className="dropdown-item" ,href="/"+menu_name + "/" + item, style={"cursor": "pointer"}) for item in menu_items
+            ])
+         ])
+        self.drop_menus.append(menu)
+
+    def components_tree(self):
+
+        nav_bar_brand = html.A(self.brand_name, className="navbar-brand")
+
+        nav_bar_sandwich_btn = html.Button(**{"data-toggle": "collapse",
+                                            "data-target": "#"+self.collapse_id,
+                                            "aria-controls": self.collapse_id,
+                                            "aria-expanded": "false",
+                                            "aria-label": "Toggle navigation",
+                                            "type": "button"},
+                                            id="idShowOrHideLink",
+                                            className="navbar-toggler",
+                                            children=[
+                                                html.Span(className="navbar-toggler-icon")
+                                            ])
+
+        nav_bar_links = html.Ul(className="navbar-nav mr-auto", children=self.drop_menus)
+        nav_bar_collapse = html.Div(className="navbar-collapse collapse", id=self.collapse_id,
+                                    children=[nav_bar_links])
+
+
+
+        nav_bar = html.Nav(className="navbar  navbar-expand-md  navbar-dark bg-primary",
+                        children = [nav_bar_brand,
+                                    nav_bar_sandwich_btn,
+                                    nav_bar_collapse,
+                                    ])
+        return nav_bar
+
+
