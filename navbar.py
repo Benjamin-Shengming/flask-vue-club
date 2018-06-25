@@ -116,11 +116,12 @@ class NavBarDropMenu(object):
 
 
 
-        nav_bar = html.Nav(className="navbar  navbar-expand-md  navbar-dark bg-primary",
+        nav_bar = html.Nav(className="navbar navbar-expand-md navbar-dark bg-primary",
                         children = [nav_bar_brand,
                                     nav_bar_sandwich_btn,
                                     nav_bar_collapse,
                                     ])
         return nav_bar
+        #return html.Div(className="container", children=[nav_bar])
 
 

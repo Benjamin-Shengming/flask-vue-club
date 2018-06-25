@@ -25,7 +25,7 @@ coloredlogs.install(level='DEBUG', logger=logger)
 
 from app import app_controller
 from app.models import init_all
-from navbar import NavBar
+#from navbar import NavBar
 
 
 app = dash.Dash(__name__, static_folder='assets')
