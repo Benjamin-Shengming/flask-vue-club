@@ -48,8 +48,10 @@ def serve_stylesheet(stylesheet):
 #app.css.append_css({"external_url": "https://codepen.io/chriddyp/pen/bWLwgP.css"})
 app.css.append_css({"external_url":
                     "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css"})
+
 app.css.append_css({"external_url":
                     "https://use.fontawesome.com/releases/v5.1.0/css/all.css"})
+
 app.css.append_css({"external_url":
                     "https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"})
 app.scripts.append_script({"external_url":
@@ -69,13 +71,15 @@ sider_bar = html.Div(className="col-md-3 float-left col-1 pl-0 pr-0 collapse wid
                         html.I(**{"aria-hidden":"true"},className="fa fa-home"),
                         html.Span("Home", className="d-none d-md-inline")
                     ]),
-                    html.A(**{"data-toggle": "collapse", "aria-expanded": "false"}, href="#menu1", className="list-group-item d-inline-block collapsed", children=[
-                        html.I(**{"aria-hidden":"true"},className="fa fa-home"),
-                        html.Span("Home", className="d-none d-md-inline")
+                    html.A(**{"data-toggle": "collapse", "aria-expanded": "false"}, href="#serviceMenu", className="list-group-item d-inline-block collapsed", children=[
+                        html.I(**{"aria-hidden":"true"},className="fab fa-servicestack"),
+                        html.Span("Service", className="d-none d-md-inline")
                     ]),
-                    html.Div(**{"data-parent":"#sidebar"}, className="collapse", id="menu1", children=[
-                        html.A("Subitem 1", **{"data-toggle":"collapse", "aria-expanded":"false"}, href="#menu1sub1", className="list-group-item"),
-                        html.Div(className="collapse", id="menu1sub1", **{"data-parent":"#menu1"}, children=[
+                    html.Div(**{"data-parent":"#sidebar"}, className="collapse", id="serviceMenu", children=[
+                        dcc.Link("List", href="/service/list", className="list-group-item", style={"cursor":"pointer"}),
+                        dcc.Link("New", href="/service/new", className="list-group-item", style={"cursor":"pointer"}),
+                        html.A("List", **{"data-toggle":"collapse", "aria-expanded":"false"}, href="#menu1sub1", className="list-group-item"),
+                        html.Div(className="collapse", id="menu1sub1", **{"data-parent":"#serviceMenu"}, children=[
                             html.A("subitem a", **{"data-parent":"#menu1sub1"}, href="#", className="list-group-item"),
                             html.A("subitem b", **{"data-parent":"#menu1sub1"}, href="#", className="list-group-item"),
                             html.A("subitem c", **{"data-toggle":"collapse","aria-expanded":"false"}, href="#menu1sub1sub1", className="list-group-item"),
