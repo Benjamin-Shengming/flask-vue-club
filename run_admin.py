@@ -47,7 +47,9 @@ def serve_stylesheet(stylesheet):
 # append other css
 #app.css.append_css({"external_url": "https://codepen.io/chriddyp/pen/bWLwgP.css"})
 app.css.append_css({"external_url":
-                    "https://use.fontawesome.com/releases/v5.0.13/css/all.css"})
+                    "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css"})
+app.css.append_css({"external_url":
+                    "https://use.fontawesome.com/releases/v5.1.0/css/all.css"})
 app.css.append_css({"external_url":
                     "https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"})
 app.scripts.append_script({"external_url":
@@ -56,66 +58,98 @@ app.scripts.append_script({"external_url":
                     "https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"})
 app.scripts.append_script({"external_url":
                     "https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"})
-
 # append local css
 for stylesheet in stylesheets_local:
     app.css.append_css({"external_url": "/assets/css/{}".format(stylesheet)})
 
 
-total = html.Div(className="container-fluid h-100", children=[
-    html.Div(className="row d-flex flex-lg-column flex-row",children=[
-        html.Aside(className="col-2 col-lg-12 h-md-100 p-0 bg-dark fixed-top",children=[
-            html.Nav(className="navbar navbar-expand navbar-dark bg-dark py-2 px-0 px-lg-2", children=[
-                html.Div(className="collapse navbar-collapse", id="nav", children=[
-                    html.Ul(className="flex-column flex-lg-row navbar-nav w-100 justify-content-center align-items-center align-items-sm-start text-left text-lg-center", children=[
-                        html.Li(className="nav-item w-100",children=[
-                            dcc.Link(className="nav-link active text-nowrap",
-                                   href="/main",
-                                   children=[
-                                       html.I(className="fa fa-bullseye fa-fw"),
-                                       html.Span("Brand", className="d-none d-sm-inline font-weight-bold")
-                                   ],
-                                   style={"cursor":"pointer"})
+sider_bar = html.Div(className="col-md-3 float-left col-1 pl-0 pr-0 collapse width show", id="sidebar", children=[
+                html.Div(className="list-group border-0 card text-center text-md-left", children=[
+                    html.A(**{"data-toggle": "collapse", "aria-expanded": "false"}, href="#menu1", className="list-group-item d-inline-block collapsed", children=[
+                        html.I(**{"aria-hidden":"true"},className="fa fa-home"),
+                        html.Span("Item 1", className="d-none d-md-inline")
+                    ]),
+                    html.Div(**{"data-parent":"#sidebar"}, className="collapse", id="menu1", children=[
+                        html.A("Subitem 1", **{"data-toggle":"collapse", "aria-expanded":"false"}, href="#menu1sub1", className="list-group-item"),
+                        html.Div(className="collapse", id="menu1sub1", **{"data-parent":"#menu1"}, children=[
+                            html.A("subitem a", **{"data-parent":"#menu1sub1"}, href="#", className="list-group-item"),
+                            html.A("subitem b", **{"data-parent":"#menu1sub1"}, href="#", className="list-group-item"),
+                            html.A("subitem c", **{"data-toggle":"collapse","aria-expanded":"false"}, href="#menu1sub1sub1", className="list-group-item"),
+                            html.Div(className="collapse", id="menu1sub1sub1", children=[
+                                html.A("Subitem c.1", **{"data-parent": '#menu1sub1sub1'}, href="#", className="list-group-item"),
+                                html.A("subitme c.2", **{"data-parent":"#menu1sub1sub1"}, href="#", className="list-group-item")
+                            ])
                         ]),
-
-                        html.Li(className="nav-item w-100",children=[
-                            dcc.Link(className="nav-link active text-nowrap",
-                                   href="/link",
-                                   children=[
-                                       html.I(className="fa fa-heart fa-fw"),
-                                       html.Span("Link", className="d-none d-sm-inline")
-                                   ],
-                                   style={"cursor":"pointer"})
+                        html.A("SubItem 3", href="#", className="list-group-item")
+                    ]),
+                    html.A(href="#", className="list-group-item d-inline-block collapsed", children=[
+                        html.I(className="fa fa-film"),
+                        html.Span("item 2", className="d-none d-md-inline")
+                    ]),
+                    html.A(**{"data-toggle":"collapse","aria-expanded":"false"}, href="#menu3", className="list-group-item d-inline-block collapsed", children=[
+                        html.I(className="fa fa-book"),
+                        html.Span("Item 3", className="d-none d-md-inline")
+                    ]),
+                    html.Div(**{"data-parent":'#sidebar'}, className="collapse", id="menu3", children=[
+                        html.A("3.1", **{"data-parent":'#menu3'}, href="#", className="list-group-item"),
+                        html.A("3.2", **{"data-toggle":"collapse","aria-expanded":"false"}, href="#menu3sub2",className="list-group-item"),
+                        html.Div(className="collapse", id="menu3sub2", children=[
+                        html.A("3.2.a", **{"data-parent":"#menu3sub2"}, href="#", className="list-group-item"),
+                        html.A("3.2.b", **{"data-parent":"#menu3sub2"}, href="#", className="list-group-item"),
+                        html.A("3.2.c", **{"data-parent":"#menu3sub2"}, href="#", className="list-group-item"),
                         ]),
+                        html.A("3.3",**{"data-parent":"#menu3"}, href="#", className="list-group-item")
                     ])
                 ])
-            ])
-        ]),
-        html.Main(className="col offset-2 offset-lg-0 bg-faded py-2",
-                  id="main",
-                  children=[
-                    html.H1("A Bootstrap 4 example")
-                  ])
+
+])
+
+
+main_area = html.Main(className="col-md-9 float-left col px-5 pl-md-2 pt-2 main", children=[
+                html.A(**{"data-target":"#sidebar", "data-toggle":"collapse"}, href="#", children=[
+                    html.I(className="fa fa-navicon fa-2x py-2 p-1")
+                ]),
+                html.Div(className="page-header", children=[
+                    html.H2("Bootstrap 4 Sidebar Menu")
+                ]),
+                html.P("A responsive, multi-level vertical accordion.", className="lead"),
+            #    html.Hr(),
+
+            #    html.Div(className="row", children=[
+            #        html.Div(className="col-lg-6", children=[
+            #            html.Button("horizontal  collapsible", **{"data-toggle":"collapse","data-target":'#demo',"aria-expanded":"true"}, role="button", className="btn btn-danger"),
+            #            html.Div(**{"aria-expanded":"true"}, id="demo", className="width collapse show", children=[
+            #                html.Div(className="list-group", style="width:400px", children=[
+            #                    html.P("Cras justo odio, dapibus ac facilisis in, egestas eget quam. Donec id elit non mi porta gravida at eget metus. Nullam id dolor id nibh ultricies vehicula ut id elit."),
+            #                    html.P("Cras justo odio, dapibus ac facilisis in, egestas eget quam. Donec id elit non mi porta gravida at eget metus. Nullam id dolor id nibh ultricies vehicula ut id elit.")
+            #                ])
+            #            ])
+            #        ]),
+            #        html.Div(className="col-lg-6", children=[
+            #            html.Button("vertical collapsible", **{"data-toggle":"collapse", "data-target":"#demo2", "aria-expanded":"true"}, role="button", className="btn btn-danger"),
+            #            html.Div(**{"aria-expanded":"true"}, id="demo2",className="height collapse show", children=[
+            #                html.Div(children=[
+            #                    html.P("Cras justo odio, dapibus ac facilisis in, egestas eget quam. Donec id elit non mi porta gravida at eget metus. Nullam id dolor id nibh ultricies vehicula ut id elit."),
+            #                    html.P("Cras justo odio, dapibus ac facilisis in, egestas eget quam. Donec id elit non mi porta gravida at eget metus. Nullam id dolor id nibh ultricies vehicula ut id elit.")
+            #                ])
+            #            ])
+            #        ])
+            #    ])
+])
+
+total = html.Div(className="container-fluid", children=[
+    html.Div(className="row d-flex d-md-block flex-nowrap wrapper", children=[
+        sider_bar,
+        main_area
     ])
 ])
 
-major_area = html.Div(**{"data-spy": "scroll",
-                         "data-target: "#nav",
-                         "data-offset":"5"},
-                         className="pt-lg-5 pt-1", children=[total])
-
-
 app.layout = html.Div(children=[
-    major_area,
+    total,
     # This Location component represents the URL bar
     dcc.Location(id='url', refresh=False),
 ])
 
-@app.callback(
-    Output('main', 'children'),
-    [Input('url', 'pathname')])
-def display_page(pathname):
-    return pathname
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Run finishing app')

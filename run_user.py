@@ -25,7 +25,7 @@ coloredlogs.install(level='DEBUG', logger=logger)
 from app import app_controller
 from app.models import init_all
 from navbar import NavBarDropMenu
-from services import *
+#from services import *
 
 nav_bar = NavBarDropMenu("HaoDuoYu")
 nav_bar.add_drop_menu("Home", ["Contact"])

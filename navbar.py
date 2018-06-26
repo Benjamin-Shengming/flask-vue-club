@@ -87,7 +87,7 @@ class NavBarDropMenu(object):
 
     def add_drop_menu(self, menu_name, menu_items):
         menu= html.Div(className="btn-group", children=[
-            html.Button(menu_name, **{"data-toggle":"dropdown","aria-haspopup":"true","aria-expanded":"false"},className="btn btn-primary dropdown-toggle"),
+            html.Button(menu_name, **{"data-toggle":"dropdown","aria-haspopup":"true","aria-expanded":"false"},className="btn btn-dark dropdown-toggle"),
             html.Div(className="dropdown-menu", children=[
                 dcc.Link(item, className="dropdown-item" ,href="/"+menu_name + "/" + item, style={"cursor": "pointer"}) for item in menu_items
             ])
@@ -96,7 +96,7 @@ class NavBarDropMenu(object):
 
     def components_tree(self):
 
-        nav_bar_brand = html.A(self.brand_name, className="navbar-brand")
+        nav_bar_brand = html.A(self.brand_name, className="navbar-brand text-white")
 
         nav_bar_sandwich_btn = html.Button(**{"data-toggle": "collapse",
                                             "data-target": "#"+self.collapse_id,
@@ -116,7 +116,7 @@ class NavBarDropMenu(object):
 
 
 
-        nav_bar = html.Nav(className="navbar navbar-expand-md navbar-dark bg-primary",
+        nav_bar = html.Nav(className="navbar navbar-expand-md navbar-dark bg-dark",
                         children = [nav_bar_brand,
                                     nav_bar_sandwich_btn,
                                     nav_bar_collapse,
