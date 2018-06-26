@@ -4,10 +4,9 @@ from flask import Blueprint, render_template, abort
 from jinja2 import TemplateNotFound
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from random import randint
-from .models import AppModel
+from models import AppModel
 from werkzeug.security import generate_password_hash, check_password_hash
 from itsdangerous import TimestampSigner, Serializer, URLSafeSerializer, URLSafeTimedSerializer
-from .models import AppModel
 from json import loads
 from magic_defines import *
 import coloredlogs, logging

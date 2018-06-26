@@ -1,11 +1,7 @@
 #!/usr/bin/python3
 import sys
 import os
-from random import *
 import flask
-from flask_cors import CORS
-from flask import Flask, render_template, jsonify, abort, make_response
-import requests
 import cherrypy
 import argparse
 import dash
@@ -15,55 +11,18 @@ import dash_core_components as dcc
 import pandas as pd
 # add current folder and lib to syspath
 sys.path.append(os.path.join(os.path.dirname(__file__)))
-sys.path.append(os.path.join(os.path.dirname(__file__), 'backend'))
-sys.path.append(os.path.join(os.path.dirname(__file__), 'backend/libs'))
-sys.path.append(os.path.join(os.path.dirname(__file__), 'backend/app'))
+sys.path.append(os.path.join(os.path.dirname(__file__), 'libs'))
+sys.path.append(os.path.join(os.path.dirname(__file__), 'apps'))
 
 import coloredlogs, logging
 logger = logging.getLogger(__name__)
 coloredlogs.install(level='DEBUG', logger=logger)
 
 from app import app_controller
-from app.models import init_all
-#from navbar import NavBar
-
-
-app = dash.Dash(__name__, static_folder='assets')
-#app.scripts.config.serve_locally=True
-app.config.supress_callback_exceptions = True
-
-# css logical
-css_directory = os.path.dirname(__name__) + "/assets/css/"
-stylesheets_local =  ['sidebar.css']   # local style sheet need to use
-def serve_stylesheet(stylesheet):
-    if stylesheet not in stylesheets_local:
-        raise Exception(
-                    '"{}" is excluded from the allowed static files'.format(
-                        stylesheet
-                    )
-                )
-    return flask.send_from_directory(css_directory, stylesheet)
-
-# append other css
-#app.css.append_css({"external_url": "https://codepen.io/chriddyp/pen/bWLwgP.css"})
-app.css.append_css({"external_url":
-                    "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css"})
-
-app.css.append_css({"external_url":
-                    "https://use.fontawesome.com/releases/v5.1.0/css/all.css"})
-
-app.css.append_css({"external_url":
-                    "https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"})
-app.scripts.append_script({"external_url":
-                    "https://code.jquery.com/jquery-3.2.1.slim.min.js"})
-app.scripts.append_script({"external_url":
-                    "https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"})
-app.scripts.append_script({"external_url":
-                    "https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"})
-# append local css
-for stylesheet in stylesheets_local:
-    app.css.append_css({"external_url": "/assets/css/{}".format(stylesheet)})
-
+from models import init_all
+from app import app
+import service_new
+import service_list
 
 sider_bar = html.Div(className="col-md-3 float-left col-1 pl-0 pr-0 collapse width show", id="sidebar", children=[
                 html.Div(className="list-group border-0 card text-center text-md-left", children=[
@@ -139,7 +98,9 @@ app.layout = html.Div(children=[
     Output('content-container-root', 'children'),
     [Input('url', 'pathname')])
 def display_page(pathname):
-    print(pathname)
+    p = pathname.lower()
+    if p == "/service/new":
+        return service_new.layout
     return pathname
 
 if __name__ == '__main__':
@@ -149,12 +110,13 @@ if __name__ == '__main__':
     if args.init:
         init_all()
         pass
-        '''
-        else:
-            for rule in app.server.url_map.iter_rules():
-                logger.debug(rule)
-            app.run_server(debug=True)
-        '''
+    else:
+        for rule in app.server.url_map.iter_rules():
+            logger.debug(rule)
+        app.run_server(debug=True, host='0.0.0.0', port=8080)
+
+
+    '''
     else:
         for rule in app.server.url_map.iter_rules():
             logger.debug(rule)
@@ -166,6 +128,7 @@ if __name__ == '__main__':
             cherrypy.engine.start()
         except KeyboardInterrupt:
             cherrypy.engine.stop()
+    '''
 
 
 
