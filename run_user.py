@@ -14,16 +14,15 @@ import dash_core_components as dcc
 import pandas as pd
 # add current folder and lib to syspath
 sys.path.append(os.path.join(os.path.dirname(__file__)))
-sys.path.append(os.path.join(os.path.dirname(__file__), 'backend'))
-sys.path.append(os.path.join(os.path.dirname(__file__), 'backend/libs'))
-sys.path.append(os.path.join(os.path.dirname(__file__), 'backend/app'))
+sys.path.append(os.path.join(os.path.dirname(__file__), 'libs'))
+sys.path.append(os.path.join(os.path.dirname(__file__), 'apps'))
 
 import coloredlogs, logging
 logger = logging.getLogger(__name__)
 coloredlogs.install(level='DEBUG', logger=logger)
 
 from app import app_controller
-from app.models import init_all
+from models import init_all
 from navbar import NavBarDropMenu
 #from services import *
 
