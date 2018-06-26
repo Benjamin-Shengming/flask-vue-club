@@ -65,9 +65,13 @@ for stylesheet in stylesheets_local:
 
 sider_bar = html.Div(className="col-md-3 float-left col-1 pl-0 pr-0 collapse width show", id="sidebar", children=[
                 html.Div(className="list-group border-0 card text-center text-md-left", children=[
+                    dcc.Link(href="/home", className="list-group-item d-inline-block collapsed", style={"cursor":"pointer"}, children=[
+                        html.I(**{"aria-hidden":"true"},className="fa fa-home"),
+                        html.Span("Home", className="d-none d-md-inline")
+                    ]),
                     html.A(**{"data-toggle": "collapse", "aria-expanded": "false"}, href="#menu1", className="list-group-item d-inline-block collapsed", children=[
                         html.I(**{"aria-hidden":"true"},className="fa fa-home"),
-                        html.Span("Item 1", className="d-none d-md-inline")
+                        html.Span("Home", className="d-none d-md-inline")
                     ]),
                     html.Div(**{"data-parent":"#sidebar"}, className="collapse", id="menu1", children=[
                         html.A("Subitem 1", **{"data-toggle":"collapse", "aria-expanded":"false"}, href="#menu1sub1", className="list-group-item"),
@@ -109,32 +113,9 @@ main_area = html.Main(className="col-md-9 float-left col px-5 pl-md-2 pt-2 main"
                 html.A(**{"data-target":"#sidebar", "data-toggle":"collapse"}, href="#", children=[
                     html.I(className="fa fa-navicon fa-2x py-2 p-1")
                 ]),
-                html.Div(className="page-header", children=[
+                html.Div(id="content-container-root", className="page-header", children=[
                     html.H2("Bootstrap 4 Sidebar Menu")
                 ]),
-                html.P("A responsive, multi-level vertical accordion.", className="lead"),
-            #    html.Hr(),
-
-            #    html.Div(className="row", children=[
-            #        html.Div(className="col-lg-6", children=[
-            #            html.Button("horizontal  collapsible", **{"data-toggle":"collapse","data-target":'#demo',"aria-expanded":"true"}, role="button", className="btn btn-danger"),
-            #            html.Div(**{"aria-expanded":"true"}, id="demo", className="width collapse show", children=[
-            #                html.Div(className="list-group", style="width:400px", children=[
-            #                    html.P("Cras justo odio, dapibus ac facilisis in, egestas eget quam. Donec id elit non mi porta gravida at eget metus. Nullam id dolor id nibh ultricies vehicula ut id elit."),
-            #                    html.P("Cras justo odio, dapibus ac facilisis in, egestas eget quam. Donec id elit non mi porta gravida at eget metus. Nullam id dolor id nibh ultricies vehicula ut id elit.")
-            #                ])
-            #            ])
-            #        ]),
-            #        html.Div(className="col-lg-6", children=[
-            #            html.Button("vertical collapsible", **{"data-toggle":"collapse", "data-target":"#demo2", "aria-expanded":"true"}, role="button", className="btn btn-danger"),
-            #            html.Div(**{"aria-expanded":"true"}, id="demo2",className="height collapse show", children=[
-            #                html.Div(children=[
-            #                    html.P("Cras justo odio, dapibus ac facilisis in, egestas eget quam. Donec id elit non mi porta gravida at eget metus. Nullam id dolor id nibh ultricies vehicula ut id elit."),
-            #                    html.P("Cras justo odio, dapibus ac facilisis in, egestas eget quam. Donec id elit non mi porta gravida at eget metus. Nullam id dolor id nibh ultricies vehicula ut id elit.")
-            #                ])
-            #            ])
-            #        ])
-            #    ])
 ])
 
 total = html.Div(className="container-fluid", children=[
@@ -150,6 +131,12 @@ app.layout = html.Div(children=[
     dcc.Location(id='url', refresh=False),
 ])
 
+@app.callback(
+    Output('content-container-root', 'children'),
+    [Input('url', 'pathname')])
+def display_page(pathname):
+    print(pathname)
+    return pathname
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Run finishing app')
