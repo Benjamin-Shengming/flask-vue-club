@@ -127,3 +127,12 @@
   -webkit-transition-timing-function: ease-out;
   transition-timing-function: ease-out;
 }
+
+.float{
+	position:fixed;
+	bottom:10px;
+	right:10px;
+	text-align:center;
+	box-shadow: 2px 2px 3px #999;
+}
+
