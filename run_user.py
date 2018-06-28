@@ -12,6 +12,7 @@ from dash.dependencies import Input, State, Output
 import dash_html_components as html
 import dash_core_components as dcc
 import pandas as pd
+
 # add current folder and lib to syspath
 sys.path.append(os.path.join(os.path.dirname(__file__)))
 sys.path.append(os.path.join(os.path.dirname(__file__), 'libs'))
@@ -21,10 +22,11 @@ import coloredlogs, logging
 logger = logging.getLogger(__name__)
 coloredlogs.install(level='DEBUG', logger=logger)
 
+import user_service_list
+from app import app
 from app import app_controller
 from models import init_all
 from navbar import NavBarDropMenu
-#from services import *
 
 nav_bar = NavBarDropMenu("HaoDuoYu")
 nav_bar.add_drop_menu("Home", ["Contact"])
@@ -32,22 +34,6 @@ nav_bar.add_drop_menu("Service", ["List", "New"])
 nav_bar.add_drop_menu("Users", ["List"])
 
 
-app = dash.Dash()
-#app.scripts.config.serve_locally=True
-
-app.config.supress_callback_exceptions = True
-
-# append css
-#app.css.append_css({"external_url": "https://codepen.io/chriddyp/pen/bWLwgP.css"})
-
-app.css.append_css({"external_url":
-                    "https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"})
-app.scripts.append_script({"external_url":
-                    "https://code.jquery.com/jquery-3.2.1.slim.min.js"})
-app.scripts.append_script({"external_url":
-                    "https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"})
-app.scripts.append_script({"external_url":
-                    "https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"})
 
 app.layout = html.Div([
     # This "header" will persist across pages
@@ -71,7 +57,7 @@ app.layout = html.Div([
 def display_page(pathname):
     if pathname.lower() == "/service/new":
         return generate_label_with_input("service Title")
-    return pathname
+    return user_service_list.layout
 
 
 
@@ -85,6 +71,8 @@ if __name__ == '__main__':
     else:
         for rule in app.server.url_map.iter_rules():
             logger.debug(rule)
+        app.run_server(debug=True, host='0.0.0.0', port=80)
+        '''
         cherrypy.tree.graft(app.server.wsgi_app, '/')
         cherrypy.config.update({'server.socket_host': '0.0.0.0',
                                 'server.socket_port':80,
@@ -93,6 +81,7 @@ if __name__ == '__main__':
             cherrypy.engine.start()
         except KeyboardInterrupt:
             cherrypy.engine.stop()
+        '''
 
 
 

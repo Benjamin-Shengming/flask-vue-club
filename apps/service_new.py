@@ -8,6 +8,7 @@ import dash_html_components as html
 from dash.dependencies import Event, State, Input, Output
 from pprint import pprint
 from app import app
+from app import app_controller
 
 MAX_IMG_TXT = 10
 
