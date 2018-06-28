@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 from collections import OrderedDict
 from uuid import uuid1
+import base64
 import dash
 import json
 import dash_core_components as dcc
@@ -8,7 +9,7 @@ import dash_html_components as html
 from dash.dependencies import Event, State, Input, Output
 from pprint import pprint
 from app import app
-import base64
+from app import app_controller
 
 MAX_IMG_TXT = 10
 
