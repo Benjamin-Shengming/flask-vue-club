@@ -8,6 +8,7 @@ import dash_html_components as html
 from dash.dependencies import Event, State, Input, Output
 from pprint import pprint
 from app import app
+import base64
 
 MAX_IMG_TXT = 10
 
@@ -19,9 +20,20 @@ def generate_id(index):
     txt_id = "service_new_txt_{}".format(index)
     return section_id, upload_id, img_id, txt_id
 
-def generate_new_img(index):
+
+def generate_img_id(index):
+    _, _, img_id, _ = generate_id(index)
+    return img_id
+
+
+def generate_txt_id(index):
+    _, _, _, txt_id = generate_id(index)
+    return txt_id
+
+
+def generate_new_img_txt(index):
     section_id, upload_id, img_id, txt_id = generate_id(index)
-    img_section = html.Div(id = section_id, children=[
+    img_txt_section = html.Div(id = section_id, children=[
         html.Div(className="row align-items-center", children=[
             html.Div(className="col-sm-12", children=[
                 dcc.Upload(
@@ -58,13 +70,15 @@ def generate_new_img(index):
         ]),
         html.Hr()
     ])
-    return img_section
-
-def generate_new_txt(index):
-    pass
+    return img_txt_section
 
 
 layout = html.Div(children=[
+    html.Label( # service uuid
+        title=str(uuid1()),
+        id="service_new_uuid",
+        style={"display": 'none'}
+    ),
     html.Div(className="row", children=[
             html.Div(className="col-sm-12", children=[
                 html.Label("Title:")
@@ -132,7 +146,7 @@ layout = html.Div(children=[
     html.Div(className="row", children=[
             html.Div(className="col-sm-12", children=[
                 dcc.Upload(
-                    id='upload',
+                    id='service_new_upload_major',
                     children=html.Div([
                         'Drag and Drop or ',
                         html.A('Select a File'),
@@ -152,12 +166,13 @@ layout = html.Div(children=[
     ]),
     html.Div(className="row", children=[
             html.Div(className="col-sm-12", children=[
-                html.Img(id="major-img",src="", className="img-fluid"),
+                html.Img(id="service_new_img_major",src="", className="img-fluid"),
             ]),
     ]),
     html.Div(className="row", children=[
             html.Div(className="col-sm-6", children=[
                 dcc.Checklist(
+                    id="service_new_checklist_online",
                     options=[
                         {'label': 'online', 'value': 'online'},
                     ],
@@ -166,6 +181,7 @@ layout = html.Div(children=[
             ]),
             html.Div(className="col-sm-6", children=[
                 dcc.Checklist(
+                    id="service_new_checklist_headline",
                     options=[
                         {'label': 'headline', 'value': 'headline'},
                     ],
@@ -174,7 +190,7 @@ layout = html.Div(children=[
             ]),
     ]),
     html.Div(id="service_new_imgs_and_texts", children=[
-        generate_new_img(i) for i in range(MAX_IMG_TXT)
+        generate_new_img_txt(i) for i in range(MAX_IMG_TXT)
     ]),
     html.Div(className="row", children=[
         html.Div(className="col-sm-12", children=[
@@ -200,16 +216,44 @@ def preview_img(contents):
         else:
             return ""
 
+state_list = [
+               State('service_new_uuid', 'title'),
+               State('service_new_title', 'value'),
+               State('service_new_description', 'value'),
+               State('service_new_price', 'value'),
+               State('service_new_discount', 'value'),
+               State('service_new_img_major', 'src'),
+               State('service_new_checklist_online', 'values'),
+               State('service_new_checklist_headline', 'values'),
+               ]
+state_list.extend([State(generate_img_id(i), 'src') for i in range(MAX_IMG_TXT)])
+state_list.extend([State(generate_txt_id(i), 'value') for i in range(MAX_IMG_TXT)])
+
 @app.callback(Output('service_new_label_message', 'children'),
               [Input('service_new_button_submit', 'n_clicks')],
-              [State('service_new_imgs_and_texts', 'children')])
-def create_new_service(n_clicks, imgs_texts_children):
+              state_list
+              )
+def create_new_service(n_clicks, uuid, title, description, price, discount, img_major_src, online, headline, *img_txt):
     if n_clicks <= 0:
         return ""
+    print(uuid)
+    print(title);
+    print(description)
+    print(price)
+    print(discount)
+    #print(img_major_src)
+    print(online)
+    print(headline)
+    img_list = img_txt[:10]
+    txt_list = img_txt[10:]
+    for txt in txt_list:
+        print(txt)
+    # save img to file
+    # save major img
 
-    for item in imgs_texts_children:
-        print(json.dumps(item, indent=2))
-    return len(imgs_texts_children)
+    # save txt to file
+    #
+    return title
 
 
 for i in range(MAX_IMG_TXT):
@@ -217,7 +261,7 @@ for i in range(MAX_IMG_TXT):
     app.callback(Output(img_id, 'src'),
                 [Input(upload_id, 'contents')])(preview_img)
 
-app.callback(Output('major-img', 'src'),
-             [Input('upload', 'contents')])(preview_img)
+app.callback(Output('service_new_img_major', 'src'),
+             [Input('service_new_upload_major', 'contents')])(preview_img)
 
 
