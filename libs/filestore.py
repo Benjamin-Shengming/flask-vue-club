@@ -55,6 +55,8 @@ def save_service_img(service_id, img_index, base64_content):
     with open(p, 'wb') as f:
         f.write(base64.b64decode(content_string))
 
+    # adjust size
+
 def save_service_txt(service_id, txt_index, txt_content):
     if not txt_content:
         return
