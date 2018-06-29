@@ -16,13 +16,13 @@ def service_dir(service_id):
 
 def make_service_txt_path(service_id, txt_index):
     p = os.path.join(service_dir(service_id), "{}.txt".format(txt_index))
-    if not os.path.exists(p):
+    if not os.path.exists(os.path.dirname(p)):
         os.makedirs(os.path.dirname(p))
     return p
 
-def make_service_img_path(service_id, img_index, ext):
-    p = os.path.join(service_dir(service_id), "{}.{}".format(img_index, ext))
-    if not os.path.exists(p):
+def make_service_img_path(service_id, img_index):
+    p = os.path.join(service_dir(service_id), img_index)
+    if not os.path.exists(os.path.dirname(p)):
         os.makedirs(os.path.dirname(p))
     return p
 
@@ -33,10 +33,9 @@ def get_service_txt_path(service_id, txt_index):
     return None
 
 def get_service_img_path(service_id, img_index):
-    folder = service_dir(service_id)
-    for filename in os.listdir(folder):
-        if str(img_index) in filename and 'txt' not in filename:
-            return os.path.join(folder, filename)
+    p = os.path.join(service_dir(service_id), img_index)
+    if os.path.isfile(p):
+        return p
     return None
 
 
@@ -50,8 +49,7 @@ def save_service_img(service_id, img_index, base64_content):
     data_tag, base64_tag = content_type.split(";")
     if "base64" not in base64_tag:
         return
-    _, ext = data_tag.split("/")
-    p = make_service_img_path(service_id, img_index, ext)
+    p = make_service_img_path(service_id, img_index)
     with open(p, 'wb') as f:
         f.write(base64.b64decode(content_string))
 

@@ -6,6 +6,7 @@ import dash
 import json
 import dash_core_components as dcc
 import dash_html_components as html
+import sd_material_ui
 from dash.dependencies import Event, State, Input, Output
 from pprint import pprint
 from app import app
@@ -193,18 +194,16 @@ layout = html.Div(children=[
     html.Div(id="service_new_imgs_and_texts", children=[
         generate_new_img_txt(i) for i in range(MAX_IMG_TXT)
     ]),
-    html.Div(className="row", children=[
-        html.Div(className="col-sm-12", children=[
-            html.Label(id="service_new_label_message", children=[""])
-        ])
-    ]),
     html.Hr(),
     html.A(className="float", children=[
         html.Button("Submit",
                     id="service_new_button_submit",
                     n_clicks=0,
                     className="btn btn-outline-primary")
-    ])
+    ]),
+    html.Div(
+        id="service_new_msg"
+    ),
 ])
 
 
@@ -230,25 +229,35 @@ state_list = [
 state_list.extend([State(generate_img_id(i), 'src') for i in range(MAX_IMG_TXT)])
 state_list.extend([State(generate_txt_id(i), 'value') for i in range(MAX_IMG_TXT)])
 
-@app.callback(Output('service_new_label_message', 'children'),
+
+@app.callback(Output('service_new_msg', 'children'),
               [Input('service_new_button_submit', 'n_clicks')],
               state_list
               )
-def create_new_service(n_clicks, service_id, title, description, price, discount, img_major_src, online, headline, *img_txt):
+def create_new_service(n_clicks,
+                       service_id,
+                       title,
+                       description,
+                       price,
+                       discount,
+                       img_major_src,
+                       online,
+                       headline,
+                       *img_txt):
     if n_clicks <= 0:
         return ""
-    print(service_id)
+    assert(service_id)
+    if not title:
+        return ""
     print(title);
     print(description)
     print(price)
     print(discount)
-    #print(img_major_src)
     print(online)
     print(headline)
+    #save image and txt to files
     img_list = img_txt[:10]
     txt_list = img_txt[10:]
-    for txt in txt_list:
-        print(txt)
     # save img to file
     # save major img
     filestore.save_service_img(service_id, "major", img_major_src)

@@ -12,6 +12,8 @@ app = dash.Dash(__name__, static_folder='assets')
 server = app.server
 app.config.supress_callback_exceptions = True
 
+app.scripts.config.serve_locally = False
+
 # css logical
 css_directory = os.path.dirname(__name__) + "/assets/css/"
 stylesheets_local =  ['sidebar.css']   # local style sheet need to use

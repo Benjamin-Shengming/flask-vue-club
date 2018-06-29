@@ -7,6 +7,7 @@ import argparse
 import dash
 from dash.dependencies import Input, State, Output
 import dash_html_components as html
+import sd_material_ui
 import dash_core_components as dcc
 import pandas as pd
 # add current folder and lib to syspath
@@ -77,7 +78,7 @@ main_area = html.Main(className="col-md-9 float-left col px-5 pl-md-2 pt-2 main"
                     html.I(className="fa fa-navicon fa-2x py-2 p-1")
                 ]),
                 html.Div(id="content-container-root", className="page-header", children=[
-                    html.H2("Bootstrap 4 Sidebar Menu")
+                    html.H2("content-container-root");
                 ]),
 ])
 
@@ -101,6 +102,8 @@ def display_page(pathname):
     p = pathname.lower()
     if p == "/service/new":
         return service_new.layout
+
+    print("other layout!")
     return pathname
 
 if __name__ == '__main__':

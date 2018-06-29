@@ -24,10 +24,10 @@ carousel = html.Div(**{"data-ride":"carousel"}, id="carouselExampleIndicators", 
     ]),
     html.Div(className="carousel-inner", children=[
         html.Div(className="carousel-item active", children=[
-            html.Img(className="d-block w-100", src="/assets/img/fall-autumn-red-season.jpg?auto=yes&bg=666&fg=444&text=First slide", alt="First slide")
+            html.Img(className="d-block w-100", src="/assets/img/fall-autumn-red-season?auto=yes&bg=666&fg=444&text=First slide", alt="First slide")
         ]),
         html.Div(className="carousel-item", children=[
-            html.Img(className="d-block w-100", src="/assets/img/pexels-photo-248797.jpeg?auto=yes&bg=666&fg=444&text=Second slide", alt="Second slide")
+            html.Img(className="d-block w-100", src="/assets/img/pexels-photo-248797?auto=yes&bg=666&fg=444&text=Second slide", alt="Second slide")
         ]),
         html.Div(className="carousel-item", children=[
             html.Img(className="d-block w-100", src="/assets/img/pexels-photo-257360.jpeg?auto=yes&bg=555&fg=333&text=Third slide", alt="Third slide")
