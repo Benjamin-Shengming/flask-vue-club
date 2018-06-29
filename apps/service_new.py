@@ -10,8 +10,8 @@ from dash.dependencies import Event, State, Input, Output
 from pprint import pprint
 from app import app
 from app import app_controller
-
-MAX_IMG_TXT = 10
+import filestore
+from magic_defines import *
 
 
 def generate_id(index):
@@ -234,10 +234,10 @@ state_list.extend([State(generate_txt_id(i), 'value') for i in range(MAX_IMG_TXT
               [Input('service_new_button_submit', 'n_clicks')],
               state_list
               )
-def create_new_service(n_clicks, uuid, title, description, price, discount, img_major_src, online, headline, *img_txt):
+def create_new_service(n_clicks, service_id, title, description, price, discount, img_major_src, online, headline, *img_txt):
     if n_clicks <= 0:
         return ""
-    print(uuid)
+    print(service_id)
     print(title);
     print(description)
     print(price)
@@ -251,9 +251,14 @@ def create_new_service(n_clicks, uuid, title, description, price, discount, img_
         print(txt)
     # save img to file
     # save major img
+    filestore.save_service_img(service_id, "major", img_major_src)
+    # save all other imgs
+    for i, img_content in enumerate(img_list):
+        filestore.save_service_img(service_id, i, img_content)
 
     # save txt to file
-    #
+    for i, txt_content in enumerate(txt_list):
+        filestore.save_service_txt(service_id, i, txt_content)
     return title
 
 
