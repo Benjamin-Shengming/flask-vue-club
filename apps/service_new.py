@@ -195,15 +195,15 @@ layout = html.Div(children=[
         generate_new_img_txt(i) for i in range(MAX_IMG_TXT)
     ]),
     html.Hr(),
+    html.A(className="topfloat", children=[
+        html.Label(id="service_new_msg", children=["mesage show here"])
+    ]),
     html.A(className="float", children=[
         html.Button("Submit",
                     id="service_new_button_submit",
                     n_clicks=0,
                     className="btn btn-outline-primary")
     ]),
-    html.Div(
-        id="service_new_msg"
-    ),
 ])
 
 
@@ -248,9 +248,10 @@ def create_new_service(n_clicks,
         return ""
     assert(service_id)
     if not title:
-        return ""
-    print(title);
-    print(description)
+        return "Please input title"
+    if not description:
+        return "Please input description"
+
     print(price)
     print(discount)
     print(online)

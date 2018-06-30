@@ -73,12 +73,12 @@ sider_bar = html.Div(className="col-md-3 float-left col-1 pl-0 pr-0 collapse wid
 ])
 
 
-main_area = html.Main(className="col-md-9 float-left col px-5 pl-md-2 pt-2 main", children=[
-                html.A(**{"data-target":"#sidebar", "data-toggle":"collapse"}, href="#", children=[
+main_area = html.Main(id="main-area", className="col-md-9 float-left col px-5 pl-md-2 pt-2 main", children=[
+                html.A(**{"data-target":"#sidebar", "data-toggle":"collapse"}, href="#",  children=[
                     html.I(className="fa fa-navicon fa-2x py-2 p-1")
                 ]),
                 html.Div(id="content-container-root", className="page-header", children=[
-                    html.H2("content-container-root");
+                    html.H2("content-container-root")
                 ]),
 ])
 

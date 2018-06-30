@@ -135,6 +135,14 @@
 	text-align:center;
 	box-shadow: 2px 2px 3px #999;
 }
+
+.topfloat{
+	position:fixed;
+	top:15px;
+	right:10px;
+	text-align:center;
+	box-shadow: 2px 2px 3px #999;
+}
 /*
 .carousel-inner > .carousel-item > img {
   width:640px;
