@@ -10,94 +10,63 @@ from pprint import pprint
 from magic_defines import *
 from app import app
 from app import app_controller
+import filestore
 
 
-headline_services = app_controller.get_club_headline_service(CLUB_NAME)
-
-club_services = app_controller.get_club_service_list(CLUB_NAME)
-
-carousel = html.Div(**{"data-ride":"carousel"}, id="carouselExampleIndicators", className="carousel slide", children=[
-    html.Ol(className="carousel-indicators", children=[
-        html.Li(**{"data-target":"#carouselExampleIndicators", "data-slide-to":"0"}, className="active"),
-        html.Li(**{"data-target":"#carouselExampleIndicators", "data-slide-to":"1"}),
-        html.Li(**{"data-target":"#carouselExampleIndicators", "data-slide-to":"2"}),
-    ]),
-    html.Div(className="carousel-inner", children=[
-        html.Div(className="carousel-item active", children=[
-            html.Img(className="d-block w-100", src="/assets/img/fall-autumn-red-season?auto=yes&bg=666&fg=444&text=First slide", alt="First slide")
+def generate_carousel():
+    print("carousel")
+    headline_services = app_controller.get_club_headline_service(CLUB_NAME)
+    if not headline_services:
+        print("no headline")
+        return html.Div()
+    service_count = len(headline_services)
+    carousel = html.Div(**{"data-ride":"carousel"}, id="carouselExampleIndicators", className="carousel slide", children=[
+        html.Ol(className="carousel-indicators", children=[
+            html.Li(**{"data-target":"#carouselExampleIndicators", "data-slide-to":str(i)}, className="active" if i ==0 else "") for i in range(service_count)
         ]),
-        html.Div(className="carousel-item", children=[
-            html.Img(className="d-block w-100", src="/assets/img/pexels-photo-248797?auto=yes&bg=666&fg=444&text=Second slide", alt="Second slide")
+        html.Div(className="carousel-inner", children=[
+            html.Div(className="carousel-item active" if i ==0 else "carousel-item", children=[
+                html.Img(className="d-block w-100",
+                         src=filestore.get_service_img_link(service.id, MAJOR_IMG),
+                         alt="Second slide")
+            ]) for i, service in enumerate(headline_services)
         ]),
-        html.Div(className="carousel-item", children=[
-            html.Img(className="d-block w-100", src="/assets/img/pexels-photo-257360.jpeg?auto=yes&bg=555&fg=333&text=Third slide", alt="Third slide")
+        html.A(**{"data-slide":"prev"}, className="carousel-control-prev", href="#carouselExampleIndicators", role="button", children=[
+            html.Span(**{"aria-hidden":"true"}, className="carousel-control-prev-icon"),
+            html.Span("Previous", className="sr-only")
         ]),
-    ]),
-    html.A(**{"data-slide":"prev"}, className="carousel-control-prev", href="#carouselExampleIndicators", role="button", children=[
-        html.Span(**{"aria-hidden":"true"}, className="carousel-control-prev-icon"),
-        html.Span("Previous", className="sr-only")
-    ]),
-    html.A(**{"data-slide":"next"}, className="carousel-control-next", href="#carouselExampleIndicators", role="button", children=[
-        html.Span(**{"aria-hidden":"true"}, className="carousel-control-next-icon"),
-        html.Span("Next", className="sr-only")
-    ]),
-])
-cards = html.Div(className="card-deck", children=[
-  html.Div(className="card", children=[
-    html.Img(className="card-img-top", src="/assets/img/pexels-photo-302804.jpeg",alt="Card image cap"),
-    html.Div(className="card-body", children=[
-      html.H5("Card title", className="card-title"),
-      html.P("This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.", className="card-text")
-    ]),
-    html.Div(className="card-footer", children=[
-      html.Small("Last updated 3 mins ago", className="text-muted")
+        html.A(**{"data-slide":"next"}, className="carousel-control-next", href="#carouselExampleIndicators", role="button", children=[
+            html.Span(**{"aria-hidden":"true"}, className="carousel-control-next-icon"),
+            html.Span("Next", className="sr-only")
+        ]),
     ])
-  ]),
-  html.Div(className="card", children=[
-    html.Img(className="card-img-top", src="/assets/img/pexels-photo-459225.jpeg",alt="Card image cap"),
-    html.Div(className="card-body", children=[
-      html.H5("Card title", className="card-title"),
-      html.P("This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.",className="card-text")
-    ]),
-    html.Div(className="card-footer", children=[
-      html.Small("Last updated 3 mins ago", className="text-muted")
-    ])
-  ]),
-  html.Div(className="card", children=[
-    html.Img(className="card-img-top", src="/assets/img/pexels-photo-459225.jpeg",alt="Card image cap"),
-    html.Div(className="card-body", children=[
-      html.H5("Card title", className="card-title"),
-      html.P("This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.",className="card-text")
-    ]),
-    html.Div(className="card-footer", children=[
-      html.Small("Last updated 3 mins ago", className="text-muted")
-    ])
-  ]),
-  html.Div(className="card", children=[
-    html.Img(className="card-img-top", src="/assets/img/pexels-photo-459225.jpeg",alt="Card image cap"),
-    html.Div(className="card-body", children=[
-      html.H5("Card title", className="card-title"),
-      html.P("This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.",className="card-text")
-    ]),
-    html.Div(className="card-footer", children=[
-      html.Small("Last updated 3 mins ago", className="text-muted")
-    ])
-  ]),
-  html.Div(className="card", children=[
-    html.Img(className="card-img-top", src="/assets/img/pexels-photo-459225.jpeg",alt="Card image cap"),
-    html.Div(className="card-body", children=[
-      html.H5("Card title", className="card-title"),
-      html.P("This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.",className="card-text")
-    ]),
-    html.Div(className="card-footer", children=[
-      html.Small("Last updated 3 mins ago", className="text-muted")
-    ])
-  ])
-])
+    return carousel
 
-layout = html.Div(children=[
-    html.Hr(),
-    carousel,
-    cards
-])
+def generate_cards():
+    print("cards")
+    club_services = app_controller.get_club_service_list(CLUB_NAME)
+    if not club_services:
+        return html.Div()
+    cards = html.Div(className="card-deck", children=[
+        html.Div(className="card", children=[
+            html.Img(className="card-img-top",
+                     src=filestore.get_service_img_link(service.id, MAJOR_IMG),
+                     alt=service.name),
+            html.Div(className="card-body", children=[
+                html.H5(service.name, className="card-title"),
+                html.P(service.description, className="card-text")
+            ]),
+            html.Div(className="card-footer", children=[
+                html.Small(service.last_update_time, className="text-muted")
+            ])
+        ]) for service in club_services
+    ])
+    return cards
 
+
+def layout():
+    return  html.Div(children=[
+        html.Hr(),
+        generate_carousel(),
+        generate_cards()
+    ])

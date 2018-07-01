@@ -55,9 +55,7 @@ app.layout = html.Div([
     Output('content-container-root', 'children'),
     [Input('url', 'pathname')])
 def display_page(pathname):
-    if pathname.lower() == "/service/new":
-        return generate_label_with_input("service Title")
-    return user_service_list.layout
+    return user_service_list.layout()
 
 
 
