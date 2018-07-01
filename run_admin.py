@@ -10,6 +10,15 @@ import dash_html_components as html
 import sd_material_ui
 import dash_core_components as dcc
 import pandas as pd
+import dash_table_experiments as dt
+import sd_material_ui
+from dash.dependencies import Event, State, Input, Output
+from pprint import pprint
+from magic_defines import *
+import json
+import pandas as pd
+import numpy as np
+import plotly
 # add current folder and lib to syspath
 sys.path.append(os.path.join(os.path.dirname(__file__)))
 sys.path.append(os.path.join(os.path.dirname(__file__), 'libs'))
@@ -19,11 +28,14 @@ import coloredlogs, logging
 logger = logging.getLogger(__name__)
 coloredlogs.install(level='DEBUG', logger=logger)
 
+from app import app
 from app import app_controller
 from models import init_all
-from app import app
 import service_new
 import service_list
+import service_detail
+import filestore
+
 
 sider_bar = html.Div(className="col-md-3 float-left col-1 pl-0 pr-0 collapse width show", id="sidebar", children=[
                 html.Div(className="list-group border-0 card text-center text-md-left", children=[
@@ -78,8 +90,9 @@ main_area = html.Main(id="main-area", className="col-md-9 float-left col px-5 pl
                     html.I(className="fa fa-navicon fa-2x py-2 p-1")
                 ]),
                 html.Div(id="content-container-root", className="page-header", children=[
-                    html.H2("content-container-root")
+                    #service_list.layout,
                 ]),
+                html.Div(id="walk-around", style={"display": "none"}, children=[service_list.layout()])
 ])
 
 total = html.Div(className="container-fluid", children=[
@@ -99,11 +112,20 @@ app.layout = html.Div(children=[
     Output('content-container-root', 'children'),
     [Input('url', 'pathname')])
 def display_page(pathname):
+    if not pathname:
+        p = "/"
+
     p = pathname.lower()
     if p == "/service/new":
         return service_new.layout
+    elif p == "/service/list":
+        return service_list.layout()
+    elif "/service/edit" in p:
+        service_id = p.split("/")[-1]
+        layout = service_detail.layout(service_id)
+        return layout
 
-    print("other layout!")
+    print("other layout! {}".format(pathname))
     return pathname
 
 if __name__ == '__main__':

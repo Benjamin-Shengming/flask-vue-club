@@ -11,12 +11,12 @@ from dash.dependencies import Event, State, Input, Output
 from pprint import pprint
 from app import app
 from app import app_controller
-import filestore
+from libs import filestore
 from magic_defines import *
 
 
 def generate_id(index):
-    section_id = "img_section_{}".format(index)
+    section_id = "service_new_img_section_{}".format(index)
     upload_id ='service_new_upload_{}'.format(index)
     img_id ="service_new_img_{}".format(index)
     txt_id = "service_new_txt_{}".format(index)
@@ -247,21 +247,20 @@ def create_new_service(n_clicks,
     if n_clicks <= 0:
         return ""
     assert(service_id)
+    print(title)
     if not title:
-        return "Please input title"
+        return html.Label("please input title")
+    print(description)
     if not description:
-        return "Please input description"
-
-    print(price)
-    print(discount)
-    print(online)
-    print(headline)
+        return html.Label("please input description")
+    if not img_major_src:
+        return html.Label("please choose major image")
     #save image and txt to files
     img_list = img_txt[:10]
     txt_list = img_txt[10:]
     # save img to file
     # save major img
-    filestore.save_service_img(service_id, "major", img_major_src)
+    filestore.save_service_img(service_id, MAJOR_IMG, img_major_src)
     # save all other imgs
     for i, img_content in enumerate(img_list):
         filestore.save_service_img(service_id, i, img_content)
@@ -269,7 +268,19 @@ def create_new_service(n_clicks,
     # save txt to file
     for i, txt_content in enumerate(txt_list):
         filestore.save_service_txt(service_id, i, txt_content)
-    return title
+
+    service_dict = {
+        "id": service_id,
+        "name": title,
+        "description": description,
+        "price":price,
+        "discount": discount,
+        "sub_services": "",
+        "active": bool(online),
+        "slide": bool(headline)
+    }
+    app_controller.create_club_service(CLUB_NAME, service_dict)
+    return html.Label("service created successfully")
 
 
 for i in range(MAX_IMG_TXT):

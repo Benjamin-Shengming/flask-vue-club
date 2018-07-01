@@ -14,9 +14,21 @@ from datetime import datetime, timedelta
 import jwt
 from utils import caller_info, RespExcept
 from email_smtp import EmailClientSMTP
-
+from flask_apispec import ResourceMeta, Ref, doc, marshal_with, use_kwargs
 logger = logging.getLogger(__name__)
 coloredlogs.install(level='DEBUG', logger=logger)
+from marshmallow import fields, Schema
+class ServiceSchema(Schema):
+    class Meta:
+        fields = ['id',
+                  'name',
+                  'description',
+                  'price',
+                  'discount',
+                  'major_pic',
+                  'pic_and_text',
+                  'active',
+                  'slide']
 
 class AppController(object):
     def __init__(self):
@@ -165,6 +177,9 @@ class AppController(object):
     def get_club_service_list(self, club_name):
         logger.debug(club_name)
         return self.db_model.get_club_service_list(club_name)
+
+    def get_club_service(self, club_name, service_id):
+        return self.db_model.get_club_service(club_name, service_id)
 
     def get_club_headline_service(self, club_name):
         return self.db_model.get_club_headline_service(club_name)

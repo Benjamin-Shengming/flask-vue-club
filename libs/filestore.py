@@ -14,6 +14,11 @@ def service_dir_root():
 def service_dir(service_id):
     return os.path.join(service_dir_root(), service_id)
 
+def get_service_img_link(service_id, img_id):
+    if not get_service_img_path(service_id, img_id):
+        return ""
+    return "/assets/filestore/services/" + service_id + "/" + str(img_id)
+
 def make_service_txt_path(service_id, txt_index):
     p = os.path.join(service_dir(service_id), "{}.txt".format(txt_index))
     if not os.path.exists(os.path.dirname(p)):
@@ -21,7 +26,7 @@ def make_service_txt_path(service_id, txt_index):
     return p
 
 def make_service_img_path(service_id, img_index):
-    p = os.path.join(service_dir(service_id), img_index)
+    p = os.path.join(service_dir(service_id), str(img_index))
     if not os.path.exists(os.path.dirname(p)):
         os.makedirs(os.path.dirname(p))
     return p
@@ -33,7 +38,7 @@ def get_service_txt_path(service_id, txt_index):
     return None
 
 def get_service_img_path(service_id, img_index):
-    p = os.path.join(service_dir(service_id), img_index)
+    p = os.path.join(service_dir(service_id), str(img_index))
     if os.path.isfile(p):
         return p
     return None
@@ -42,7 +47,10 @@ def get_service_img_path(service_id, img_index):
 def save_service_img(service_id, img_index, base64_content):
     if not base64_content:
         return
-    content_type, content_string = base64_content.split(',')
+    try:
+        content_type, content_string = base64_content.split(',')
+    except Exception as e:
+        return
     if "image" not in  content_type:
         return
 
@@ -73,8 +81,8 @@ def get_service_img_content(service_id, img_index):
     _, ext = os.path.splitext(p)
     content_string = None
     with open(p, 'rb') as f:
-        content_string = base64.b64decod(f.read())
-    return "data:img/{};base64,".format(ext) + content_string
+        content_string = base64.b64decode(f.read())
+    return "data:img/{};base64,{}".format(ext) + str(content_string)
 
 def get_service_txt_content(service_id, txt_index):
     '''

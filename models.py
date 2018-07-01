@@ -49,6 +49,9 @@ class BaseMixin(object):
             dict_value[key] = getattr(self, col_name)
         return dict_value
 
+    def columns(self):
+        return self.__table__.columns
+
 class User(Base, BaseMixin, UserMixin):
     __tablename__ = 'user'
     id = Column(Integer, primary_key=True)
@@ -101,9 +104,7 @@ class Service(Base, BaseMixin):
     description = Column(String) #  summary text of service
     price = Column(Integer, nullable=False)
     discount = Column(Integer, nullable=False, default=20)
-    pic_and_text = Column(String) # a list of text and image files
     last_update_time = Column(DateTime, default=datetime.datetime.utcnow)
-    major_pic = Column(String) # major picture of this service
     sub_services = Column(String) # a list of sub services
     active = Column(Boolean, default=True) #onine or offline
     slide = Column(Boolean, default=False)  # show on slding headline
@@ -361,6 +362,11 @@ class AppModel(object):
         self._add_commit(service)
         logger.debug("after commit update service ")
         logger.debug(service.to_dict())
+
+    def get_club_service(self, club_name, service_id):
+        club= self._find_club_and_error(club_name)
+        service = Service.query.filter_by(id=service_id).first()
+        return service
 
 def init_all():
     Base.metadata.drop_all(bind=engine)
