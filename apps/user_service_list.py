@@ -26,9 +26,11 @@ def generate_carousel():
         ]),
         html.Div(className="carousel-inner", children=[
             html.Div(className="carousel-item active" if i ==0 else "carousel-item", children=[
-                html.Img(className="d-block w-100",
-                         src=filestore.get_service_img_link(service.id, MAJOR_IMG),
-                         alt="Second slide")
+                dcc.Link(href="/service/book/{}".format(service.id), children=[
+                    html.Img(className="d-block w-100",
+                            src=filestore.get_service_img_link(service.id, MAJOR_IMG),
+                            alt="Second slide")
+                ])
             ]) for i, service in enumerate(headline_services)
         ]),
         html.A(**{"data-slide":"prev"}, className="carousel-control-prev", href="#carouselExampleIndicators", role="button", children=[
@@ -49,15 +51,17 @@ def generate_cards():
         return html.Div()
     cards = html.Div(className="card-deck", children=[
         html.Div(className="card", children=[
-            html.Img(className="card-img-top",
-                     src=filestore.get_service_img_link(service.id, MAJOR_IMG),
-                     alt=service.name),
-            html.Div(className="card-body", children=[
-                html.H5(service.name, className="card-title"),
-                html.P(service.description, className="card-text")
-            ]),
-            html.Div(className="card-footer", children=[
-                html.Small(service.last_update_time, className="text-muted")
+            dcc.Link(href="/service/book/{}".format(service.id), children=[
+                html.Img(className="card-img-top",
+                        src=filestore.get_service_img_link(service.id, MAJOR_IMG),
+                        alt=service.name),
+                html.Div(className="card-body", children=[
+                    html.H5(service.name, className="card-title"),
+                    html.P(service.description, className="card-text")
+                ]),
+                html.Div(className="card-footer", children=[
+                    html.Small(service.last_update_time, className="text-muted")
+                ])
             ])
         ]) for service in club_services
     ])

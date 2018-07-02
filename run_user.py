@@ -23,6 +23,8 @@ logger = logging.getLogger(__name__)
 coloredlogs.install(level='DEBUG', logger=logger)
 
 import user_service_list
+import user_service_book
+import user_register_login
 from app import app
 from app import app_controller
 from models import init_all
@@ -31,21 +33,19 @@ from navbar import NavBarDropMenu
 nav_bar = NavBarDropMenu("HaoDuoYu")
 nav_bar.add_drop_menu("Home", ["Contact"])
 nav_bar.add_drop_menu("Service", ["List", "New"])
-nav_bar.add_drop_menu("Users", ["List"])
+nav_bar.add_drop_menu("User", ["Login", "Register", "Profile"])
 
 
 
 app.layout = html.Div([
-    # This "header" will persist across pages
 
-    # Each "page" will modify this element
+    # hidden div used to store data
+    html.Div(id='global-hiden-storage', style={"display":"None"}),
     nav_bar.components_tree(),
     # This Location component represents the URL bar
     dcc.Location(id='url', refresh=False),
-
     # Each "page" will modify this element
     html.Div(id='content-container-root'),
-
 
 ], className="container-fluid")
 
@@ -55,7 +55,24 @@ app.layout = html.Div([
     Output('content-container-root', 'children'),
     [Input('url', 'pathname')])
 def display_page(pathname):
-    return user_service_list.layout()
+    if not pathname:
+        return user_service_list.layout()
+
+    p = pathname.lower()
+    if p == "/service/list":
+        return user_service_list.layout()
+
+    if "/service/book/" in p:
+        service_id = p.split("/")[-1]
+        if service_id:
+            return user_service_book.layout(service_id)
+    if p == "/user/login":
+        return user_register_login.login_layout()
+
+    if p == "/user/register":
+        return user_register_login.register_layout()
+
+    return pathname
 
 
 
@@ -80,7 +97,6 @@ if __name__ == '__main__':
         except KeyboardInterrupt:
             cherrypy.engine.stop()
         '''
-
 
 
 
