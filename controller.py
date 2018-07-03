@@ -124,6 +124,10 @@ class AppController(object):
         new_user = self.db_model.create_club_user(club_name ,user_data)
         return new_user
 
+    def get_club_user_by_id(self, club_name, user_id):
+        user = self.db_model.get_club_user_by_id(club_name, user_id);
+        return user
+
     def get_club_user_by_email(self, club_name, user_email):
         user = self.db_model.get_club_user_by_email(club_name, user_email)
         return  user

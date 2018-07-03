@@ -34,7 +34,6 @@ from models import init_all
 import service_new
 import service_list
 import service_detail
-import client_list
 import filestore
 
 
@@ -53,7 +52,7 @@ sider_bar = html.Div(className="col-md-3 float-left col-1 pl-0 pr-0 collapse wid
                         dcc.Link("New", href="/service/new", className="list-group-item", style={"cursor":"pointer"}),
                         html.A("List", **{"data-toggle":"collapse", "aria-expanded":"false"}, href="#menu1sub1", className="list-group-item"),
                     ]),
-                    dcc.Link(href="/client/list", className="list-group-item d-inline-block collapsed", style={"cursor": "pointer"}, children=[
+                    dcc.Link(href="/user/list", className="list-group-item d-inline-block collapsed", style={"cursor": "pointer"}, children=[
                         html.I(className="fa fa-film"),
                         html.Span("Users", className="d-none d-md-inline")
                     ]),
@@ -115,8 +114,6 @@ def display_page(pathname):
         service_id = p.split("/")[-1]
         layout = service_detail.layout(service_id)
         return layout
-    elif "/client/list" in p:
-        return client_list.layout()
 
     print("other layout! {}".format(pathname))
     return pathname

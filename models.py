@@ -209,6 +209,14 @@ class AppModel(object):
         logger.debug(user_list)
         return user_list
 
+    def get_club_user_by_id(self, club_name, user_id):
+        logger.debug("get user by id")
+        club = self._find_club_and_error(club_name)
+        logger.debug(club.name)
+        logger.debug("search id: " + str(user_id))
+        user = User.query.filter_by(id=user_id, club_id=club.id).first()
+        return user
+
     def get_club_user_by_email(self, club_name, email):
         logger.debug("get user by email")
         club = self._find_club_and_error(club_name)

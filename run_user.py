@@ -24,7 +24,8 @@ coloredlogs.install(level='DEBUG', logger=logger)
 
 import user_service_list
 import user_service_book
-import user_register_login
+import user_register
+import user_activate
 from app import app
 from app import app_controller
 from models import init_all
@@ -40,10 +41,10 @@ nav_bar.add_drop_menu("User", ["Login", "Register", "Profile"])
 app.layout = html.Div([
 
     # hidden div used to store data
-    html.Div(id='global-hiden-storage', style={"display":"None"}),
+    html.Div(id='global-hiden-user-info', style={"display":"None"}),
     nav_bar.components_tree(),
     # This Location component represents the URL bar
-    dcc.Location(id='url', refresh=False),
+    dcc.Location(id='global-url', refresh=False),
     # Each "page" will modify this element
     html.Div(id='content-container-root'),
 
@@ -53,7 +54,7 @@ app.layout = html.Div([
 
 @app.callback(
     Output('content-container-root', 'children'),
-    [Input('url', 'pathname')])
+    [Input('global-url', 'pathname')])
 def display_page(pathname):
     if not pathname:
         return user_service_list.layout()
@@ -67,10 +68,15 @@ def display_page(pathname):
         if service_id:
             return user_service_book.layout(service_id)
     if p == "/user/login":
-        return user_register_login.login_layout()
+        return user_login.login_layout()
 
     if p == "/user/register":
-        return user_register_login.register_layout()
+        return user_register.register_layout()
+
+    if "/user/activate" in p:
+        user_id = p.split("/")[-1]
+        if user_id:
+            return user_activate.layout(user_id)
 
     return pathname
 

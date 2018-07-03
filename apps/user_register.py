@@ -37,7 +37,7 @@ email_row = html.Div(className="row", children=[
                             html.Div(className="input-group-addon", style={"width": "2.6rem"}, children=[
                                 html.I(className="fa fa-at")
                             ]),
-                            dcc.Input(type="text", name="email",className="form-control",id="email", placeholder="you@example.com",required="true", autofocus="true")
+                            dcc.Input(type="text", name="email",className="form-control",id="register-email", placeholder="you@example.com",required="true", autofocus="true")
                         ])
                     ])
                 ]),
@@ -57,7 +57,7 @@ password_row = html.Div(className="row", children=[
                             html.Div(className="input-group-addon", style={"width": "2.6rem"}, children=[
                                 html.I(className="fa fa-key")
                             ]),
-                            dcc.Input(type="password",name="password",className="form-control",id="password", placeholder="Password",required ="true")
+                            dcc.Input(type="password",name="password",className="form-control",id="register-password", placeholder="Password",required ="true")
                         ])
                     ])
                 ])
@@ -73,7 +73,7 @@ confirm_pwd_row = html.Div(className="row", children=[
                                 html.Div(className="input-group-addon", style={"width": "2.6rem"}, children=[
                                     html.I(className="fa fa-repeat")
                                 ]),
-                                dcc.Input(type="password", name="password-confirmation", className="form-control", id="password-confirm", placeholder="Password", required="true")
+                                dcc.Input(type="password", name="password-confirmation", className="form-control", id="register-password-confirm", placeholder="Password", required="true")
                             ])
                         ])
                     ])
@@ -88,18 +88,47 @@ register_button_row = html.Div(className="row", children=[
                 ])
             ])
 
-def login_layout():
-    logger.debug("login layout")
 
 def register_layout():
     logger.debug("register layout")
     return html.Div(className="container", children=[
-        html.Form(className="form-horizontal", role="form", children=[
+        #html.Form(className="form-horizontal", role="form", children=[
             register_title_row,
             email_row,
             password_row,
             confirm_pwd_row,
             register_button_row
-        ])
+        #])
     ])
 
+@app.callback(Output('global-hiden-user-info', 'children'),
+              [Input("register-user", "n_clicks")],
+              [State("register-email", "value")])
+def register_user(n_clicks, email):
+    if n_clicks <= 0:
+        raise ValueError("Do nothing")
+    return email
+
+@app.callback(Output('global-url', 'pathname'),
+              [Input("register-user", "n_clicks")],
+              [State("register-email", "value"),
+               State("register-password", "value"),
+               State("register-password-confirm", "value")])
+def register_user(n_clicks, email, password, password_confirm):
+    if n_clicks <= 0:
+        raise ValueError("Do nothing")
+    if password != password_confirm:
+        raise ValueError("Password does not match")
+    user_data = {
+        'email': email,
+        'tel':None,
+        'password': password,
+        'roles': None
+    }
+    user = app_controller.create_club_user(CLUB_NAME, user_data)
+    if user.tel:
+        pass
+    if user.email:
+        #app_controller.resend_active_code_by_email(CLUB_NAME, user.email)
+        pass
+    return "/user/activate/{}".format(user.id)
