@@ -1,0 +1,100 @@
+#!/usr/bin/python3
+from collections import OrderedDict
+from uuid import uuid1
+import dash
+import json
+import dash_core_components as dcc
+import dash_html_components as html
+from dash.dependencies import Event, State, Input, Output
+from pprint import pprint
+from magic_defines import *
+from app import app
+from app import app_controller
+import filestore
+
+
+
+def generate_tb_header():
+    return html.Thead(
+                html.Tr(children=[
+                    html.Th("Product",style={"width":"50%"}),
+                    html.Th("Price", style={"width":"10%"}),
+                    html.Th("Quantity", style={"width":"8%"}),
+                    html.Th("Subtotal", style={"width":"22%"}, className="text-center"),
+                    html.Th(style={"width":"10%"})
+                ])
+             )
+
+def generate_tb_footer():
+    return html.Tfoot(children=[
+      html.Tr(children=[
+        html.Td(children=[
+            html.A(href="#", className="btn btn-warning", children=[
+                html.I(className="fa fa-angle-left"),
+                "Conitnue Shopping"
+            ])
+        ]),
+        html.Td(className="hidden-xs"),
+        html.Td(className="hidden-xs text-center", children=[
+            html.Strong("Total $1.99")
+        ]),
+        html.Td(children=[
+            html.A(href="#", className="btn btn-success btn-block", children=[
+                "Checkout",
+                html.I(className="fa fa-angle-right")
+            ])
+        ])
+      ])
+
+    ])
+
+
+def generate_tb_body():
+    return html.Tbody(children=[
+      html.Tr(children=[
+        html.Td(**{"data-th": "Product"}, children=[
+          html.Div(className="row", children=[
+            html.Div(className="col-sm-2 hidden-xs", children =[
+                html.Img(src="http://placehold.it/100x100",
+                         alt="...",
+                         className="img-responsive")
+            ]),
+            html.Div(className="col-sm-1 hidden-xs", children =[""]),
+            html.Div(className="col-sm-9", children=[
+              html.H4("Product 1",className="nomargin"),
+              html.P("Quis aute iure reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Lorem ipsum dolor sit amet.")
+            ])
+          ])
+        ]),
+        html.Td(**{"data-th":"Price"}, children=["$1.99"]),
+        html.Td(**{"data-th":"Quantity"}, children=[
+          dcc.Input(type="number",
+                     className="form-control text-center",
+                     value="1")
+
+        ]),
+        html.Td(**{"data-th":"Subtotal"}, className="text-center", children=["1.99"]),
+        html.Td(className="actions", children=[
+            html.Button(className="btn btn-info btn-sm", children=[
+                html.I(className="fa fa-refresh")
+            ]),
+            html.Button(className="btn btn-danger btn-sm", children=[
+                html.I(className="fa fa-trash")
+            ])
+        ])
+      ])
+    ])
+
+
+def layout():
+    return html.Div(className="container", children=[
+        html.Table(id="cart", className="table table-hover table-condensed", children=[
+            generate_tb_header(),
+            generate_tb_body(),
+            generate_tb_footer()
+        ])
+    ])
+
+
+
+

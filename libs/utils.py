@@ -1,5 +1,6 @@
 #!/user/bin/python
 import inspect
+import json
 
 def caller_info():
     frame = inspect.currentframe().f_back
@@ -30,3 +31,22 @@ class Conflict(RespExcept):
     def __init__(self, message="There are some conflicts"):
        super(NotFound, self).__init__(message, 404)
        self._debug = caller_info()
+
+
+def load_user_info_from_storage(user_info_str):
+    return user_info_str
+
+def get_user_jwt(user_info_str):
+    user_info = load_user_info_from_storage(user_info_str)
+    return user_info
+
+
+def load_cart_info_from_storage(cart_info_str):
+    try:
+        cart_info = json.loads(cart_info_str)
+    except:
+        cart_info = {}
+    if not isinstance(cart_info, dict):
+        cart_info = {}
+    return cart_info
+

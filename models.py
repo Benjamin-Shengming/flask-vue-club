@@ -114,11 +114,6 @@ class Service(Base, BaseMixin):
     __table_args__ = (UniqueConstraint('name', 'club_id'),)
 
 
-class ShoppingCart(Base, BaseMixin):
-    __tablename__ = 'shoppingcart'
-    id = Column(Integer, primary_key=True)
-    user_id = Column(Integer, ForeignKey('user.id', ondelete='CASCADE'))
-    service_id = Column(Integer, ForeignKey('service.id', ondelete='CASCADE' ))
 
 class Order(Base, BaseMixin):
     __tablename__ = 'order'

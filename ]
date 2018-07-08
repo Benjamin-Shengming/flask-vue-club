@@ -1,0 +1,120 @@
+#!/usr/bin/python3
+from collections import OrderedDict
+from uuid import uuid1
+import dash
+import json
+import dash_core_components as dcc
+import dash_html_components as html
+from dash.dependencies import Event, State, Input, Output
+from pprint import pprint
+from magic_defines import *
+from app import app
+from app import app_controller
+import filestore
+import local_storage
+
+
+def generate_tb_header():
+    return html.Thead(
+                html.Tr(children=[
+                    html.Th("Product",style={"width":"50%"}),
+                    html.Th("Price", style={"width":"10%"}),
+                    html.Th("Quantity", style={"width":"8%"}),
+                    html.Th("Subtotal", style={"width":"22%"}, className="text-center"),
+                    html.Th(style={"width":"10%"})
+                ])
+             )
+
+def generate_tb_footer():
+    return html.Tfoot(children=[
+      html.Tr(children=[
+        html.Td(children=[
+            html.A(href="#", className="btn btn-warning", children=[
+                html.I(className="fa fa-angle-left"),
+                "Conitnue Shopping"
+            ])
+        ]),
+        html.Td(className="hidden-xs"),
+        html.Td(className="hidden-xs text-center", children=[
+            html.Strong("Total $1.99")
+        ]),
+        html.Td(children=[
+            html.A(href="#", className="btn btn-success btn-block", children=[
+                "Checkout",
+                html.I(className="fa fa-angle-right")
+            ])
+        ])
+      ])
+
+    ])
+
+def generate_service_del(sid):
+        return html.Td(className="actions", children=[
+            html.Button(id = "user_shopcart_del_service_{}".format(sid), className="btn btn-danger btn-sm", children=[
+                html.I(className="fa fa-trash")
+            ])
+        ])
+
+def generate_tb_body(cart_info):
+    s_ids = cart_info.keys()
+    cart_service = [(cart_info[sid], app_controller.get_club_service(CLUB_NAME, s_id)) for s_id in s_ids]
+
+    return html.Tbody(children=[
+      html.Tr(children=[
+        html.Td(**{"data-th": "Product"}, children=[
+          html.Div(className="row", children=[
+            html.Div(className="col-sm-2 hidden-xs", children =[
+                html.Img(src=filestore.get_service_img_link(service.id, MAJOR_IMG),
+                         alt=service.name,
+                         className="img-responsive")
+            ]),
+            html.Div(className="col-sm-1 hidden-xs", children =[""]),
+            html.Div(className="col-sm-9", children=[
+              html.H4(service.name,className="nomargin"),
+              html.P(service.description)
+            ])
+          ])
+        ]),
+        html.Td(**{"data-th":"Price"}, children=[service.price]),
+        html.Td(**{"data-th":"Quantity"}, children=[
+          dcc.Input(type="number",
+                     className="form-control text-center",
+                     value=squantity)
+
+        ]),
+        html.Td(**{"data-th":"Subtotal"}, className="text-center", children=["1.99"]),
+for squantity, service in cart_service])
+    ])
+
+
+def layout(user_info, cart_info):
+
+    return html.Div(className="container", children=[
+        local_storage.LocalStorageComponent(id="user_shopcart_user_storage", label=USER_STORAGE),
+        local_storage.LocalStorageComponent(id="user_shopcart_cart_storage", label=CART_STORAGE),
+        html.Table(id="cart", className="table table-hover table-condensed", children=[
+            generate_tb_header(),
+            generate_tb_body(cart_info),
+            generate_tb_footer()
+        ])
+    ])
+
+
+
+
+@app.callback(Output('user_shopcart_storage', 'value'),
+              [Input("user_login_email", "value"),
+               Input("user_login_password", "value")])
+def store_user_info(email, password):
+    print("store user info called")
+    user_data = {
+        'email': email,
+        'tel':None,
+        'password': password,
+    }
+    user = app_controller.verify_club_user(CLUB_NAME, user_data)
+    if not user:
+        return ""
+    jwt = app_controller.generate_user_jwt(CLUB_NAME, user)
+    return jwt
+

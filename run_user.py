@@ -8,10 +8,12 @@ import requests
 import cherrypy
 import argparse
 import dash
+import local_storage
 from dash.dependencies import Input, State, Output
 import dash_html_components as html
 import dash_core_components as dcc
 import pandas as pd
+from dash.exceptions import PreventUpdate
 
 # add current folder and lib to syspath
 sys.path.append(os.path.join(os.path.dirname(__file__)))
@@ -26,36 +28,50 @@ import user_service_list
 import user_service_book
 import user_register
 import user_activate
+import user_login
+import user_shopcart
 from app import app
 from app import app_controller
 from models import init_all
 from navbar import NavBarDropMenu
+from magic_defines import *
+from utils import *
 
 nav_bar = NavBarDropMenu("HaoDuoYu")
 nav_bar.add_drop_menu("Home", ["Contact"])
 nav_bar.add_drop_menu("Service", ["List", "New"])
 nav_bar.add_drop_menu("User", ["Login", "Register", "Profile"])
+nav_bar.add_shop_cart_button("navbar-shopcart-button")
 
 
+def generate_main_layout():
+    return html.Div([
+        # hidden div used to store data
+        local_storage.LocalStorageComponent(id="user-local-storage", label=USER_STORAGE),
+        local_storage.LocalStorageComponent(id="cart-local-storage", label=CART_STORAGE),
+        nav_bar.components_tree(),
+        # This Location component represents the URL bar
+        dcc.Location(id='global-url', refresh=False),
+        # Each "page" will modify this element
+        html.Div(id='content-container-root'),
+        html.Div(id=DUMMY_ID)
 
-app.layout = html.Div([
+    ], className="container-fluid")
 
-    # hidden div used to store data
-    html.Div(id='global-hiden-user-info', style={"display":"None"}),
-    nav_bar.components_tree(),
-    # This Location component represents the URL bar
-    dcc.Location(id='global-url', refresh=False),
-    # Each "page" will modify this element
-    html.Div(id='content-container-root'),
-
-], className="container-fluid")
-
+app.layout = generate_main_layout
 
 
 @app.callback(
     Output('content-container-root', 'children'),
-    [Input('global-url', 'pathname')])
-def display_page(pathname):
+    [Input('global-url', 'pathname')],
+    [State('user-local-storage', 'value'),
+     State('cart-local-storage', 'value')])
+def display_page(pathname, user_info_str, cart_info_str):
+    user_info = load_user_info_from_storage(user_info_str)
+    cart_info = load_cart_info_from_storage(cart_info_str)
+
+    logger.debug(user_info)
+    logger.debug(cart_info)
     if not pathname:
         return user_service_list.layout()
 
@@ -68,15 +84,19 @@ def display_page(pathname):
         if service_id:
             return user_service_book.layout(service_id)
     if p == "/user/login":
-        return user_login.login_layout()
+        return user_login.layout()
 
     if p == "/user/register":
         return user_register.register_layout()
+
 
     if "/user/activate" in p:
         user_id = p.split("/")[-1]
         if user_id:
             return user_activate.layout(user_id)
+
+    if "/shop/cart" in p:
+        return user_shopcart.layout(user_info, cart_info)
 
     return pathname
 
@@ -92,6 +112,7 @@ if __name__ == '__main__':
     else:
         for rule in app.server.url_map.iter_rules():
             logger.debug(rule)
+        #app.run_server(debug=True, host='0.0.0.0', port=80, ssl_context='adhoc')
         app.run_server(debug=True, host='0.0.0.0', port=80)
         '''
         cherrypy.tree.graft(app.server.wsgi_app, '/')

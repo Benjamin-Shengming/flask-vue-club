@@ -13,8 +13,7 @@ from app import app
 from app import app_controller
 import filestore
 from magic_defines import *
-import json
-import local_storage
+
 
 def generate_id(index):
     section_id = "service_book_img_section_{}".format(index)
@@ -97,30 +96,17 @@ def layout(service_id):
             generate_img_txt(service_id, i) for i in range(MAX_IMG_TXT)
         ]),
         html.Hr(),
-        dcc.Link(href= "/shop/cart",
-                    className="btn btn-primary secondfloat",
-                    children=["Goto cart"]),
-        html.Button(id="service_book_add_to_cart",
-                    className="btn btn-primary float",
-                    children=[ "Add to cart"]),
-        local_storage.LocalStorageComponent(id="service_book_shopcart_storage", label=CART_STORAGE)
+        html.Div(className="row floatbar", children=[
+            html.Div(className="col-sm-6", children=[
+                dcc.Link(href= "/shop/cart", className="btn btn-outline-dark btn-block", children=[
+                    html.Label("Goto cart")
+                ])
+            ]),
+            html.Div(className="col-sm-6", children=[
+                html.Button(id="service_book_add_to_cart", className="btn btn-outline-dark btn-block", children=[
+                    html.Label("Add to cart")
+                ])
+            ])
+        ])
     ])
 
-
-@app.callback(Output('service_book_shopcart_storage', 'value'),
-              [Input("service_book_add_to_cart", "n_clicks")],
-              [State("service_book_uuid", "title"),
-               State("service_book_shopcart_storage", "value"),]
-              )
-def add_service_to_cart(n_clicks, service_id, cart_json_str):
-    cart = {}
-    try:
-        cart = json.loads(cart_json_str)
-    except:
-        pass
-    if not isinstance(cart, dict):
-        cart = {}
-    old_value = cart.get(service_id, 0)
-    cart[service_id] = old_value + 1;
-
-    return json.dumps(cart)

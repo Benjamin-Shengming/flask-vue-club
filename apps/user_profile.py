@@ -21,10 +21,10 @@ coloredlogs.install(level='DEBUG', logger=logger)
 
 
 #register_storage = local_storage.LocalStorageComponent(id="global-local-storage", label="user_info")
-register_title_row = html.Div(className="row", children=[
+profile_title_row = html.Div(className="row", children=[
                 html.Div(className="col-md-3"),
                 html.Div(className="col-md-6", children=[
-                    html.H2("Register New User"),
+                    html.H2("User details"),
                     html.Hr()
                 ])
             ])

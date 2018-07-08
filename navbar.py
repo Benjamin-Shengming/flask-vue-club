@@ -84,6 +84,7 @@ class NavBarDropMenu(object):
         self.links = OrderedDict()
         self.collapse_id = str(uuid1())
         self.drop_menus  = []
+        self.shop_cart = None
 
     def add_drop_menu(self, menu_name, menu_items):
         menu= html.Div(className="btn-group", children=[
@@ -93,6 +94,11 @@ class NavBarDropMenu(object):
             ])
          ])
         self.drop_menus.append(menu)
+
+    def add_shop_cart_button(self, shop_cart_id):
+        self.shop_cart = dcc.Link(href="/shop/cart", className="btn btn-outline-info", children=[
+            html.I(className="fa fa-shopping-cart")
+        ])
 
     def components_tree(self):
 
@@ -112,7 +118,7 @@ class NavBarDropMenu(object):
 
         nav_bar_links = html.Ul(className="navbar-nav mr-auto", children=self.drop_menus)
         nav_bar_collapse = html.Div(className="navbar-collapse collapse", id=self.collapse_id,
-                                    children=[nav_bar_links])
+                                    children=[nav_bar_links, self.shop_cart])
 
 
 
