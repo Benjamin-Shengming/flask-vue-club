@@ -15,7 +15,6 @@ import filestore
 from magic_defines import *
 import local_storage
 from flask import redirect
-import redirectlink
 
 import coloredlogs, logging
 logger = logging.getLogger(__name__)

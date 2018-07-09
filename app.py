@@ -1,14 +1,16 @@
 import dash
 import os
 
-from flask import send_from_directory
+from flask import send_from_directory, Flask
 
 
 # create controller object, the central point
 from controller import AppController
 app_controller = AppController()
 
-app = dash.Dash(__name__, static_folder='assets')
+server = Flask(__name__)
+
+app = dash.Dash(__name__, server=server, static_folder='assets', url_base_pathname="/dash")
 server = app.server
 app.config.supress_callback_exceptions = True
 
