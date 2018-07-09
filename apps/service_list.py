@@ -37,7 +37,7 @@ def layout():
     return html.Div([
         html.H4('All services'),
         dt.DataTable(
-            rows=services_data,
+            rows= services_data if services_data else [{"No service":"No Service"}],
 
             # optional - sets the order of columns
             #columns=sorted(DF_GAPMINDER.columns),
