@@ -36,6 +36,9 @@ from models import init_all
 from navbar import NavBarDropMenu
 from magic_defines import *
 from utils import *
+import autolink
+import localstorage_writer
+import localstorage_reader
 
 nav_bar = NavBarDropMenu("HaoDuoYu")
 nav_bar.add_drop_menu("Home", ["Contact"])
@@ -47,8 +50,10 @@ nav_bar.add_shop_cart_button("navbar-shopcart-button")
 def generate_main_layout():
     return html.Div([
         # hidden div used to store data
-        local_storage.LocalStorageComponent(id="user-local-storage", label=USER_STORAGE),
-        local_storage.LocalStorageComponent(id="cart-local-storage", label=CART_STORAGE),
+        autolink.ExampleComponent("click me to redirect", href="", style={"display": "none"}),
+        localstorage_writer.ExampleComponent(id="global-local-storage-writer", label=USER_STORAGE),
+        localstorage_reader.ExampleComponent(id="user-local-storage-reader", label=USER_STORAGE),
+        localstorage_reader.ExampleComponent(id="cart-local-storage-reader", label=CART_STORAGE),
         nav_bar.components_tree(),
         # This Location component represents the URL bar
         dcc.Location(id='global-url', refresh=False),
@@ -64,8 +69,8 @@ app.layout = generate_main_layout
 @app.callback(
     Output('content-container-root', 'children'),
     [Input('global-url', 'pathname')],
-    [State('user-local-storage', 'value'),
-     State('cart-local-storage', 'value')])
+    [State('user-local-storage-reader', 'value'),
+     State('cart-local-storage-reader', 'value')])
 def display_page(pathname, user_info_str, cart_info_str):
     user_info = load_user_info_from_storage(user_info_str)
     cart_info = load_cart_info_from_storage(cart_info_str)

@@ -14,6 +14,7 @@ from app import app_controller
 import filestore
 from magic_defines import *
 import local_storage
+import autolink
 
 import coloredlogs, logging
 logger = logging.getLogger(__name__)
@@ -89,17 +90,17 @@ register_button_row = html.Div(className="row", children=[
                 ])
             ])
 
+auto_link = autolink.ExampleComponent(id="user_register_autolink_home", href="")
 
 def register_layout():
     logger.debug("register layout")
     return html.Div(className="container", children=[
-        #html.Form(className="form-horizontal", role="form", children=[
             register_title_row,
             email_row,
             password_row,
             confirm_pwd_row,
-            register_button_row
-        #])
+            register_button_row,
+            auto_link
     ])
 
 @app.callback(Output('global-hiden-user-info', 'children'),
@@ -110,7 +111,7 @@ def register_user(n_clicks, email):
         raise ValueError("Do nothing")
     return email
 
-@app.callback(Output('global-url', 'pathname'),
+@app.callback(Output('user_register_autolink_home', 'href'),
               [Input("register-user", "n_clicks")],
               [State("register-email", "value"),
                State("register-password", "value"),
@@ -120,6 +121,7 @@ def register_user(n_clicks, email, password, password_confirm):
         raise PreventUpdate()
     if password != password_confirm:
         raise PreventUpdate()
+    return "/home"
     user_data = {
         'email': email,
         'tel':None,

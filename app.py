@@ -10,7 +10,7 @@ app_controller = AppController()
 
 server = Flask(__name__)
 
-app = dash.Dash(__name__, server=server, static_folder='assets', url_base_pathname="/dash")
+app = dash.Dash(__name__, static_folder='assets')
 server = app.server
 app.config.supress_callback_exceptions = True
 

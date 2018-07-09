@@ -14,7 +14,14 @@ from app import app_controller
 import filestore
 from magic_defines import *
 import json
-import local_storage
+import localstorage_writer
+import localstorage_reader
+
+
+
+import coloredlogs, logging
+logger = logging.getLogger(__name__)
+coloredlogs.install(level='DEBUG', logger=logger)
 
 def generate_id(index):
     section_id = "service_book_img_section_{}".format(index)
@@ -103,16 +110,19 @@ def layout(service_id):
         html.Button(id="service_book_add_to_cart",
                     className="btn btn-primary float",
                     children=[ "Add to cart"]),
-        local_storage.LocalStorageComponent(id="service_book_shopcart_storage", label=CART_STORAGE)
+        localstorage_writer.ExampleComponent(id="service_book_cart_storage_writer", label=CART_STORAGE),
+        localstorage_reader.ExampleComponent(id="service_book_cart_storage_reader", label=CART_STORAGE),
     ])
 
-
-@app.callback(Output('service_book_shopcart_storage', 'value'),
+@app.callback(Output('service_book_cart_storage_writer', 'value'),
               [Input("service_book_add_to_cart", "n_clicks")],
               [State("service_book_uuid", "title"),
-               State("service_book_shopcart_storage", "value"),]
+               State("service_book_cart_storage_reader", "value"),
+               ]
               )
 def add_service_to_cart(n_clicks, service_id, cart_json_str):
+    global i
+    logger.debug(cart_json_str)
     cart = {}
     try:
         cart = json.loads(cart_json_str)
@@ -121,6 +131,6 @@ def add_service_to_cart(n_clicks, service_id, cart_json_str):
     if not isinstance(cart, dict):
         cart = {}
     old_value = cart.get(service_id, 0)
-    cart[service_id] = old_value + 1;
+    cart[service_id] = old_value + 1
 
     return json.dumps(cart)
