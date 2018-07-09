@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/python
 from collections import OrderedDict
 from uuid import uuid1
 import base64
@@ -14,9 +14,8 @@ from app import app_controller
 import filestore
 from magic_defines import *
 import json
-import localstorage_writer
-import localstorage_reader
-
+from localstorage_writer import LocalStorageWriter
+from localstorage_reader import LocalStorageReader
 
 
 import coloredlogs, logging
@@ -110,8 +109,8 @@ def layout(service_id):
         html.Button(id="service_book_add_to_cart",
                     className="btn btn-primary float",
                     children=[ "Add to cart"]),
-        localstorage_writer.ExampleComponent(id="service_book_cart_storage_writer", label=CART_STORAGE),
-        localstorage_reader.ExampleComponent(id="service_book_cart_storage_reader", label=CART_STORAGE),
+        LocalStorageWriter(id="service_book_cart_storage_writer", label=CART_STORAGE),
+        LocalStorageReader(id="service_book_cart_storage_reader", label=CART_STORAGE),
     ])
 
 @app.callback(Output('service_book_cart_storage_writer', 'value'),

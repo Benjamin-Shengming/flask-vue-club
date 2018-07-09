@@ -36,9 +36,9 @@ from models import init_all
 from navbar import NavBarDropMenu
 from magic_defines import *
 from utils import *
-import autolink
-import localstorage_writer
-import localstorage_reader
+from autolink import Redirect
+from localstorage_writer import LocalStorageWriter
+from localstorage_reader import LocalStorageReader
 
 nav_bar = NavBarDropMenu("HaoDuoYu")
 nav_bar.add_drop_menu("Home", ["Contact"])
@@ -50,10 +50,10 @@ nav_bar.add_shop_cart_button("navbar-shopcart-button")
 def generate_main_layout():
     return html.Div([
         # hidden div used to store data
-        autolink.ExampleComponent("click me to redirect", href="", style={"display": "none"}),
-        localstorage_writer.ExampleComponent(id="global-local-storage-writer", label=USER_STORAGE),
-        localstorage_reader.ExampleComponent(id="user-local-storage-reader", label=USER_STORAGE),
-        localstorage_reader.ExampleComponent(id="cart-local-storage-reader", label=CART_STORAGE),
+        Redirect("click me to redirect", href="", style={"display": "none"}),
+        LocalStorageWriter(id="global-local-storage-writer", label=USER_STORAGE),
+        LocalStorageReader(id="user-local-storage-reader", label=USER_STORAGE),
+        LocalStorageReader(id="cart-local-storage-reader", label=CART_STORAGE),
         nav_bar.components_tree(),
         # This Location component represents the URL bar
         dcc.Location(id='global-url', refresh=False),

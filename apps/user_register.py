@@ -13,15 +13,13 @@ from app import app
 from app import app_controller
 import filestore
 from magic_defines import *
-import local_storage
-import autolink
+from autolink import Redirect
 
 import coloredlogs, logging
 logger = logging.getLogger(__name__)
 coloredlogs.install(level='DEBUG', logger=logger)
 
 
-#register_storage = local_storage.LocalStorageComponent(id="global-local-storage", label="user_info")
 register_title_row = html.Div(className="row", children=[
                 html.Div(className="col-md-3"),
                 html.Div(className="col-md-6", children=[
@@ -90,7 +88,7 @@ register_button_row = html.Div(className="row", children=[
                 ])
             ])
 
-auto_link = autolink.ExampleComponent(id="user_register_autolink_home", href="")
+auto_link = Redirect(id="user_register_autolink_home", href="")
 
 def register_layout():
     logger.debug("register layout")
@@ -117,11 +115,10 @@ def register_user(n_clicks, email):
                State("register-password", "value"),
                State("register-password-confirm", "value")])
 def register_user(n_clicks, email, password, password_confirm):
-    if n_clicks <= 0:
+    if not n_clicks or n_clicks <= 0:
         raise PreventUpdate()
     if password != password_confirm:
         raise PreventUpdate()
-    return "/home"
     user_data = {
         'email': email,
         'tel':None,
