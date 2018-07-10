@@ -19,6 +19,10 @@ import sd_material_ui
 from sd_material_ui import Snackbar
 import coloredlogs, logging
 from utils import *
+from autolink import Redirect
+from localstorage_writer import LocalStorageWriter
+from localstorage_reader import LocalStorageReader
+
 logger = logging.getLogger(__name__)
 coloredlogs.install(level='DEBUG', logger=logger)
 
@@ -95,16 +99,16 @@ login_button_row = html.Div(id="user_login_button_row",
                                     login_button,
                                 ]),
                             ])
-err_msg_row = Snackbar(id='user_login_snackbar', open=True, message='Polo', action='Reveal'),
-
+err_msg_row = Snackbar(id='user_login_snackbar', open=True, message='Polo', action='Reveal')
+user_storage = LocalStorageWriter(id="user_login_user_storage", label=USER_STORAGE)
+auto_redirect = Redirect(href="/home")
 def layout():
     logger.debug("login layout")
     return html.Div(className="container", children=[
-            email_row,
-            password_row,
-            login_button_row,
-            html.Div(id="user_login_button_target")
-
+        email_row,
+        password_row,
+        login_button_row,
+        html.Div(id="user_login_button_target")
     ])
 
 
@@ -146,8 +150,8 @@ def store_user_info(n_clicks, email, password):
         return [err_msg_row]
     jwt = app_controller.generate_user_jwt(CLUB_NAME, user)
     return [
-            LocalStorageWriter(label=USER_STORAGE, value="jwt"),
+            user_storage,
             err_msg_row,
-            Redirect(href="/home")
+            #auto_redirect
             ]
 
