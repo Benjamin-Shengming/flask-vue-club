@@ -15,8 +15,10 @@ import filestore
 from magic_defines import *
 import local_storage
 from flask import redirect
-
+import sd_material_ui
+from sd_material_ui import Snackbar
 import coloredlogs, logging
+from utils import *
 logger = logging.getLogger(__name__)
 coloredlogs.install(level='DEBUG', logger=logger)
 
@@ -77,44 +79,37 @@ password_row = html.Div(className="row", children=[
             ])
 
 
-back_button  = html.Button(type="submit",
-                            id="user_login_button_home",
+login_button  = html.Button(type="submit",
+                            id="user_login_button_login",
                             className="btn btn-success",
                             children=[
-                                "Home",
+                                "Login",
                                 html.I(className="fa fa-user-plus")
                              ])
-back_home_link =  dcc.Link( href="/home",
-                           children=[back_button]
-                           )
 
-back_button_row = html.Div(id="user_login_button_row",
+login_button_row = html.Div(id="user_login_button_row",
                             className="row",
                             children= [
                                 html.Div(className="col-md-3"),
                                 html.Div(className="col-md-3", children=[
-                                    back_home_link,
+                                    login_button,
                                 ]),
                             ])
-
-err_msg_row= html.Div(className="row", children=[
-                html.Div(className="col-md-3"),
-                html.Div(id = "user_login_err_msg", className="col-md-6", children=[])
-            ])
-
+err_msg_row = Snackbar(id='user_login_snackbar', open=True, message='Polo', action='Reveal'),
 
 def layout():
     logger.debug("login layout")
     return html.Div(className="container", children=[
-            local_storage.LocalStorageComponent(id="user_login_storage", label=USER_STORAGE),
             email_row,
             password_row,
-            err_msg_row,
-            back_button_row,
+            login_button_row,
+            html.Div(id="user_login_button_target")
 
     ])
 
-@app.callback(Output('user_login_err_msg', 'children'),
+
+
+@app.callback(Output('user_login_snackbar', 'message'),
               [Input("user_login_email", "value"),
                Input("user_login_password", "value")])
 def check_user(email, password):
@@ -133,23 +128,13 @@ def check_user(email, password):
 
     return "You have logged in"
 
-@app.callback(Output('user_login_redirect_link', 'children'),
-              [Input("user_login_email", "value"),
-               Input("user_login_password", "value")])
-def check_user(email, password):
-    user_data = {
-        'email': email,
-        'tel':None,
-        'password': password,
-    }
-    if not app_controller.verify_club_user(CLUB_NAME, user_data):
-        return "back to Home (not login)"
-    return "Back to Home (login)"
 
-@app.callback(Output('user_login_storage', 'value'),
-              [Input("user_login_email", "value"),
-               Input("user_login_password", "value")])
-def store_user_info(email, password):
+@app.callback(Output('user_login_button_target', 'children'),
+              [Input("user_login_button_login", "n_clicks")],
+              [State("user_login_email", "value"),
+               State("user_login_password", "value")])
+def store_user_info(n_clicks, email, password):
+    assert_button_clicks(n_clicks)
     print("store user info called")
     user_data = {
         'email': email,
@@ -158,7 +143,11 @@ def store_user_info(email, password):
     }
     user = app_controller.verify_club_user(CLUB_NAME, user_data)
     if not user:
-        return ""
+        return [err_msg_row]
     jwt = app_controller.generate_user_jwt(CLUB_NAME, user)
-    return jwt
+    return [
+            LocalStorageWriter(label=USER_STORAGE, value="jwt"),
+            err_msg_row,
+            Redirect(href="/home")
+            ]
 
