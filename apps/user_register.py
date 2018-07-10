@@ -90,7 +90,7 @@ register_button_row = html.Div(className="row", children=[
 
 auto_link = Redirect(id="user_register_autolink_to_activate", href="")
 
-def register_layout():
+def layout():
     logger.debug("register layout")
     return html.Div(className="container", children=[
             register_title_row,

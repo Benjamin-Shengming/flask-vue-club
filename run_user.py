@@ -42,10 +42,10 @@ from localstorage_writer import LocalStorageWriter
 from localstorage_reader import LocalStorageReader
 
 nav_bar = NavBarDropMenu("HaoDuoYu")
-nav_bar.add_drop_menu("Home", ["Contact"])
-nav_bar.add_drop_menu("Service", ["List", "New"])
+nav_bar.add_drop_menu("Home", ["Service","Contact"])
 nav_bar.add_drop_menu("User", ["Login", "Register", "Profile"])
 nav_bar.add_shop_cart_button("navbar-shopcart-button")
+nav_bar.add_shop_order_button("navbar-shoporder-button")
 
 
 def generate_main_layout():
@@ -83,18 +83,15 @@ def display_page(pathname, user_info_str, cart_info_str):
         return user_service_list.layout()
 
     p = pathname.lower()
-    if p == "/service/list":
-        return user_service_list.layout()
-
     if "/service/book/" in p:
         service_id = p.split("/")[-1]
         if service_id:
             return user_service_book.layout(service_id)
-    if p == "/user/login":
+    if "/user/login" in p:
         return user_login.layout()
 
-    if p == "/user/register":
-        return user_register.register_layout()
+    if "/user/register" in p:
+        return user_register.layout()
 
     if "/user/profile" in p:
         return user_profile.layout()
@@ -102,7 +99,7 @@ def display_page(pathname, user_info_str, cart_info_str):
     if "/shop/cart" in p:
         return user_shopcart.layout(user_info, cart_info)
 
-    return pathname
+    return user_service_list.layout()
 
 
 
