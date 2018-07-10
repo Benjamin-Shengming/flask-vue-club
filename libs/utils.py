@@ -6,7 +6,7 @@ def caller_info():
     frame = inspect.currentframe().f_back
     func = frame.f_code
     return "func:{} line:{}".format(func.co_name,frame.f_lineno)
-
+# exceptions
 class RespExcept(Exception):
     def __init__(self,
                  error_message,
@@ -32,7 +32,17 @@ class Conflict(RespExcept):
        super(NotFound, self).__init__(message, 404)
        self._debug = caller_info()
 
+class LoginExpireMsg(RespExcept):
+    def __init__(self, message="Login expired, please login again!"):
+       super(NotFound, self).__init__(message, 404)
+       self._debug = caller_info()
 
+class CodeNotMatch(RespExcept):
+    def __init__(self, message="Activate code does not match!"):
+       super(NotFound, self).__init__(message, 404)
+       self._debug = caller_info()
+
+# helper functions
 def load_user_info_from_storage(user_info_str):
     return user_info_str
 

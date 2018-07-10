@@ -27,9 +27,9 @@ coloredlogs.install(level='DEBUG', logger=logger)
 import user_service_list
 import user_service_book
 import user_register
-import user_activate
 import user_login
 import user_shopcart
+import user_profile
 from app import app
 from app import app_controller
 from models import init_all
@@ -49,7 +49,7 @@ nav_bar.add_shop_cart_button("navbar-shopcart-button")
 
 def generate_main_layout():
     return html.Div([
-        # hidden div used to store data
+        # walkalround that let client download js bundle, *bugs* in dash
         Redirect("click me to redirect", href="", style={"display": "none"}),
         LocalStorageWriter(id="global-local-storage-writer", label=USER_STORAGE),
         LocalStorageReader(id="user-local-storage-reader", label=USER_STORAGE),
@@ -94,11 +94,8 @@ def display_page(pathname, user_info_str, cart_info_str):
     if p == "/user/register":
         return user_register.register_layout()
 
-
-    if "/user/activate" in p:
-        user_id = p.split("/")[-1]
-        if user_id:
-            return user_activate.layout(user_id)
+    if "/user/profile" in p:
+        return user_profile.layout()
 
     if "/shop/cart" in p:
         return user_shopcart.layout(user_info, cart_info)

@@ -12,7 +12,7 @@ from magic_defines import *
 import coloredlogs, logging
 from datetime import datetime, timedelta
 import jwt
-from utils import caller_info, RespExcept
+from utils import caller_info, RespExcept, CodeNotMatch
 from email_smtp import EmailClientSMTP
 from flask_apispec import ResourceMeta, Ref, doc, marshal_with, use_kwargs
 logger = logging.getLogger(__name__)
@@ -57,17 +57,41 @@ class AppController(object):
     def get_user_by_id(self, user_id):
         return self.db_model.get_user_by_id(user_id)
 
+
     def get_club_user_list(self, club_name):
         user_list = self.db_model.get_club_user_list(club_name)
         return user_list
 
+    def _decode_user_jwt(self, encoded_jwt):
+        payload = jwt.decode(encoded_jwt, JWT_SECRET_KEY, JWT_ALGORITHM)
+        return payload
+
+    def get_club_user_by_jwt(self, club_name, encoded_jwt):
+        u = None
+        try:
+            user_dict = self._decode_user_jwt(encoded_jwt)
+            u = self.get_club_user_by_id(user_dict['user_id'])
+        except jwt.ExpiredSignatureError:
+            pass
+        return u
+
     def generate_user_jwt(self, club_name, user):
         payload = {
             'user_id': user.id,
+            'club_name': club_name,
             'exp':datetime.utcnow() + timedelta(hours=JWT_EXP_DELTA_HOURS)
         }
         jwt_token = jwt.encode(payload, JWT_SECRET_KEY, JWT_ALGORITHM)
         return jwt_token
+
+
+    def activate_club_user_by_jwt(self, club_name, encoded_jwt, code):
+        user = self.get_club_user_by_jwt(club_name, encoded_jwt)
+        if not user:
+            raise LoginExpireMsg()
+        user.activate_code(code)
+        self.db_model.save(user)
+
 
     def activate_club_user_by_email(self, club_name, email, activate_code):
         '''

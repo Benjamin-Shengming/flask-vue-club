@@ -66,6 +66,12 @@ class User(Base, BaseMixin, UserMixin):
     roles = relationship("Role",
                          secondary=association_user_role,
                          back_populates="users")
+    def is_active(self):
+        return False if self.activate_code else True
+
+    def activate(self, code):
+        if code == self.activate_code:
+            self.activate_code = ""
 
 
 class Club(Base, BaseMixin):
@@ -162,6 +168,9 @@ class AppModel(object):
             logger.debug(str(e))
             self.db_session.rollback()
             raise e
+
+    def save(self, obj):
+        self._add_commit(obj)
 
     def _find_club_and_error(self, club_name):
         club = Club.query.filter_by(name=club_name).first()

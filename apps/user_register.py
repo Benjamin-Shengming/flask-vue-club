@@ -88,7 +88,7 @@ register_button_row = html.Div(className="row", children=[
                 ])
             ])
 
-auto_link = Redirect(id="user_register_autolink_home", href="")
+auto_link = Redirect(id="user_register_autolink_to_activate", href="")
 
 def register_layout():
     logger.debug("register layout")
@@ -101,15 +101,8 @@ def register_layout():
             auto_link
     ])
 
-@app.callback(Output('global-hiden-user-info', 'children'),
-              [Input("register-user", "n_clicks")],
-              [State("register-email", "value")])
-def register_user(n_clicks, email):
-    if n_clicks <= 0:
-        raise ValueError("Do nothing")
-    return email
 
-@app.callback(Output('user_register_autolink_home', 'href'),
+@app.callback(Output('user_register_autolink_to_activate', 'href'),
               [Input("register-user", "n_clicks")],
               [State("register-email", "value"),
                State("register-password", "value"),
@@ -129,6 +122,5 @@ def register_user(n_clicks, email, password, password_confirm):
     if user.tel:
         raise PreventUpdate()
     if user.email:
-        #app_controller.resend_active_code_by_email(CLUB_NAME, user.email)
-        pass
-    return "/user/activate/{}".format(user.id)
+        app_controller.resend_active_code_by_email(CLUB_NAME, user.email)
+    return "/user/profile/"

@@ -19,8 +19,95 @@ import coloredlogs, logging
 logger = logging.getLogger(__name__)
 coloredlogs.install(level='DEBUG', logger=logger)
 
+'''
+<div class="container">
+	<div class="row">
+		<h2>Create your snippet's HTML, CSS and Javascript in the editor tabs</h2>
 
-#register_storage = local_storage.LocalStorageComponent(id="global-local-storage", label="user_info")
+
+       <div class="col-md-7 ">
+
+<div class="panel panel-default">
+  <div class="panel-heading">  <h4 >User Profile</h4></div>
+   <div class="panel-body">
+
+    <div class="box box-info">
+
+            <div class="box-body">
+                     <div class="col-sm-6">
+                     <div  align="center"> <img alt="User Pic" src="https://x1.xingassets.com/assets/frontend_minified/img/users/nobody_m.original.jpg" id="profile-image1" class="img-circle img-responsive">
+
+                <input id="profile-image-upload" class="hidden" type="file">
+<div style="color:#999;" >click here to change profile image</div>
+                <!--Upload Image Js And Css-->
+
+
+
+
+
+
+
+                     </div>
+
+              <br>
+
+              <!-- /input-group -->
+            </div>
+            <div class="col-sm-6">
+            <h4 style="color:#00b1b1;">Prasad Shankar Huddedar </h4></span>
+              <span><p>Aspirant</p></span>
+            </div>
+            <div class="clearfix"></div>
+            <hr style="margin:5px 0 5px 0;">
+
+
+<div class="col-sm-5 col-xs-6 tital " >First Name:</div><div class="col-sm-7 col-xs-6 ">Prasad</div>
+     <div class="clearfix"></div>
+<div class="bot-border"></div>
+
+<div class="col-sm-5 col-xs-6 tital " >Middle Name:</div><div class="col-sm-7"> Shankar</div>
+  <div class="clearfix"></div>
+<div class="bot-border"></div>
+
+<div class="col-sm-5 col-xs-6 tital " >Last Name:</div><div class="col-sm-7"> Huddedar</div>
+  <div class="clearfix"></div>
+<div class="bot-border"></div>
+
+<div class="col-sm-5 col-xs-6 tital " >Date Of Joining:</div><div class="col-sm-7">15 Jun 2016</div>
+
+  <div class="clearfix"></div>
+<div class="bot-border"></div>
+
+<div class="col-sm-5 col-xs-6 tital " >Date Of Birth:</div><div class="col-sm-7">11 Jun 1998</div>
+
+  <div class="clearfix"></div>
+<div class="bot-border"></div>
+
+<div class="col-sm-5 col-xs-6 tital " >Place Of Birth:</div><div class="col-sm-7">Shirdi</div>
+
+ <div class="clearfix"></div>
+<div class="bot-border"></div>
+
+<div class="col-sm-5 col-xs-6 tital " >Nationality:</div><div class="col-sm-7">Indian</div>
+
+ <div class="clearfix"></div>
+<div class="bot-border"></div>
+
+<div class="col-sm-5 col-xs-6 tital " >Relition:</div><div class="col-sm-7">Hindu</div>
+
+
+            <!-- /.box-body -->
+          </div>
+          <!-- /.box -->
+
+        </div>
+
+
+    </div>
+    </div>
+</div>
+'''
+
 profile_title_row = html.Div(className="row", children=[
                 html.Div(className="col-md-3"),
                 html.Div(className="col-md-6", children=[
@@ -28,6 +115,7 @@ profile_title_row = html.Div(className="row", children=[
                     html.Hr()
                 ])
             ])
+
 email_row = html.Div(className="row", children=[
                 html.Div(className="col-md-3 field-label-responsive", children=[
                     html.Label("E-Mail Address", htmlFor="email")
@@ -48,88 +136,12 @@ email_row = html.Div(className="row", children=[
                     ])
                 ])
             ])
-password_row = html.Div(className="row", children=[
-                html.Div(className="col-md-3 field-label-responsive", children=[
-                    html.Label("Password", htmlFor="password")
-                ]),
-                html.Div(className="col-md-6", children=[
-                    html.Div(className="form-group has-danger", children=[
-                        html.Div(className="input-group mb-2 mr-sm-2 mb-sm-0", children=[
-                            html.Div(className="input-group-addon", style={"width": "2.6rem"}, children=[
-                                html.I(className="fa fa-key")
-                            ]),
-                            dcc.Input(type="password",name="password",className="form-control",id="register-password", placeholder="Password",required ="true")
-                        ])
-                    ])
-                ])
-            ])
-
-confirm_pwd_row = html.Div(className="row", children=[
-                    html.Div(className="col-md-3 field-label-responsive", children=[
-                        html.Label("Confirm Password", htmlFor="password")
-                    ]),
-                    html.Div(className="col-md-6", children=[
-                        html.Div(className="form-group", children=[
-                            html.Div(className="input-group mb-2 mr-sm-2 mb-sm-0", children=[
-                                html.Div(className="input-group-addon", style={"width": "2.6rem"}, children=[
-                                    html.I(className="fa fa-repeat")
-                                ]),
-                                dcc.Input(type="password", name="password-confirmation", className="form-control", id="register-password-confirm", placeholder="Password", required="true")
-                            ])
-                        ])
-                    ])
-            ])
-
-register_button_row = html.Div(className="row", children=[
-                html.Div(className="col-md-3"),
-                html.Div(className="col-md-6", children=[
-                    html.Button(type="submit", id="register-user", className="btn btn-success", children=[
-                        "Register", html.I(className="fa fa-user-plus")
-                    ])
-                ])
-            ])
 
 
-def register_layout():
-    logger.debug("register layout")
+def layout():
+    logger.debug("profile layout")
     return html.Div(className="container", children=[
-        #html.Form(className="form-horizontal", role="form", children=[
-            register_title_row,
-            email_row,
-            password_row,
-            confirm_pwd_row,
-            register_button_row
-        #])
+        profile_title_row,
+        email_row
     ])
 
-@app.callback(Output('global-hiden-user-info', 'children'),
-              [Input("register-user", "n_clicks")],
-              [State("register-email", "value")])
-def register_user(n_clicks, email):
-    if n_clicks <= 0:
-        raise ValueError("Do nothing")
-    return email
-
-@app.callback(Output('global-url', 'pathname'),
-              [Input("register-user", "n_clicks")],
-              [State("register-email", "value"),
-               State("register-password", "value"),
-               State("register-password-confirm", "value")])
-def register_user(n_clicks, email, password, password_confirm):
-    if n_clicks <= 0:
-        raise PreventUpdate()
-    if password != password_confirm:
-        raise PreventUpdate()
-    user_data = {
-        'email': email,
-        'tel':None,
-        'password': password,
-        'roles': None
-    }
-    user = app_controller.create_club_user(CLUB_NAME, user_data)
-    if user.tel:
-        raise PreventUpdate()
-    if user.email:
-        #app_controller.resend_active_code_by_email(CLUB_NAME, user.email)
-        pass
-    return "/user/activate/{}".format(user.id)
