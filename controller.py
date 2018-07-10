@@ -182,13 +182,6 @@ class AppController(object):
     def delete_club_role_by_name(self, club_name, role_name):
         return self.db_model.delete_club_role_by_name(club_name, role_name)
 
-    def get_filestore_dir(self):
-        return self.db_model.get_filestore_dir()
-
-    def get_filestore_service(self, club_name, id):
-        directory = self.db_model.get_filestore_service(club_name, id)
-        logger.debug(directory)
-        return os.path.abspath(directory)
 
     def allow_file(self, filename):
       allow_ext = set(['txt','png', 'jpg', 'jpeg', 'gif'])
