@@ -14,6 +14,7 @@ import dash_html_components as html
 import dash_core_components as dcc
 import pandas as pd
 from dash.exceptions import PreventUpdate
+import sd_material_ui
 
 # add current folder and lib to syspath
 sys.path.append(os.path.join(os.path.dirname(__file__)))
@@ -54,6 +55,7 @@ def generate_main_layout():
         LocalStorageWriter(id="global-local-storage-writer", label=USER_STORAGE),
         LocalStorageReader(id="user-local-storage-reader", label=USER_STORAGE),
         LocalStorageReader(id="cart-local-storage-reader", label=CART_STORAGE),
+        sd_material_ui.Snackbar(id='snackbar', open=False, message='Polo', action='Reveal'),
         nav_bar.components_tree(),
         # This Location component represents the URL bar
         dcc.Location(id='global-url', refresh=False),
