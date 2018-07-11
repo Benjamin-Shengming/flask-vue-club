@@ -12,11 +12,10 @@ from pprint import pprint
 from app import app
 from app import app_controller
 import filestore
-from magic_defines import *
 from flask import redirect
-import sd_material_ui
-from sd_material_ui import Snackbar
 import coloredlogs, logging
+from sd_material_ui import Snackbar
+from magic_defines import *
 from utils import *
 from autolink import Redirect
 from localstorage_writer import LocalStorageWriter
@@ -144,7 +143,7 @@ def show_snackbar(msg):
 def change_message(n_clicks, email, pwd):
     logger.debug("change message")
     if not email:
-        logger.debug(S_INPUT_EMAIL)
+        logger.debug("input email is {}".format(email))
         return S_INPUT_EMAIL
     if not pwd:
         return S_INPUT_PWD

@@ -47,7 +47,6 @@ nav_bar.add_drop_menu("User", ["Login", "Register", "Profile"])
 nav_bar.add_shop_cart_button("navbar-shopcart-button")
 nav_bar.add_shop_order_button("navbar-shoporder-button")
 
-
 def generate_main_layout():
     return html.Div([
         # walkalround that let client download js bundle, *bugs* in dash
@@ -94,7 +93,7 @@ def display_page(pathname, user_info_str, cart_info_str):
         return user_register.layout()
 
     if "/user/profile" in p:
-        return user_profile.layout()
+        return user_profile.layout(user_info_str)
 
     if "/shop/cart" in p:
         return user_shopcart.layout(user_info, cart_info)

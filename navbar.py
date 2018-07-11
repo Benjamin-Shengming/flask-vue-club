@@ -86,7 +86,7 @@ class NavBarDropMenu(object):
         self.drop_menus  = []
         self.shop_cart = None
         self.shop_order = None
-
+        self.buttons = []
     def add_drop_menu(self, menu_name, menu_items):
         menu= html.Div(className="btn-group", children=[
             html.Button(menu_name, **{"data-toggle":"dropdown","aria-haspopup":"true","aria-expanded":"false"},className="btn btn-dark dropdown-toggle"),
@@ -106,6 +106,11 @@ class NavBarDropMenu(object):
             html.I("Order",className="fas fa-shipping-fast")
         ])
 
+    def add_button(self, button_id, button_text):
+        self.buttons.append(html.Button(id=button_id,
+                                      className="btn btn-outline-info",
+                                      children=[ html.I(button_text)]))
+        self.buttons.append(html.Span("  "))
     def components_tree(self):
 
         nav_bar_brand = html.A(self.brand_name, className="navbar-brand text-white")
@@ -123,11 +128,12 @@ class NavBarDropMenu(object):
                                             ])
 
         nav_bar_links = html.Ul(className="navbar-nav mr-auto", children=self.drop_menus)
-        nav_bar_collapse = html.Div(className="navbar-collapse collapse", id=self.collapse_id,
-                                    children=[nav_bar_links,
-                                              self.shop_cart,
-                                              html.Span(" "),
-                                              self.shop_order])
+        collapse_children = [nav_bar_links]
+        collapse_children.extend(self.buttons)
+        collapse_children.extend([self.shop_cart, html.Span("  "), self.shop_order])
+        nav_bar_collapse = html.Div(className="navbar-collapse collapse",
+                                    id=self.collapse_id,
+                                    children=collapse_children)
 
 
 

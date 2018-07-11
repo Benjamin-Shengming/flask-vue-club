@@ -17,6 +17,8 @@ from magic_defines import *
 import sd_material_ui
 from sd_material_ui import Snackbar
 import coloredlogs, logging
+from sd_material_ui import Snackbar
+from magic_defines import *
 from utils import *
 from autolink import Redirect
 from localstorage_writer import LocalStorageWriter
@@ -32,60 +34,201 @@ def gen_id(name):
     logger.debug(s_id)
     return s_id
 
-
-profile_layout = html.Div(className="tab-pane", id="edit", children=[
-    html.Form(role="form", children=[
-        html.Div(className="form-group row", children=[
-            html.Label("First name", className="col-lg-3 col-form-label form-control-label"),
-            html.Div(className="col-lg-9", children=[
-                dcc.Input(className="form-control", type="text", value="Jane")
-            ])
-        ]),
-        html.Div(className="form-group row", children=[
-            html.Label("First name", className="col-lg-3 col-form-label form-control-label"),
-            html.Div(className="col-lg-9", children=[
-                dcc.Input(className="form-control", type="text", value="Jane")
-            ])
-        ]),
-        html.Div(className="form-group row", children=[
-            html.Label(className="col-lg-3 col-form-label form-control-label"),
-            html.Div(className="col-lg-9", children=[
-                dcc.Input(type="reset",className="btn btn-secondary", value="Cancel"),
-                html.Span("  "),
-                dcc.Input(type="button",className="btn btn-primary", value="Save Changes")
-            ])
+def generate_field_user_id(user):
+    field_row = html.Div(className="form-group row", children=[
+        html.Label(S_USER_ID, className="col-lg-3 col-form-label form-control-label"),
+        html.Div(className="col-lg-9", children=[
+            dcc.Input(id=gen_id(USER_ID),
+                        className="form-control",
+                        type="text",
+                        value=user.id,
+                        disabled=True)
         ])
     ])
-])
+    return field_row
 
+def generate_field_user_email(user):
+    field_row = html.Div(className="form-group row", children=[
+        html.Label(S_EMAIL, className="col-lg-3 col-form-label form-control-label"),
+        html.Div(className="col-lg-9", children=[
+            dcc.Input(id=gen_id(EMAIL),
+                        className="form-control",
+                        type="text",
+                        value=user.email,
+                        disabled=True),
+            html.Button(S_EDIT,
+                        id=gen_id(EDIT + EMAIL),
+                        className="btn btn-outline-info"),
+            html.Span(" "),
+            html.Button(S_CONFIRM,
+                        id=gen_id(CONFIRM + EMAIL),
+                        className="btn btn-outline-primary"),
 
-timer = dcc.Interval(
-            id=gen_id(TIMER),
-            interval=1*1000, # in milliseconds
-            n_intervals=0)
-user_info_reader = LocalStorageReader(id=gen_id(STORAGE_R), label=USER_STORAGE)
-
-
-def layout():
-    return html.Div(id=gen_id(ROOT), children=[
-        timer,
-        user_info_reader,
-        html.Div(id=gen_id(PLACEHOLDER))
+        ])
     ])
+    return field_row
+
+def generate_field_user_tel(user):
+    field_row = html.Div(className="form-group row", children=[
+        html.Label(S_TEL, className="col-lg-3 col-form-label form-control-label"),
+        html.Div(className="col-lg-9", children=[
+            dcc.Input(id=gen_id(TEL),
+                        className="form-control",
+                        type="text",
+                        value=user.tel,
+                        disabled=True),
+            html.Button(S_EDIT,
+                        id=gen_id(EDIT + TEL),
+                        className="btn btn-outline-info"),
+            html.Span(" "),
+            html.Button(S_CONFIRM,
+                        id=gen_id(CONFIRM + TEL),
+                        className="btn btn-outline-primary"),
+
+        ])
+    ])
+    return field_row
 
 
-###
-@app.callback(Output(gen_id(PLACEHOLDER), 'children'),
-              [Input(gen_id(TIMER), 'n_intervals')],
-              [State(gen_id(STORAGE_R), 'value')])
-def update_profile(interval, jwt):
-    logger.debug("update profile, jwt is {}".format(jwt))
+def generate_field_user_pwd(user):
+    field_row = html.Div(className="form-group row", children=[
+        html.Label(S_PWD, className="col-lg-3 col-form-label form-control-label"),
+        html.Div(className="col-lg-9", children=[
+            dcc.Input(id=gen_id(PASSWD),
+                        className="form-control",
+                        type="password",
+                        value=user.password_hash,
+                        disabled=True)
+        ])
+    ])
+    return field_row
+
+def generate_field_user_pwd_confirm(user):
+    field_row = html.Div(className="form-group row", children=[
+        html.Label(S_PWD_CONFIRM, className="col-lg-3 col-form-label form-control-label"),
+        html.Div(className="col-lg-9", children=[
+            dcc.Input(id=gen_id(PASSWD_CONFIRM),
+                        className="form-control",
+                        type="password",
+                        value=user.password_hash,
+                        disabled=True),
+            html.Button(S_EDIT,
+                        id=gen_id(EDIT + PASSWD),
+                        className="btn btn-outline-info"),
+            html.Span(" "),
+            html.Button(S_CONFIRM,
+                        id=gen_id(CONFIRM + PASSWD),
+                        className="btn btn-outline-primary"),
+        ])
+    ])
+    return field_row
+
+def generate_field_user_activate_status(user):
+    field_row = html.Div(className="form-group row", children=[
+        html.Label(S_ACTIVE_STATUS, className="col-lg-3 col-form-label form-control-label"),
+        html.Div(className="col-lg-9", children=[
+            dcc.Input(id=gen_id(STATUS + ACTIVATE),
+                        className="form-control",
+                        type="text",
+                        value= S_ACTIVE_YES if user.is_active() else S_ACTIVE_NO)
+        ])
+    ])
+    return field_row
+
+def generate_field_user_activate(user):
+    field_row = html.Div(className="form-group row", children=[
+        html.Label(S_ACTIVATE, className="col-lg-3 col-form-label form-control-label"),
+        html.Div(className="col-lg-9", children=[
+            dcc.Input(id=gen_id(ACTIVATE),
+                        className="form-control",
+                        type="text",
+                        placeholder=S_INPUT_ACTIVATE_CODE),
+            html.Button(S_ACTIVATE,
+                        id=gen_id(CONFIRM+ACTIVATE),
+                        className="btn btn-outline-info"),
+            html.Button(S_LOGOUT,
+                        id=gen_id(LOGOUT),
+                        className="btn btn-outline-info")
+        ])
+    ])
+    return field_row
+
+
+def generate_user_fields(user):
+    list_fields = []
+    list_fields.append(generate_field_user_id(user))
+    list_fields.append(generate_field_user_email(user))
+    list_fields.append(generate_field_user_tel(user))
+    list_fields.append(generate_field_user_pwd(user))
+    list_fields.append(generate_field_user_pwd_confirm(user))
+    list_fields.append(generate_field_user_activate_status(user))
+    list_fields.append(generate_field_user_activate(user))
+    return html.Div(className="tab-pane", children= list_fields)
+
+user_info_reader = LocalStorageReader(id=gen_id(STORAGE_R),
+                                      label=USER_STORAGE)
+
+user_info_writer= LocalStorageWriter(id=gen_id(STORAGE_W),
+                                      label=USER_STORAGE)
+
+auto_link = Redirect(id=gen_id(REDIRECT), href="")
+
+def layout(jwt):
     if not jwt:
-        return [dcc.Link("Please login firstly!", href="/user/login")]
+        return dcc.Link("Please login firstly!",
+                         href="/user/login",
+                         style={"cursor":"pointer"}
+                        )
 
     user = app_controller.get_club_user_by_jwt(CLUB_NAME, jwt)
     if not user:
-        return [html.H1("Login expires, relogin again!")]
+        return dcc.Link("Please login firstly!",
+                         href="/user/login",
+                         style={"cursor":"pointer"}
+                        )
+    return html.Div(id=gen_id(ROOT), children=[
+        user_info_reader,
+        user_info_writer,
+        auto_link,
+        html.Div(id=gen_id(PLACEHOLDER), children=[
+            generate_user_fields(user)
+        ])
+    ])
 
-    return profile_layout
+
+@app.callback(Output(gen_id(PLACEHOLDER), 'children'),
+              [Input(gen_id(CONFIRM+ACTIVATE), "n_clicks")],
+              [State(gen_id(ACTIVATE), "value"),
+              State(gen_id(STORAGE_R), "value")])
+def activate(n_clicks, code, jwt):
+    logger.debug(n_clicks)
+    logger.debug(code)
+    logger.debug(jwt)
+    assert_button_clicks(n_clicks)
+    assert_has_value(code)
+    assert_has_value(jwt)
+    user = app_controller.get_club_user_by_jwt(CLUB_NAME, jwt)
+    if user.is_active():
+        raise PreventUpdate()
+    user.activate(code)
+    app_controller.save(user)
+    return generate_user_fields(user)
+
+@app.callback(Output(gen_id(REDIRECT), 'href'),
+              [Input(gen_id(STORAGE_R), "value")])
+def redirect(jwt):
+    logger.debug("redirect ")
+    logger.debug(str(jwt))
+    user = app_controller.get_club_user_by_jwt(CLUB_NAME, jwt)
+    if user:
+        raise PreventUpdate()
+
+    return "/home"
+
+@app.callback(Output(gen_id(STORAGE_W), 'value'),
+              [Input(gen_id(LOGOUT), "n_clicks")])
+def activate(n_clicks):
+    assert_button_clicks(n_clicks)
+    return ""
+
 

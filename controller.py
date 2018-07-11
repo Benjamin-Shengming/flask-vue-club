@@ -34,6 +34,9 @@ class AppController(object):
     def __init__(self):
         self.db_model = AppModel()
 
+    def save(self, obj):
+        self.db_model.save(obj)
+
     # club related functions
     def get_club_list(self):
         user_list = self.db_model.get_club_list()
@@ -71,7 +74,7 @@ class AppController(object):
         try:
             user_dict = self._decode_user_jwt(encoded_jwt)
             u = self.get_club_user_by_id(club_name, user_dict['user_id'])
-        except jwt.ExpiredSignatureError:
+        except:
             pass
         return u
 

@@ -69,4 +69,7 @@ def assert_button_clicks(clicks):
     if not clicks or clicks <= 0:
         raise PreventUpdate()
 
+def assert_has_value(obj):
+    if not obj:
+        raise PreventUpdate()
 
