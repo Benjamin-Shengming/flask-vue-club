@@ -106,7 +106,8 @@ login_button_row = html.Div(id=gen_id(LOGIN),
                                 ]),
                             ])
 err_msg_row = Snackbar(id=gen_id(SNACK_BAR), open=True, message='Polo', action='Reveal')
-user_storage = LocalStorageWriter(id=gen_id(STORAGE_W), label=USER_STORAGE)
+user_storage_w = LocalStorageWriter(id=gen_id(STORAGE_W), label=USER_STORAGE)
+user_storage_r = LocalStorageReader(id=gen_id(STORAGE_R), label=USER_STORAGE)
 auto_redirect = Redirect(id=gen_id(REDIRECT), href="")
 
 def layout():
@@ -117,7 +118,8 @@ def layout():
         login_button_row,
         html.Div(id=gen_id(HIDDEN_DIV)),
         err_msg_row,
-        user_storage,
+        user_storage_w,
+        user_storage_r,
         auto_redirect
     ])
 
@@ -154,7 +156,7 @@ def change_message(n_clicks, email, pwd):
 
 
 
-@app.callback(Output(gen_id(STORAGE_W), 'value'),
+@app.callback(Output(gen_id(HIDDEN_DIV), 'children'),
               [Input(gen_id(SNACK_BAR), "message")],
               [State(gen_id(EMAIL), "value"),
                State(gen_id(PASSWD), "value")])
@@ -167,5 +169,23 @@ def store_user_info(msg, email, password):
         raise PreventUpdate()
 
     jwt = app_controller.generate_user_jwt(CLUB_NAME, user)
-    return jwt
+    return [LocalStorageWriter(id=str(uuid1()), label=USER_STORAGE, value=jwt)]
 
+
+
+@app.callback(Output(gen_id(REDIRECT), 'href'),
+              [Input(gen_id(HIDDEN_DIV), "children")],
+              [State(gen_id(EMAIL), "value"),
+               State(gen_id(PASSWD), "value")])
+def redirect(loggedin, email, password):
+    if not loggedin:
+        raise PreventUpdate()
+
+    user = app_controller.get_club_user_by_email(CLUB_NAME, email)
+    if not user:
+        raise PreventUpdate()
+
+    if user.is_active():
+        return "/home"
+    else:
+        return "/user/profile"

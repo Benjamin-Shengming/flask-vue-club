@@ -100,6 +100,7 @@ def display_page(pathname, user_info_str, cart_info_str):
         return user_shopcart.layout(user_info, cart_info)
 
     logger.debug("use home page")
+    return pathname
     return user_service_list.layout()
 
 
