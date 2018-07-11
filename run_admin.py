@@ -118,7 +118,7 @@ def display_page(pathname):
 
     p = pathname.lower()
     if p == "/service/new":
-        return service_new.layout
+        return service_new.layout()
     elif p == "/service/list":
         return service_list.layout()
     elif "/service/edit" in p:

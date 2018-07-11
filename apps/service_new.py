@@ -75,136 +75,137 @@ def generate_new_img_txt(index):
     return img_txt_section
 
 
-layout = html.Div(children=[
-    html.Label( # service uuid
-        title=str(uuid1()),
-        id="service_new_uuid",
-        style={"display": 'none'}
-    ),
-    html.Div(className="row", children=[
-            html.Div(className="col-sm-12", children=[
-                html.Label("Title:")
-            ]),
-    ]),
-    html.Div(className="row", children=[
-            html.Div(className="col-sm-12", children=[
-                dcc.Input(id="service_new_title",
-                        placeholder="Please input title",
-                        className="form-control form-control-lg")
-            ])
-    ]),
-    html.Div(className="row", children=[
-            html.Div(className="col-sm-12", children=[
-                html.Label("Description:")
-            ]),
-    ]),
-    html.Div(className="row", children=[
-            html.Div(className="col-sm-12", children=[
-                dcc.Textarea(id="service_new_description",
-                        placeholder="Please input service description",
-                        style={'width':'100%'},
-                        className="form-control form-control-lg")
-            ])
-    ]),
-    html.Div(className="row", children=[
-            html.Div(className="col-sm-12", children=[
-                html.Label("Price:")
-            ]),
-    ]),
-    html.Div(className="row", children=[
-            html.Div(className="col-sm-12", children=[
-                dcc.Input(id="service_new_price",
-                        placeholder="Please input service price",
-                        style={'width':'100%'},
-                        type="number",
-                        value=500,
-                        step=1,
-                        className="form-control form-control-lg")
-            ])
-    ]),
-    html.Div(className="row", children=[
-            html.Div(className="col-sm-12", children=[
-                html.Label("discount:")
-            ]),
-    ]),
-    html.Div(className="row", children=[
-            html.Div(className="col-sm-12", children=[
-                dcc.Input(id="service_new_discount",
-                        placeholder="Please input service price",
-                        style={'width':'100%'},
-                        type="number",
-                        value=80,
-                        min=0,
-                        max=100,
-                        step=1,
-                        className="form-control form-control-lg")
-            ])
-    ]),
-    html.Div(className="row", children=[
-            html.Div(className="col-sm-12", children=[
-                html.Label("major picture:")
-            ]),
-    ]),
-    html.Div(className="row", children=[
-            html.Div(className="col-sm-12", children=[
-                dcc.Upload(
-                    id='service_new_upload_major',
-                    children=html.Div([
-                        'Drag and Drop or ',
-                        html.A('Select a File'),
-                    ]),
-                    style={
-                        'width': '100%',
-                        'height': '60px',
-                        'lineHeight': '60px',
-                        'borderWidth': '1px',
-                        'borderStyle': 'dashed',
-                        'borderRadius': '5px',
-                        'textAlign': 'center',
-                        'margin': '10px'
-                    }
-                ),
-            ])
-    ]),
-    html.Div(className="row", children=[
-            html.Div(className="col-sm-12", children=[
-                html.Img(id="service_new_img_major",src="", className="img-fluid"),
-            ]),
-    ]),
-    html.Div(className="row", children=[
-            html.Div(className="col-sm-6", children=[
-                dcc.Checklist(
-                    id="service_new_checklist_online",
-                    options=[
-                        {'label': 'online', 'value': 'online'},
-                    ],
-                    values=['online']
-                )
-            ]),
-            html.Div(className="col-sm-6", children=[
-                dcc.Checklist(
-                    id="service_new_checklist_headline",
-                    options=[
-                        {'label': 'headline', 'value': 'headline'},
-                    ],
-                    values=['headline']
-                )
-            ]),
-    ]),
-    html.Div(id="service_new_imgs_and_texts", children=[
-        generate_new_img_txt(i) for i in range(MAX_IMG_TXT)
-    ]),
-    html.Hr(),
-    html.A(className="topfloat", children=[
-        html.Label(id="service_new_msg", children=["mesage show here"])
-    ]),
-    html.A(className="float", children=[
-        html.Button("Submit",
-                    id="service_new_button_submit",
-                    n_clicks=0,
-                    className="btn btn-outline-primary")
-    ]),
-])
+def layout():
+    return html.Div(children=[
+        html.Label( # service uuid
+            title=str(uuid1()),
+            id="service_new_uuid",
+            style={"display": 'none'}
+        ),
+        html.Div(className="row", children=[
+                html.Div(className="col-sm-12", children=[
+                    html.Label("Title:")
+                ]),
+        ]),
+        html.Div(className="row", children=[
+                html.Div(className="col-sm-12", children=[
+                    dcc.Input(id="service_new_title",
+                            placeholder="Please input title",
+                            className="form-control form-control-lg")
+                ])
+        ]),
+        html.Div(className="row", children=[
+                html.Div(className="col-sm-12", children=[
+                    html.Label("Description:")
+                ]),
+        ]),
+        html.Div(className="row", children=[
+                html.Div(className="col-sm-12", children=[
+                    dcc.Textarea(id="service_new_description",
+                            placeholder="Please input service description",
+                            style={'width':'100%'},
+                            className="form-control form-control-lg")
+                ])
+        ]),
+        html.Div(className="row", children=[
+                html.Div(className="col-sm-12", children=[
+                    html.Label("Price:")
+                ]),
+        ]),
+        html.Div(className="row", children=[
+                html.Div(className="col-sm-12", children=[
+                    dcc.Input(id="service_new_price",
+                            placeholder="Please input service price",
+                            style={'width':'100%'},
+                            type="number",
+                            value=500,
+                            step=1,
+                            className="form-control form-control-lg")
+                ])
+        ]),
+        html.Div(className="row", children=[
+                html.Div(className="col-sm-12", children=[
+                    html.Label("discount:")
+                ]),
+        ]),
+        html.Div(className="row", children=[
+                html.Div(className="col-sm-12", children=[
+                    dcc.Input(id="service_new_discount",
+                            placeholder="Please input service price",
+                            style={'width':'100%'},
+                            type="number",
+                            value=80,
+                            min=0,
+                            max=100,
+                            step=1,
+                            className="form-control form-control-lg")
+                ])
+        ]),
+        html.Div(className="row", children=[
+                html.Div(className="col-sm-12", children=[
+                    html.Label("major picture:")
+                ]),
+        ]),
+        html.Div(className="row", children=[
+                html.Div(className="col-sm-12", children=[
+                    dcc.Upload(
+                        id='service_new_upload_major',
+                        children=html.Div([
+                            'Drag and Drop or ',
+                            html.A('Select a File'),
+                        ]),
+                        style={
+                            'width': '100%',
+                            'height': '60px',
+                            'lineHeight': '60px',
+                            'borderWidth': '1px',
+                            'borderStyle': 'dashed',
+                            'borderRadius': '5px',
+                            'textAlign': 'center',
+                            'margin': '10px'
+                        }
+                    ),
+                ])
+        ]),
+        html.Div(className="row", children=[
+                html.Div(className="col-sm-12", children=[
+                    html.Img(id="service_new_img_major",src="", className="img-fluid"),
+                ]),
+        ]),
+        html.Div(className="row", children=[
+                html.Div(className="col-sm-6", children=[
+                    dcc.Checklist(
+                        id="service_new_checklist_online",
+                        options=[
+                            {'label': 'online', 'value': 'online'},
+                        ],
+                        values=['online']
+                    )
+                ]),
+                html.Div(className="col-sm-6", children=[
+                    dcc.Checklist(
+                        id="service_new_checklist_headline",
+                        options=[
+                            {'label': 'headline', 'value': 'headline'},
+                        ],
+                        values=['headline']
+                    )
+                ]),
+        ]),
+        html.Div(id="service_new_imgs_and_texts", children=[
+            generate_new_img_txt(i) for i in range(MAX_IMG_TXT)
+        ]),
+        html.Hr(),
+        html.A(className="topfloat", children=[
+            html.Label(id="service_new_msg", children=["mesage show here"])
+        ]),
+        html.A(className="float", children=[
+            html.Button("Submit",
+                        id="service_new_button_submit",
+                        n_clicks=0,
+                        className="btn btn-outline-primary")
+        ]),
+    ])
 
 
 # callbacks setup
