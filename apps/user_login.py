@@ -27,6 +27,12 @@ logger = logging.getLogger(__name__)
 coloredlogs.install(level='DEBUG', logger=logger)
 
 
+def gen_id(name):
+    # user module as name prefix
+    s_id = g_id(__name__, name)
+    logger.debug(s_id)
+    return s_id
+
 #register_storage = local_storage.LocalStorageComponent(id="global-local-storage", label="user_info")
 login_title_row = html.Div(className="row", children=[
                 html.Div(className="col-md-3"),
@@ -48,7 +54,7 @@ email_row = html.Div(className="row", children=[
                             dcc.Input(type="text",
                                       name="email",
                                       className="form-control",
-                                      id="user_login_email",
+                                      id=gen_id(EMAIL),
                                       placeholder="you@example.com",
                                       required="true",
                                       autofocus="true")
@@ -74,7 +80,7 @@ password_row = html.Div(className="row", children=[
                             dcc.Input(type="password",
                                       name="password",
                                       className="form-control",
-                                      id="user_login_password",
+                                      id=gen_id(PASSWD),
                                       placeholder="Password",
                                       required ="true")
                         ])
@@ -84,14 +90,14 @@ password_row = html.Div(className="row", children=[
 
 
 login_button  = html.Button(type="submit",
-                            id="user_login_button_login",
+                            id=gen_id(LOGIN),
                             className="btn btn-success",
                             children=[
                                 "Login",
                                 html.I(className="fa fa-user-plus")
                              ])
 
-login_button_row = html.Div(id="user_login_button_row",
+login_button_row = html.Div(id=gen_id(LOGIN),
                             className="row",
                             children= [
                                 html.Div(className="col-md-3"),
@@ -99,59 +105,67 @@ login_button_row = html.Div(id="user_login_button_row",
                                     login_button,
                                 ]),
                             ])
-err_msg_row = Snackbar(id='user_login_snackbar', open=True, message='Polo', action='Reveal')
-user_storage = LocalStorageWriter(id="user_login_user_storage", label=USER_STORAGE)
-auto_redirect = Redirect(href="/home")
+err_msg_row = Snackbar(id=gen_id(SNACK_BAR), open=True, message='Polo', action='Reveal')
+user_storage = LocalStorageWriter(id=gen_id(STORAGE_W), label=USER_STORAGE)
+auto_redirect = Redirect(id=gen_id(REDIRECT), href="")
+
 def layout():
     logger.debug("login layout")
     return html.Div(className="container", children=[
         email_row,
         password_row,
         login_button_row,
-        html.Div(id="user_login_button_target")
+        html.Div(id=gen_id(HIDDEN_DIV)),
+        err_msg_row,
+        user_storage,
+        auto_redirect
     ])
 
 
 
-@app.callback(Output('user_login_snackbar', 'message'),
-              [Input("user_login_email", "value"),
-               Input("user_login_password", "value")])
-def check_user(email, password):
+# callbacks
+@app.callback(Output(gen_id(SNACK_BAR), 'open'),
+              [Input(gen_id(SNACK_BAR), "message")])
+def show_snackbar(msg):
+    if msg:
+        logger.debug("show snackbar")
+        return True
+    else:
+        logger.debug("hide snackbar")
+        return False
+
+
+@app.callback(Output(gen_id(SNACK_BAR), 'message'),
+              [Input(gen_id(LOGIN), "n_clicks")],
+              [State(gen_id(EMAIL), "value"),
+               State(gen_id(PASSWD), "value")])
+def change_message(n_clicks, email, pwd):
+    logger.debug("change message")
     if not email:
-        return "Pleaes input email"
-    if not password:
-        return "Please input password"
-
-    user_data = {
-        'email': email,
-        'tel':None,
-        'password': password,
-    }
-    if not app_controller.verify_club_user(CLUB_NAME, user_data):
-        return "You email, tel or password does not match"
-
-    return "You have logged in"
-
-
-@app.callback(Output('user_login_button_target', 'children'),
-              [Input("user_login_button_login", "n_clicks")],
-              [State("user_login_email", "value"),
-               State("user_login_password", "value")])
-def store_user_info(n_clicks, email, password):
-    assert_button_clicks(n_clicks)
-    print("store user info called")
-    user_data = {
-        'email': email,
-        'tel':None,
-        'password': password,
-    }
-    user = app_controller.verify_club_user(CLUB_NAME, user_data)
+        logger.debug(S_INPUT_EMAIL)
+        return S_INPUT_EMAIL
+    user = app_controller.get_club_user_by_email(CLUB_NAME, email)
     if not user:
-        return [err_msg_row]
+        return S_USER_NOT_EXIST
+    if not pwd:
+        logger.debug(S_INPUT_PWD)
+        return S_INPUT_PWD
+    return ""
+
+
+
+@app.callback(Output(gen_id(STORAGE_W), 'value'),
+              [Input(gen_id(SNACK_BAR), "message")],
+              [State(gen_id(EMAIL), "value"),
+               State(gen_id(PASSWD), "value")])
+def store_user_info(msg, email, password):
+    if msg:
+        raise PreventUpdate()
+
+    user = app_controller.get_club_user_by_email(CLUB_NAME, email)
+    if not user:
+        raise PreventUpdate()
+
     jwt = app_controller.generate_user_jwt(CLUB_NAME, user)
-    return [
-            user_storage,
-            err_msg_row,
-            #auto_redirect
-            ]
+    return jwt
 

@@ -44,6 +44,10 @@ class CodeNotMatch(RespExcept):
        self._debug = caller_info()
 
 # helper functions
+def g_id(module_name, name):
+    return "{}-{}".format(module_name, name)
+
+
 def load_user_info_from_storage(user_info_str):
     return user_info_str
 
@@ -64,3 +68,5 @@ def load_cart_info_from_storage(cart_info_str):
 def assert_button_clicks(clicks):
     if not clicks or clicks <= 0:
         raise PreventUpdate()
+
+
