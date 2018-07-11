@@ -1,6 +1,14 @@
 #!/user/bin/python
 import os
 import base64
+from mimetypes import guess_extension, guess_type
+from PIL import Image
+from io import BytesIO
+from magic_defines import *
+import coloredlogs, logging
+
+logger = logging.getLogger(__name__)
+coloredlogs.install(level='DEBUG', logger=logger)
 
 def root_dir():
     return os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
@@ -17,7 +25,9 @@ def service_dir(service_id):
 def get_service_img_link(service_id, img_id):
     if not get_service_img_path(service_id, img_id):
         return ""
-    return "/assets/filestore/services/" + service_id + "/" + str(img_id)
+    link = "/assets/filestore/services/" + service_id + "/" + str(img_id) + DEF_EXT
+    logger.debug(link)
+    return link
 
 def make_service_txt_path(service_id, txt_index):
     p = os.path.join(service_dir(service_id), "{}.txt".format(txt_index))
@@ -26,7 +36,7 @@ def make_service_txt_path(service_id, txt_index):
     return p
 
 def make_service_img_path(service_id, img_index):
-    p = os.path.join(service_dir(service_id), str(img_index))
+    p = os.path.join(service_dir(service_id), str(img_index)+DEF_EXT)
     if not os.path.exists(os.path.dirname(p)):
         os.makedirs(os.path.dirname(p))
     return p
@@ -38,7 +48,7 @@ def get_service_txt_path(service_id, txt_index):
     return None
 
 def get_service_img_path(service_id, img_index):
-    p = os.path.join(service_dir(service_id), str(img_index))
+    p = os.path.join(service_dir(service_id), str(img_index)+DEF_EXT)
     if os.path.isfile(p):
         return p
     return None
@@ -57,11 +67,12 @@ def save_service_img(service_id, img_index, base64_content):
     data_tag, base64_tag = content_type.split(";")
     if "base64" not in base64_tag:
         return
-    p = make_service_img_path(service_id, img_index)
-    with open(p, 'wb') as f:
-        f.write(base64.b64decode(content_string))
-
     # adjust size
+    im = Image.open(BytesIO(base64.b64decode(content_string)))
+    im.thumbnail(IMAGE_SIZE)
+    p = make_service_img_path(service_id, img_index)
+    # save to file
+    im.save(p)
 
 def save_service_txt(service_id, txt_index, txt_content):
     if not txt_content:
