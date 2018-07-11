@@ -107,10 +107,6 @@ err_msg_row = Snackbar(id=gen_id(SNACK_BAR), open=False, message='fill login inf
 user_storage_w = LocalStorageWriter(id=gen_id(STORAGE_W), label=USER_STORAGE)
 auto_redirect = Redirect(id=gen_id(REDIRECT))
 
-timer = dcc.Interval(
-            id=gen_id(TIMER),
-            interval=1*1000, # in milliseconds
-            n_intervals=0)
 user_storage_r = LocalStorageReader(id=gen_id(STORAGE_R), label=USER_STORAGE)
 
 def layout():
@@ -124,7 +120,6 @@ def layout():
         err_msg_row,
         auto_redirect,
         user_storage_w,
-        timer,
         user_storage_r
     ])
 
@@ -195,20 +190,3 @@ def redirect(jwt):
     else:
         return "/user/profile"
 
-'''
-@app.callback(Output(gen_id(REDIRECT), 'href'),
-              [Input(gen_id(TIMER), "n_intervals")],
-              [State(gen_id(STORAGE_R), "value")])
-def redirect(interval, jwt):
-    if not jwt:
-        raise PreventUpdate()
-
-    user = app_controller.get_club_user_by_jwt(CLUB_NAME, jwt)
-    if not user:
-        raise PreventUpdate()
-
-    if user.is_active():
-        return "/home"
-    else:
-        return "/user/profile"
-'''
