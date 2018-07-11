@@ -180,7 +180,22 @@ def store_user_info(msg, email, password):
     jwt = app_controller.generate_user_jwt(CLUB_NAME, user)
     return jwt
 
+@app.callback(Output(gen_id(REDIRECT), 'href'),
+              [Input(gen_id(STORAGE_R), "value")])
+def redirect(jwt):
+    if not jwt:
+        raise PreventUpdate()
 
+    user = app_controller.get_club_user_by_jwt(CLUB_NAME, jwt)
+    if not user:
+        raise PreventUpdate()
+
+    if user.is_active():
+        return "/home"
+    else:
+        return "/user/profile"
+
+'''
 @app.callback(Output(gen_id(REDIRECT), 'href'),
               [Input(gen_id(TIMER), "n_intervals")],
               [State(gen_id(STORAGE_R), "value")])
@@ -196,3 +211,4 @@ def redirect(interval, jwt):
         return "/home"
     else:
         return "/user/profile"
+'''
