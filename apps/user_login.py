@@ -13,7 +13,6 @@ from app import app
 from app import app_controller
 import filestore
 from magic_defines import *
-import local_storage
 from flask import redirect
 import sd_material_ui
 from sd_material_ui import Snackbar
@@ -33,11 +32,10 @@ def gen_id(name):
     logger.debug(s_id)
     return s_id
 
-#register_storage = local_storage.LocalStorageComponent(id="global-local-storage", label="user_info")
 login_title_row = html.Div(className="row", children=[
                 html.Div(className="col-md-3"),
                 html.Div(className="col-md-6", children=[
-                    html.H2("Login"),
+                    html.H2("User Login"),
                     html.Hr()
                 ])
             ])
@@ -105,22 +103,29 @@ login_button_row = html.Div(id=gen_id(LOGIN),
                                     login_button,
                                 ]),
                             ])
-err_msg_row = Snackbar(id=gen_id(SNACK_BAR), open=True, message='Polo', action='Reveal')
+err_msg_row = Snackbar(id=gen_id(SNACK_BAR), open=False, message='fill login information')
 user_storage_w = LocalStorageWriter(id=gen_id(STORAGE_W), label=USER_STORAGE)
+auto_redirect = Redirect(id=gen_id(REDIRECT))
+
+timer = dcc.Interval(
+            id=gen_id(TIMER),
+            interval=1*1000, # in milliseconds
+            n_intervals=0)
 user_storage_r = LocalStorageReader(id=gen_id(STORAGE_R), label=USER_STORAGE)
-auto_redirect = Redirect(id=gen_id(REDIRECT), href="")
 
 def layout():
     logger.debug("login layout")
     return html.Div(className="container", children=[
+        login_title_row,
         email_row,
         password_row,
         login_button_row,
         html.Div(id=gen_id(HIDDEN_DIV)),
         err_msg_row,
+        auto_redirect,
         user_storage_w,
-        user_storage_r,
-        auto_redirect
+        timer,
+        user_storage_r
     ])
 
 
@@ -146,6 +151,9 @@ def change_message(n_clicks, email, pwd):
     if not email:
         logger.debug(S_INPUT_EMAIL)
         return S_INPUT_EMAIL
+    if not pwd:
+        return S_INPUT_PWD
+
     user = app_controller.get_club_user_by_email(CLUB_NAME, email)
     if not user:
         return S_USER_NOT_EXIST
@@ -156,11 +164,12 @@ def change_message(n_clicks, email, pwd):
 
 
 
-@app.callback(Output(gen_id(HIDDEN_DIV), 'children'),
+@app.callback(Output(gen_id(STORAGE_W), 'value'),
               [Input(gen_id(SNACK_BAR), "message")],
               [State(gen_id(EMAIL), "value"),
                State(gen_id(PASSWD), "value")])
 def store_user_info(msg, email, password):
+    logger.debug("store user info")
     if msg:
         raise PreventUpdate()
 
@@ -169,19 +178,17 @@ def store_user_info(msg, email, password):
         raise PreventUpdate()
 
     jwt = app_controller.generate_user_jwt(CLUB_NAME, user)
-    return [LocalStorageWriter(id=str(uuid1()), label=USER_STORAGE, value=jwt)]
-
+    return jwt
 
 
 @app.callback(Output(gen_id(REDIRECT), 'href'),
-              [Input(gen_id(HIDDEN_DIV), "children")],
-              [State(gen_id(EMAIL), "value"),
-               State(gen_id(PASSWD), "value")])
-def redirect(loggedin, email, password):
-    if not loggedin:
+              [Input(gen_id(TIMER), "n_intervals")],
+              [State(gen_id(STORAGE_R), "value")])
+def redirect(interval, jwt):
+    if not jwt:
         raise PreventUpdate()
 
-    user = app_controller.get_club_user_by_email(CLUB_NAME, email)
+    user = app_controller.get_club_user_by_jwt(CLUB_NAME, jwt)
     if not user:
         raise PreventUpdate()
 

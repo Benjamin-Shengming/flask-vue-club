@@ -30,7 +30,9 @@ REGISTER = "register"
 HIDDEN_DIV = "hidden-div"
 STORAGE_W = "storage-writer"
 STORAGE_R = "storage-reader"
-
+TIMER = "timer"
+ROOT = "root"
+PLACEHOLDER = "place-holder"
 # constant string defines, need translation
 S_INPUT_EMAIL = "Please input email!"
 S_INPUT_PWD = "Please input password!"

@@ -70,7 +70,7 @@ class AppController(object):
         u = None
         try:
             user_dict = self._decode_user_jwt(encoded_jwt)
-            u = self.get_club_user_by_id(user_dict['user_id'])
+            u = self.get_club_user_by_id(club_name, user_dict['user_id'])
         except jwt.ExpiredSignatureError:
             pass
         return u
