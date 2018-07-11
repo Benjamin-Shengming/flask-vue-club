@@ -13,7 +13,15 @@ from app import app
 from app import app_controller
 import filestore
 from magic_defines import *
+from autolink import Redirect
+from utils import *
 
+import coloredlogs, logging
+logger = logging.getLogger(__name__)
+coloredlogs.install(level='DEBUG', logger=logger)
+
+def gen_id(name):
+    return g_id(__name__, name)
 
 def generate_id(index):
     section_id = "service_detail_img_section_{}".format(index)
@@ -87,6 +95,13 @@ float_button = html.A(className="float", children=[
                         n_clicks=0,
                         className="btn btn-outline-primary")
         ])
+float_button_del = html.A(className=".secondfloat", children=[
+            html.Button("Delete",
+                        id=gen_id("button-del"),
+                        n_clicks=0,
+                        className="btn btn-outline-danger")
+        ])
+auto_link = Redirect(id=gen_id("redirect-to-list"), href="")
 
 def layout(service_id):
     service = app_controller.get_club_service(CLUB_NAME, service_id)
@@ -170,11 +185,7 @@ def layout(service_id):
                         id='service_detail_upload_major',
                         children=html.Div([
                             'Drag and Drop or ',
-                            html.A('Select a File'),
-                        ]),
-                        style={
-                            'width': '100%',
-                            'height': '60px',
+                            html.A('Select a File'), ]), style={ 'width': '100%', 'height': '60px',
                             'lineHeight': '60px',
                             'borderWidth': '1px',
                             'borderStyle': 'dashed',
@@ -217,7 +228,9 @@ def layout(service_id):
         ]),
         html.Hr(),
         float_msg,
-        float_button
+        float_button,
+        float_button_del,
+        auto_link
     ])
 
 
@@ -292,3 +305,18 @@ app.callback(Output('service_detail_img_major', 'src'),
 app.callback(Output('service_detail_msg', 'children'),
             [Input('service_detail_button_submit', 'n_clicks')],
             state_list)(update_service)
+
+@app.callback(Output(gen_id("redirect-to-list"), 'href'),
+            [Input(gen_id('button-del'), 'n_clicks')],
+            [State('service_detail_uuid', 'title')])
+def del_service(n_clicks, uuid):
+    logger.debug("delete service " + uuid)
+    assert_button_clicks(n_clicks)
+    assert_has_value(uuid)
+    app_controller.delete_club_service(CLUB_NAME, uuid)
+    service = app_controller.get_club_service(CLUB_NAME, uuid)
+    if not service:
+        filestore.del_service(uuid)
+        return "/service/list"
+
+    raise PreventUpdate()

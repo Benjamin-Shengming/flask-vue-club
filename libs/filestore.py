@@ -6,6 +6,7 @@ from PIL import Image
 from io import BytesIO
 from magic_defines import *
 import coloredlogs, logging
+import shutil
 
 logger = logging.getLogger(__name__)
 coloredlogs.install(level='DEBUG', logger=logger)
@@ -105,6 +106,9 @@ def get_service_txt_content(service_id, txt_index):
     with open(p, 'r') as f:
         return f.read()
 
+def del_service(service_id):
+    dir_path = os.path.join(service_dir(service_id))
+    shutil.rmtree(dir_path, True)
 
 if __name__ == "__main__":
     print(service_dir())

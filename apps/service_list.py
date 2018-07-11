@@ -67,5 +67,3 @@ def update_service_cards(rows, selected_row_indices):
         all_cards.append(generate_service_card(rows[i]["id"]))
     return all_cards
 
-if __name__ == '__main__':
-    app.run_server(debug=True)
