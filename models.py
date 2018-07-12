@@ -10,8 +10,8 @@ from flask_login import UserMixin
 from flask_babel import lazy_gettext as _
 from utils import *
 import coloredlogs, logging
-
-
+import filestore
+from uuid import uuid1
 
 logger = logging.getLogger(__name__)
 coloredlogs.install(level='DEBUG', logger=logger)
@@ -65,6 +65,8 @@ class User(Base, BaseMixin, UserMixin):
     roles = relationship("Role",
                          secondary=association_user_role,
                          back_populates="users")
+    orders = relationship("Order", backref="user", cascade="all, delete", order_by="desc(Order.time)")
+
     def is_active(self):
         return False if self.activate_code else True
 
@@ -118,33 +120,57 @@ class Service(Base, BaseMixin):
     club_id = Column(Integer, ForeignKey("club.id", ondelete='CASCADE'), nullable=False)
     __table_args__ = (UniqueConstraint('name', 'club_id'),)
 
+    def discount_percent_str(self):
+        return "{}%".format(self.discount)
+
+    def final_price(self):
+        return int(self.price * self.discount / 100)
+
+    def calc_price(self, quantity):
+        return self.final_price() * quantity
+
+    def is_active(self):
+        return self.active
+
+    def get_img_link(self, index):
+        return filestore.get_service_img_link(self.id, index)
 
 
 class Order(Base, BaseMixin):
     __tablename__ = 'order'
     id = Column(Integer, primary_key=True)
-    user_id = Column(Integer)
-    club_name = Column(String)
-    user_email = Column(String, unique=False)
-    user_tel = Column(String, unique=False)
-    total_price = Column(Integer)
+    user_id = Column(Integer, ForeignKey('user.id'), nullable=False)
+    club_id = Column(Integer, ForeignKey('club.id'), nullable=False)
     paid = Column(Integer)
-    time = Column(DateTime)
+    time = Column(DateTime, default=datetime.datetime.utcnow)  # when this order generated
     details = relationship("OrderDetail",cascade="all, delete",backref="order")
 
-class OrderDetail(Base, BaseMixin):
+    def total_price(self):
+        total = 0
+        for item in details:
+            total += item.price()
+        return total
+
+class OrderDetail(Base, BaseMixin): # this just copy the content of Service include images
     __tablename__ = 'orderdetail'
-    id = Column(Integer, primary_key=True)
-    service_id = Column(Integer, primary_key=True)
-    name = Column(String, nullable=False)
+    id = Column(String, primary_key=True) # order/service uuid
+    name = Column(String, nullable=False) # title of a service
+    description = Column(String) #  summary text of service
     price = Column(Integer, nullable=False)
     discount = Column(Integer, nullable=False, default=20)
-    last_update_time = Column(DateTime)
-    major_pic = Column(String) # major picture of this service
-    description = Column(String) # msxing picture path and text descriptions
-
+    quantity = Column(Integer)
     # relation to the order
     order_id = Column(Integer, ForeignKey('order.id'), nullable=False)
+
+    def final_price(self):
+        return self.price * self.discount() * quantity
+
+    def get_img_link(self, index):
+        return filestore.get_service_img_link(self.id, index)
+
+    def get_txt_content(self, index):
+        return filestore.get_service_txt_content(self.id, index)
+
 
 class AppModel(object):
     def __init__(self, db_session=db_session):
@@ -322,6 +348,35 @@ class AppModel(object):
         new_service = Service(**service_data)
         new_service.club_id = club.id
         self._add_commit(new_service)
+
+    def _create_club_order_detail(self, service, quantity):
+        if not quantity:
+            return
+        order_detail = OrderDetail()
+        order_detail.id = str(uuid1())
+        order_detail.name = service.name
+        order_detail.description = service.description
+        order_detail.price = service.price
+        order_detail.discount = service.discount
+        order_detail.quantity = quantity
+        return order_detail
+
+    def create_club_user_order(self, club_name, user, quantity_services):
+        if len(quantity_services) <= 0:
+            return
+        order_details = []
+        for item in quantity_services:
+            quantity, service = item
+            detail = self._create_club_order_detail(service, quantity)
+            order_details.append(detail)
+        if not order_details:
+            return
+        order = Order()
+        order.user_id = user.id
+        order.club_id = user.club.id
+        order.paid = 0
+        order.details = order_details
+        return order
 
     def get_club_service_list(self, club_name):
         club = self._find_club_and_error(club_name)

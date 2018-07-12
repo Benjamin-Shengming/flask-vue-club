@@ -73,3 +73,4 @@ def assert_has_value(obj):
     if not obj:
         raise PreventUpdate()
 
+

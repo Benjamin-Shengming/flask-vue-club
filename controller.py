@@ -214,6 +214,17 @@ class AppController(object):
     def delete_club_service(self, club_name, service_id):
         return self.db_model.delete_club_service(club_name, service_id)
 
+    def create_club_user_order(self, club_name, jwt, quantity_service):
+        if len(quantity_service)<=0:
+            return
+        user = self.get_club_user_by_jwt(club_name, jwt)
+        order = self.db_model.create_club_user_order(club_name,
+                                                     user,
+                                                     quantity_service)
+        if order:
+            self.save(order)
+        return order
+
     # check one service has special keywords
     def _service_has_keyword(self, service, key_words):
         #check name

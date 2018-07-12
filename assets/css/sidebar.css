@@ -169,8 +169,8 @@
   width:300px;
   height:200px;
 }
-
 */
+
 
 
 @media(min-width: 768px) {
@@ -180,13 +180,12 @@
   }
 }
 
-
 .table>tbody>tr>td,
 .table>tfoot>tr>td {
   vertical-align: middle;
 }
 
-@media screen and (max-width: 600px) {
+@media screen  {
   table#cart tbody td .form-control {
     width: 20%;
     display: inline !important;

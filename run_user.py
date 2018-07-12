@@ -31,6 +31,7 @@ import user_register
 import user_login
 import user_shopcart
 import user_profile
+import user_orders
 from app import app
 from app import app_controller
 from models import init_all
@@ -40,7 +41,7 @@ from utils import *
 from autolink import Redirect
 from localstorage_writer import LocalStorageWriter
 from localstorage_reader import LocalStorageReader
-
+import dash_table_experiments as dt
 nav_bar = NavBarDropMenu("HaoDuoYu")
 nav_bar.add_drop_menu("Home", ["Service","Contact"])
 nav_bar.add_drop_menu("User", ["Login", "Register", "Profile"])
@@ -54,6 +55,15 @@ def generate_main_layout():
         LocalStorageWriter(id="global-local-storage-writer", label=USER_STORAGE),
         LocalStorageReader(id="user-local-storage-reader", label=USER_STORAGE),
         LocalStorageReader(id="cart-local-storage-reader", label=CART_STORAGE),
+        html.Div(style={"display": "none"}, children=[
+            dt.DataTable(id="global-table-hiden",
+                        rows= [{"No data":"no data"}],
+                        row_selectable=True,
+                        filterable=True,
+                        sortable=True,
+                        editable=False,
+                        selected_row_indices=[])
+        ]),
         sd_material_ui.Snackbar(id='snackbar', open=False, message='Polo', action='Reveal'),
         nav_bar.components_tree(),
         # This Location component represents the URL bar
@@ -73,11 +83,6 @@ app.layout = generate_main_layout
     [State('user-local-storage-reader', 'value'),
      State('cart-local-storage-reader', 'value')])
 def display_page(pathname, user_info_str, cart_info_str):
-    user_info = load_user_info_from_storage(user_info_str)
-    cart_info = load_cart_info_from_storage(cart_info_str)
-
-    logger.debug(user_info)
-    logger.debug(cart_info)
     if not pathname:
         return user_service_list.layout()
 
@@ -96,7 +101,9 @@ def display_page(pathname, user_info_str, cart_info_str):
         return user_profile.layout(user_info_str)
 
     if "/shop/cart" in p:
-        return user_shopcart.layout(user_info, cart_info)
+        return user_shopcart.layout(user_info_str, cart_info_str)
+    if "/shop/order" in p:
+        return user_orders.layout(user_info_str)
 
     return user_service_list.layout()
 
