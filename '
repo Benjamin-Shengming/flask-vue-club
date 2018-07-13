@@ -55,7 +55,7 @@ class ShoppingCart(object):
 
     def header(self):
         return html.Div(children=[
-                    html.H3("Your Shopping Cart"),
+                    html.H1("Your Shopping Cart"),
                     html.Hr()
                 ])
 
@@ -87,35 +87,33 @@ class ShoppingCart(object):
         ])
 
     def service_item(self, service, quantity):
-        return  html.Div(className="cntainer-fluid border border-info", children = [
-            html.Div(className="d-flex",children=[
-                html.Div(className="p-2",children =[
+        return  html.Div(className="cntainer-fluid", children = [
+            html.Div(className="row",children=[
+                html.Div(className="col-sm-4 col-lg-2", children =[
                     html.Img(src=service.get_img_link(MAJOR_IMG),
                             width="100px",
                             height="100px",
                             alt=service.name,
                             className="img-responsive")
                 ]),
-                html.Div(className="p-2",children=[
-                    html.H5(service.name,className="nomargin"),
+                html.Div(className="col-sm-8 col-lg-10 text-left float-left", children=[
+                    html.H4(service.name,className="nomargin"),
                     html.P(service.description)
-                ])
+                ]),
             ]),
-            html.Div(className="d-flex justify-content-between",children=[
-                html.Div(className="p-2", children=["price: {}*{}={}".format(service.price,
+            html.Div(className="row",children=[
+                html.Div(className="col-3 d-flex align-items-center", children=["price: {}*{}={}".format(service.price,
                                                                 service.discount_percent_str(),
                                                                 service.final_price())
                 ]),
-                html.Div(className="p-2", children=[
-                    html.Span("Qty: "),
-                    dcc.Input(type="numnber", value=quantity, size="10")
+                html.Div(className="col-sm-2 d-flex align-items-center", children=[
+                    html.Div("Qty: "),
+                    dcc.Input(type="number", value=quantity)
                 ]),
-            ]),
-            html.Div(className="d-flex justify-content-between",children=[
-                html.Div(className="p-2",children=[
+                html.Div(className="col-sm-2 d-flex justify-content-start", children=[
                     html.Div(children=["Subtotal:",service.calc_price(quantity)]),
                 ]),
-                html.Div(className="p-2", children=[
+                html.Div(className="col float-right", children=[
                     html.Button(id=gen_id("del_service_{}".format(service.id)),
                                 className="btn btn-danger btn-sm float-right",
                                 children=[
@@ -130,7 +128,6 @@ class ShoppingCart(object):
         for item in cart_service:
             quantity, service = item
             item_list.append(self.service_item(service, quantity))
-            item_list.append(html.Br())
         return item_list
 
     def body(self):

@@ -62,7 +62,8 @@ def generate_main_layout():
                         filterable=True,
                         sortable=True,
                         editable=False,
-                        selected_row_indices=[])
+                        selected_row_indices=[]),
+
         ]),
         sd_material_ui.Snackbar(id='snackbar', open=False, message='Polo', action='Reveal'),
         nav_bar.components_tree(),
