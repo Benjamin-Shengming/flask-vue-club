@@ -42,11 +42,16 @@ from autolink import Redirect
 from localstorage_writer import LocalStorageWriter
 from localstorage_reader import LocalStorageReader
 import dash_table_experiments as dt
-nav_bar = NavBarDropMenu("HaoDuoYu")
+nav_bar = NavBarDropMenu(CLUB_NAME)
 nav_bar.add_drop_menu("Home", ["Service","Contact"])
 nav_bar.add_drop_menu("User", ["Login", "Register", "Profile"])
 nav_bar.add_shop_cart_button("navbar-shopcart-button")
 nav_bar.add_shop_order_button("navbar-shoporder-button")
+
+def gen_id(name):
+    # user module as name prefix
+    s_id = g_id(__name__, name)
+    return s_id
 
 def generate_main_layout():
     return html.Div([
@@ -54,7 +59,7 @@ def generate_main_layout():
         Redirect("click me to redirect", href="", style={"display": "none"}),
         LocalStorageWriter(id="global-local-storage-writer", label=USER_STORAGE),
         LocalStorageReader(id="user-local-storage-reader", label=USER_STORAGE),
-        LocalStorageReader(id="cart-local-storage-reader", label=CART_STORAGE),
+        LocalStorageReader(id=gen_id("main_cart_reader"), label=CART_STORAGE),
         html.Div(style={"display": "none"}, children=[
             dt.DataTable(id="global-table-hiden",
                         rows= [{"No data":"no data"}],
@@ -82,7 +87,7 @@ app.layout = generate_main_layout
     Output('content-container-root', 'children'),
     [Input('global-url', 'pathname')],
     [State('user-local-storage-reader', 'value'),
-     State('cart-local-storage-reader', 'value')])
+     State(gen_id("main_cart_reader"), 'value')])
 def display_page(pathname, user_info_str, cart_info_str):
     if not pathname:
         return user_service_list.layout()

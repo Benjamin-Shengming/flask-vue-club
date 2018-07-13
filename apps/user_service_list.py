@@ -14,7 +14,6 @@ import filestore
 
 
 def generate_carousel():
-    print("carousel")
     headline_services = app_controller.get_club_headline_service(CLUB_NAME)
     if not headline_services:
         print("no headline")
@@ -45,7 +44,6 @@ def generate_carousel():
     return carousel
 
 def generate_cards():
-    print("cards")
     club_services = app_controller.get_club_service_list(CLUB_NAME)
     if not club_services:
         return html.Div()
@@ -72,5 +70,7 @@ def layout():
     return  html.Div(children=[
         html.Hr(),
         generate_carousel(),
+        html.Hr(),
+        html.H4("All services"),
         generate_cards()
     ])

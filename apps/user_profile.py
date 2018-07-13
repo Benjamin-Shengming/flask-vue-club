@@ -31,7 +31,6 @@ coloredlogs.install(level='DEBUG', logger=logger)
 def gen_id(name):
     # user module as name prefix
     s_id = g_id(__name__, name)
-    logger.debug(s_id)
     return s_id
 
 def generate_field_user_id(user):

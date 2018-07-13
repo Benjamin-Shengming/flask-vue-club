@@ -28,7 +28,6 @@ coloredlogs.install(level='DEBUG', logger=logger)
 def gen_id(name):
     # user module as name prefix
     s_id = g_id(__name__, name)
-    logger.debug(s_id)
     return s_id
 
 login_title_row = html.Div(className="row", children=[
@@ -184,8 +183,5 @@ def redirect(jwt):
     if not user:
         raise PreventUpdate()
 
-    if user.is_active():
-        return "/home"
-    else:
-        return "/user/profile"
+    return "/user/profile"
 

@@ -162,8 +162,14 @@ class OrderDetail(Base, BaseMixin): # this just copy the content of Service incl
     # relation to the order
     order_id = Column(Integer, ForeignKey('order.id'), nullable=False)
 
+    def calc_price(self):
+        return self.final_price() * self.quantity
+
+    def discount_percent_str(self):
+        return "{}%".format(self.discount)
+
     def final_price(self):
-        return self.price * self.discount() * quantity
+        return int(self.price * self.discount / 100)
 
     def get_img_link(self, index):
         return filestore.get_service_img_link(self.id, index)
@@ -359,6 +365,8 @@ class AppModel(object):
         order_detail.price = service.price
         order_detail.discount = service.discount
         order_detail.quantity = quantity
+        filestore.copy_service_to_order_detail(service.id,
+                                               order_detail.id)
         return order_detail
 
     def create_club_user_order(self, club_name, user, quantity_services):
@@ -417,6 +425,10 @@ class AppModel(object):
         club= self._find_club_and_error(club_name)
         service = Service.query.filter_by(id=service_id).first()
         return service
+
+    def get_order_by_id(self, order_id):
+       order = Order.query.filter_by(id=order_id).first()
+       return order
 
 def init_all():
     Base.metadata.drop_all(bind=engine)

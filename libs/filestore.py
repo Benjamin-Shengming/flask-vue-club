@@ -110,5 +110,11 @@ def del_service(service_id):
     dir_path = os.path.join(service_dir(service_id))
     shutil.rmtree(dir_path, True)
 
+def copy_service_to_order_detail(service_id, order_detail_id):
+    # order is a special service
+    service_p = service_dir(service_id)
+    order_detail_p = service_dir(order_detail_id)
+    shutil.copytree(service_p, order_detail_p)
+
 if __name__ == "__main__":
     print(service_dir())

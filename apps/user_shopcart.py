@@ -16,6 +16,7 @@ from magic_defines import *
 import json
 from localstorage_writer import LocalStorageWriter
 from localstorage_reader import LocalStorageReader
+from autolink import Redirect
 
 import coloredlogs, logging
 logger = logging.getLogger(__name__)
@@ -87,7 +88,7 @@ class ShoppingCart(object):
         ])
 
     def service_item(self, service, quantity):
-        return  html.Div(className="cntainer-fluid border border-info", children = [
+        return  html.Div(className="container-fluid border border-info", children = [
             html.Div(className="d-flex",children=[
                 html.Div(className="p-2",children =[
                     html.Img(src=service.get_img_link(MAJOR_IMG),
@@ -152,6 +153,7 @@ def layout(user_info, cart_info):
         LocalStorageWriter(id=gen_id(STORAGE_W), label=CART_STORAGE),
         LocalStorageReader(id=gen_id(STORAGE_R), label=CART_STORAGE),
         LocalStorageReader(id=gen_id(STORAGE_R2), label=USER_STORAGE),
+        Redirect(id=gen_id(REDIRECT), href=""),
         html.Div(id=gen_id(CART), className="container-fluid", children=[
             shop_cart.layout()
         ])
@@ -159,6 +161,14 @@ def layout(user_info, cart_info):
 
 
 
+@app.callback(Output(gen_id(REDIRECT), 'href'),
+              [Input(gen_id(STORAGE_R), "value")],
+              [State(gen_id(CHECKOUT), "n_clicks")])
+def redirect_to_order(cart_info_str, n_clicks):
+    assert_button_clicks(n_clicks)
+    if cart_info_str == "/shop/order":
+        return "/shop/order"
+    raise PreventUpdate()
 
 @app.callback(Output(gen_id(STORAGE_W), 'value'),
               [Input(gen_id(CHECKOUT), "n_clicks")],
@@ -173,6 +183,6 @@ def checkout(n_clicks, cart_info_str, jwt):
                                           jwt,
                                           shop_cart.cart_service)
     if order:
-        return ""
+        return "/shop/order"
     raise PreventUpdate()
 

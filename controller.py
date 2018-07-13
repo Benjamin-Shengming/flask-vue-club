@@ -225,6 +225,10 @@ class AppController(object):
             self.save(order)
         return order
 
+    def get_club_order_by_id(self, order_id):
+        return self.db_model.get_order_by_id(order_id)
+
+
     # check one service has special keywords
     def _service_has_keyword(self, service, key_words):
         #check name
