@@ -108,14 +108,14 @@ class ShoppingCart(object):
                 ]),
                 html.Div(className="p-2", children=[
                     html.Span("Qty: "),
-                    dcc.Input(type="numnber", value=quantity, size="10")
+                    dcc.Input(type="tel", value=quantity, size="5")
                 ]),
             ]),
             html.Div(className="d-flex justify-content-between",children=[
                 html.Div(className="p-2",children=[
                     html.Div(children=["Subtotal:",service.calc_price(quantity)]),
                 ]),
-                html.Div(className="p-2", children=[
+                html.Div(className="", children=[
                     html.Button(id=gen_id("del_service_{}".format(service.id)),
                                 className="btn btn-danger btn-sm float-right",
                                 children=[
