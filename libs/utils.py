@@ -1,8 +1,14 @@
 #!/user/bin/python
 import inspect
 import json
+import datetime
+import calendar
 from dash.exceptions import PreventUpdate
+import coloredlogs, logging
 
+
+logger = logging.getLogger(__name__)
+coloredlogs.install(level='DEBUG', logger=logger)
 def caller_info():
     frame = inspect.currentframe().f_back
     func = frame.f_code
@@ -74,3 +80,23 @@ def assert_has_value(obj):
         raise PreventUpdate()
 
 
+TIME_FORMAT = '%Y-%m-%d %H:%M:%S'
+def local_time_day():
+    c = datetime.datetime.now()
+    new = c.replace(hour=0, minute=0, second=0)
+    return new
+
+#Converts local time to UTC time
+def local_2_utc(l):
+    local = l.strftime(TIME_FORMAT)
+    timestamp =  str(time.mktime(datetime.datetime.strptime(local, TIME_FORMAT).timetuple()))[:-2]
+    utc = datetime.datetime.utcfromtimestamp(int(timestamp))
+    return utc
+
+
+#Converts UTC time to local time
+def utc_2_local(u):
+    utc = u.strftime(TIME_FORMAT)
+    timestamp =  calendar.timegm((datetime.datetime.strptime( utc, TIME_FORMAT)).timetuple())
+    local = datetime.datetime.fromtimestamp(timestamp)
+    return local

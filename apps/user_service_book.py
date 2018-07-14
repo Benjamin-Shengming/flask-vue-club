@@ -64,6 +64,8 @@ def generate_img_txt(service_id, index):
 
 def layout(service_id):
     service = app_controller.get_club_service(CLUB_NAME, service_id)
+    service.increase_user_view_times()
+    app_controller.save(service)
     major_img_link = filestore.get_service_img_link(service_id, MAJOR_IMG)
     print(major_img_link)
     return html.Div(children=[

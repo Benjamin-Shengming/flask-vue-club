@@ -40,13 +40,17 @@ import service_list
 import service_detail
 import client_list
 import filestore
+import club_monitor
 
 
 sider_bar = html.Div(className="col-md-3 float-left col-1 pl-0 pr-0 collapse width show", id="sidebar", children=[
                 html.Div(className="list-group border-0 card text-center text-md-left", children=[
-                    dcc.Link(href="/home", className="list-group-item d-inline-block collapsed", style={"cursor":"pointer"}, children=[
-                        html.I(**{"aria-hidden":"true"},className="fa fa-home"),
-                        html.Span("Home", className="d-none d-md-inline")
+                    dcc.Link(href="/home/monitor",
+                             className="list-group-item d-inline-block collapsed",
+                             style={"cursor": "pointer"},
+                             children=[
+                                html.I(**{"aria-hidden":"true"},className="fa fa-home"),
+                                html.Span("Home", className="d-none d-md-inline")
                     ]),
                     html.A(**{"data-toggle": "collapse", "aria-expanded": "false"}, href="#serviceMenu", className="list-group-item d-inline-block collapsed", children=[
                         html.I(**{"aria-hidden":"true"},className="fab fa-servicestack"),
@@ -55,30 +59,36 @@ sider_bar = html.Div(className="col-md-3 float-left col-1 pl-0 pr-0 collapse wid
                     html.Div(**{"data-parent":"#sidebar"}, className="collapse", id="serviceMenu", children=[
                         dcc.Link("List", href="/service/list", className="list-group-item", style={"cursor":"pointer"}),
                         dcc.Link("New", href="/service/new", className="list-group-item", style={"cursor":"pointer"}),
-                        html.A("List", **{"data-toggle":"collapse", "aria-expanded":"false"}, href="#menu1sub1", className="list-group-item"),
                     ]),
                     dcc.Link(href="/client/list", className="list-group-item d-inline-block collapsed", style={"cursor": "pointer"}, children=[
                         html.I(className="fa fa-film"),
                         html.Span("Users", className="d-none d-md-inline")
                     ]),
-                    html.A(**{"data-toggle":"collapse","aria-expanded":"false"}, href="#menu3", className="list-group-item d-inline-block collapsed", children=[
-                        html.I(className="fa fa-book"),
+                    dcc.Link(href="/order/list", className="list-group-item d-inline-block collapsed", style={"cursor": "pointer"}, children=[
+                        html.I(className="fa fa-film"),
                         html.Span("Orders", className="d-none d-md-inline")
                     ]),
+                    html.A(**{"data-toggle":"collapse","aria-expanded":"false"}, href="#menu3", className="list-group-item d-inline-block collapsed", children=[
+                        html.I(className="fa fa-book"),
+                        html.Span("Analyse & Report", className="d-none d-md-inline")
+                    ]),
                     html.Div(**{"data-parent":'#sidebar'}, className="collapse", id="menu3", children=[
-                        html.A("3.1", **{"data-parent":'#menu3'}, href="#", className="list-group-item"),
-                        html.A("3.2", **{"data-toggle":"collapse","aria-expanded":"false"}, href="#menu3sub2",className="list-group-item"),
-                        html.Div(className="collapse", id="menu3sub2", children=[
-                        html.A("3.2.a", **{"data-parent":"#menu3sub2"}, href="#", className="list-group-item"),
-                        html.A("3.2.b", **{"data-parent":"#menu3sub2"}, href="#", className="list-group-item"),
-                        html.A("3.2.c", **{"data-parent":"#menu3sub2"}, href="#", className="list-group-item"),
-                        ]),
-                        html.A("3.3",**{"data-parent":"#menu3"}, href="#", className="list-group-item")
+                        html.A("By user", **{"data-parent":'#menu3'},
+                               href="#",
+                               className="list-group-item"),
+                        html.A("By Service", **{"data-parent":'#menu3'},
+                               href="#",
+                               className="list-group-item")
                     ])
                 ])
 
 ])
 
+fig = plotly.tools.make_subplots(rows=2, cols=1, vertical_spacing=0.2)
+fig['layout']['margin'] = {
+    'l': 30, 'r': 10, 'b': 30, 't': 10
+}
+fig['layout']['legend'] = {'x': 0, 'y': 1, 'xanchor': 'left'}
 
 main_area = html.Main(id="main-area", className="col-md-9 float-left col px-5 pl-md-2 pt-2 main", children=[
                 html.A(**{"data-target":"#sidebar", "data-toggle":"collapse"}, href="#",  children=[
@@ -92,6 +102,14 @@ main_area = html.Main(id="main-area", className="col-md-9 float-left col px-5 pl
 
 total = html.Div(className="container-fluid", children=[
     html.Div(className="row d-flex d-md-block flex-nowrap wrapper", children=[
+        html.Div(style={"display":"none"},
+                 children=[
+                    dcc.Graph(id='temp-id-graph'),
+            dcc.Interval(
+                id='temp-id',
+                interval=60*1000*60*24*365, # in milliseconds
+                n_intervals=0),
+        ]),
         sider_bar,
         main_area
     ])
@@ -129,7 +147,7 @@ def display_page(pathname):
         return client_list.layout()
 
     print("other layout! {}".format(pathname))
-    return pathname
+    return club_monitor.layout()
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Run finishing app')

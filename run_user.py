@@ -3,7 +3,7 @@ import sys
 import os
 from random import *
 from flask_cors import CORS
-from flask import Flask, render_template, jsonify, abort, make_response
+from flask import Flask, render_template, jsonify, abort, make_response, request
 import requests
 import cherrypy
 import argparse
@@ -89,6 +89,7 @@ app.layout = generate_main_layout
     [State('user-local-storage-reader', 'value'),
      State(gen_id("main_cart_reader"), 'value')])
 def display_page(pathname, user_info_str, cart_info_str):
+    app_controller.create_remote_ip_activity(request.remote_addr)
     if not pathname:
         return user_service_list.layout()
 

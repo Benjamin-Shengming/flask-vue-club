@@ -60,6 +60,8 @@ class User(Base, BaseMixin, UserMixin):
     email_confirmed = Column(Boolean, default=False)
     tel_confirmed = Column(Boolean, default=False)
     activate_code = Column(String)
+    last_active_time = Column(DateTime, default=datetime.datetime.utcnow)
+
     club_id = Column(Integer, ForeignKey('club.id', ondelete='CASCADE'), nullable=False)
     __table_args__ = (UniqueConstraint('email', 'club_id'),)
     roles = relationship("Role",
@@ -74,6 +76,8 @@ class User(Base, BaseMixin, UserMixin):
         if code == self.activate_code:
             self.activate_code = ""
 
+    def update_active_time(self):
+        self.last_active_time = datetime.datetime.now()
 
 class Club(Base, BaseMixin):
     __tablename__ = 'club'
@@ -90,6 +94,27 @@ class Club(Base, BaseMixin):
     users = relationship("User", backref="club")
     roles = relationship("Role", backref="club")
     services = relationship("Service", backref="club", order_by="desc(Service.last_update_time)")
+
+
+class HistoryActivity(Base, BaseMixin):
+    __tablename__ = 'historyactivity'
+    id = Column(Integer, primary_key=True)
+    label = Column(String, unique=False, nullable=False)
+    value = Column(String, nullable=False)
+    time = Column(DateTime, default=datetime.datetime.utcnow)
+
+    def increase_value_as_int(self):
+        self.value = int(self.value) + 1
+        self.time = datetime.datetime.now()
+
+    def change_value(self, new_value):
+        self.value = new_value
+        self.time = datetime.datetime.now()
+    def utc_time(self):
+        return self.time
+
+    def local_time(self):
+        return utc_2_local(self.time)
 
 class Role(Base, BaseMixin):
     __tablename__ = 'role'
@@ -115,6 +140,8 @@ class Service(Base, BaseMixin):
     sub_services = Column(String) # a list of sub services
     active = Column(Boolean, default=True) #onine or offline
     slide = Column(Boolean, default=False)  # show on slding headline
+    user_view = Column(Integer, default=0)
+    user_view_time = Column(DateTime, default=datetime.datetime.utcnow)
 
     # link to club
     club_id = Column(Integer, ForeignKey("club.id", ondelete='CASCADE'), nullable=False)
@@ -135,6 +162,9 @@ class Service(Base, BaseMixin):
     def get_img_link(self, index):
         return filestore.get_service_img_link(self.id, index)
 
+    def increase_user_view_times(self):
+        self.user_view += 1
+        self.user_view_time = datetime.datetime.utcnow()
 
 class Order(Base, BaseMixin):
     __tablename__ = 'order'
@@ -429,6 +459,22 @@ class AppModel(object):
     def get_order_by_id(self, order_id):
        order = Order.query.filter_by(id=order_id).first()
        return order
+
+    def create_new_history_activity(self, key, value):
+        history_item = HistoryActivity()
+        history_item.label= key
+        history_item.value = value
+        self._add_commit(history_item)
+
+    def search_history_activity(self, k):
+        return HistoryActivity.query.filter_by(label=k).all()
+
+    def create_ip_activity(self, addr):
+        self.create_new_history_activity("IP", addr)
+
+    def search_ip_activity(self):
+        return self.search_history_activity("IP")
+
 
 def init_all():
     Base.metadata.drop_all(bind=engine)

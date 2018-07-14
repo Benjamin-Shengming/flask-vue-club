@@ -254,3 +254,9 @@ class AppController(object):
         ret = [item for item in services if self._service_has_keyword(item , key_words)]
         return [self.service_to_article(item, club_name) for item in ret]
 
+    def create_remote_ip_activity(self, ip_addr):
+        self.db_model.create_ip_activity(ip_addr)
+
+    def get_remote_ip_activity(self):
+        return self.db_model.search_ip_activity()
+
