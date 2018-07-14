@@ -41,7 +41,13 @@ import service_detail
 import client_list
 import filestore
 import club_monitor
+import club_order
 
+
+def gen_id(name):
+    # user module as name prefix
+    s_id = g_id(__name__, name)
+    return s_id
 
 sider_bar = html.Div(className="col-md-3 float-left col-1 pl-0 pr-0 collapse width show", id="sidebar", children=[
                 html.Div(className="list-group border-0 card text-center text-md-left", children=[
@@ -109,6 +115,10 @@ total = html.Div(className="container-fluid", children=[
                 id='temp-id',
                 interval=60*1000*60*24*365, # in milliseconds
                 n_intervals=0),
+            dcc.Dropdown(
+                id=gen_id('tempid-dropdown'),
+                options=[ ],
+            )
         ]),
         sider_bar,
         main_area
@@ -145,7 +155,8 @@ def display_page(pathname):
         return layout
     elif "/client/list" in p:
         return client_list.layout()
-
+    elif "/order/list" in p:
+        return club_order.layout()
     print("other layout! {}".format(pathname))
     return club_monitor.layout()
 

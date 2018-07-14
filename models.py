@@ -94,7 +94,7 @@ class Club(Base, BaseMixin):
     users = relationship("User", backref="club")
     roles = relationship("Role", backref="club")
     services = relationship("Service", backref="club", order_by="desc(Service.last_update_time)")
-
+    orders = relationship("Order", backref='club', order_by="desc(Order.time)")
 
 class HistoryActivity(Base, BaseMixin):
     __tablename__ = 'historyactivity'
@@ -456,6 +456,10 @@ class AppModel(object):
         service = Service.query.filter_by(id=service_id).first()
         return service
 
+    def get_club_order_list(self, club_name):
+        club = self._find_club_and_error(club_name)
+        return club.orders
+
     def get_order_by_id(self, order_id):
        order = Order.query.filter_by(id=order_id).first()
        return order
@@ -474,6 +478,10 @@ class AppModel(object):
 
     def search_ip_activity(self):
         return self.search_history_activity("IP")
+
+
+
+
 
 
 def init_all():

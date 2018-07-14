@@ -228,6 +228,9 @@ class AppController(object):
     def get_club_order_by_id(self, order_id):
         return self.db_model.get_order_by_id(order_id)
 
+    def get_club_order_list(self, club_name):
+        return self.db_model.get_club_order_list(club_name)
+
 
     # check one service has special keywords
     def _service_has_keyword(self, service, key_words):
