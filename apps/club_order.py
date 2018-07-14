@@ -32,6 +32,16 @@ def generate_layout(orders):
 
     return html.Div([
         html.H4('All orders'),
+        dcc.Dropdown(
+                id=gen_id('all-day-month-year'),
+                options=[
+                    {'label': 'All', 'value': 'all'},
+                    {'label': 'Today', 'value': 'day'},
+                    {'label': 'This Month', 'value': 'month'},
+                    {'label': 'This year', 'value': 'year'}
+                ],
+                value='all'
+        ),
         dt.DataTable(
             rows= orders_data if orders_data else [{"No order": "No order"}],
 
@@ -52,18 +62,12 @@ def generate_layout(orders):
     ])
 
 
-def layout(user_info):
-    logger.debug(user_info)
+def layout():
+    club = app_controller.get_club_by_name(CLUB_NAME)
 
-    user = app_controller.get_club_user_by_jwt(CLUB_NAME, user_info)
-    if not user:
-        return dcc.Link(href="/user/login",
-                    className="col btn btn-warning float-left ", children=[
-            html.I(className="fa fa-angle-left"),
-            "Please login firstly"
-        ]),
-
-    return generate_layout(user.orders)
+    if not club or not club.orders:
+        return html.H1("No orders!")
+    return generate_layout(club.orders)
 
 def generate_order_detail(order_detail):
     return  html.Div(className="container-fluid", children = [
@@ -126,7 +130,7 @@ def generate_order_card(order_id):
     Output(gen_id("order-cards"), 'children'),
     [Input(gen_id(TABLE), 'rows'),
      Input(gen_id(TABLE), 'selected_row_indices')])
-def update_service_cards(rows, selected_row_indices):
+def update_order_cards(rows, selected_row_indices):
     all_cards = []
     for i in selected_row_indices:
         logger.debug(rows[i]["id"])
@@ -134,4 +138,14 @@ def update_service_cards(rows, selected_row_indices):
         all_cards.append(html.Br())
     return all_cards
 
+
+@app.callback(
+    Output(gen_id(TABLE), 'rows'),
+    [Input(gen_id('all-day-month-year'), 'value')]
+)
+def update_order_table(value):
+    logger.debug(value)
+    app_controller.get_club_order_list(CLUB_NAME)
+
+    raise PreventUpdate()
 
