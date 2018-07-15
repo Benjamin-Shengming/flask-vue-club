@@ -36,7 +36,7 @@ import user_login
 import user_shopcart
 import user_profile
 import user_orders
-from app import app
+from app import app, server
 from app import app_controller
 from models import init_all
 from navbar import NavBarDropMenu
@@ -86,7 +86,7 @@ def generate_main_layout():
 
 app.layout = generate_main_layout
 
-@app.server.route("/api_v1/{club_name}/wechat")
+@server.route('/api_v1/<club_name>/wechat')
 def wechat(club_name):
     logger.debug(club_name)
     query = request.args

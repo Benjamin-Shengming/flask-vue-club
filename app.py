@@ -1,8 +1,11 @@
 import dash
 import os
 
-from flask import send_from_directory, Flask
+from flask import send_from_directory, Flask, request
 
+import coloredlogs, logging
+logger = logging.getLogger(__name__)
+coloredlogs.install(level='DEBUG', logger=logger)
 
 # create controller object, the central point
 from controller import AppController
@@ -45,9 +48,12 @@ class Dash_responsive(dash.Dash):
 server = Flask(__name__)
 
 
-app = Dash_responsive(__name__, static_folder='assets')
 
-server = app.server
+app = Dash_responsive(__name__,
+                      server=server,
+                      static_folder='assets',
+                      url_base_pathname="/dash")
+
 app.config.supress_callback_exceptions = True
 
 app.scripts.config.serve_locally = False
