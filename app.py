@@ -51,8 +51,7 @@ server = Flask(__name__)
 
 app = Dash_responsive(__name__,
                       server=server,
-                      static_folder='assets',
-                      url_base_pathname="/dash")
+                      static_folder='assets')
 
 app.config.supress_callback_exceptions = True
 
