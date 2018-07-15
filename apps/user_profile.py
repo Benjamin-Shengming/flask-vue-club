@@ -12,7 +12,6 @@ from pprint import pprint
 from app import app
 from app import app_controller
 import filestore
-import local_storage
 from magic_defines import *
 import sd_material_ui
 from sd_material_ui import Snackbar
