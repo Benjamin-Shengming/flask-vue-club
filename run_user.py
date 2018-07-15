@@ -8,7 +8,6 @@ import requests
 import cherrypy
 import argparse
 import dash
-import local_storage
 from dash.dependencies import Input, State, Output
 import dash_html_components as html
 import dash_core_components as dcc
