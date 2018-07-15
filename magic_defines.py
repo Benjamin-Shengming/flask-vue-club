@@ -68,3 +68,17 @@ S_ACTIVE_YES = "Active"
 S_LOGOUT = "Logout"
 S_CHECKOUT= "Checkout"
 S_CONTINUE_SHOP = "Continue Shopping"
+
+
+
+
+
+# wechat related
+# one wechat service number should have exact one token, AES_KEY, APP_ID
+# wechat token
+TOKEN = '1234567890google.com'
+AES_KEY = '1234567890'
+APP_ID = '1234567890'
+
+def get_host():
+    return "http://35.198.210.78"

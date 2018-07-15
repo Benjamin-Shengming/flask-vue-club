@@ -14,6 +14,11 @@ import dash_core_components as dcc
 import pandas as pd
 from dash.exceptions import PreventUpdate
 import sd_material_ui
+from wechatpy.utils import check_signature
+from wechatpy.exceptions import InvalidSignatureException
+from wechatpy import parse_message
+from wechatpy.replies import TextReply, VoiceReply, create_reply, ImageReply, ArticlesReply
+from wechatpy.crypto import WeChatCrypto
 
 # add current folder and lib to syspath
 sys.path.append(os.path.join(os.path.dirname(__file__)))
@@ -82,12 +87,66 @@ def generate_main_layout():
 app.layout = generate_main_layout
 
 
+def wechat(club_name):
+    logger.debug(club_name)
+    query = request.args
+    logger.debug(query)
+    signature = query.get('signature', '')
+    timestamp = query.get('timestamp', '')
+    nonce = query.get('nonce', '')
+    logger.debug(request.args)
+    try:
+        check_signature(TOKEN, signature, timestamp, nonce)
+    except Exception as e:
+        logger.debug("invalid request!")
+        abort(403)
+
+    if request.method == 'GET':
+        return make_response(request.args.get('echostr', ''))
+    else:
+        logger.debug("start make response")
+        encrypt_type = request.args.get('encrypt_type', 'raw')
+        xml = request.data
+        msg = None
+        if encrypt_type == 'raw':
+            # plain mode
+            logger.debug("plain mode")
+            msg = parse_message(xml)
+        else:
+            try:
+                # encrypt mode
+                crypto = WeChatCrypto(TOKEN, AES_KEY, APP_ID)
+                msg = parse_message(crypto.decrypt_message(xml, signature, timestamp, nonce))
+            except Exception as e:
+                abort(403)
+
+        reply_xml = None
+        if msg.type == 'text':
+            key_words = [item.strip() for item in str(msg.content).split(" ")]
+            articles = app_controller.search_club_service_article(club_name, key_words)
+            for article in articles:
+                article['image'] = get_host() + '/api_v1' + article['image']
+                article['url'] = get_host() + article['url']
+            reply =  ArticlesReply(articles=articles, message=msg)
+            reply_xml = reply.render()
+        else:
+            reply = TextReply(content='Not supported!', message=msg)
+            reply_xml = reply.render()
+
+        logger.debug("xml:" + reply_xml)
+        if encrypt_type == "raw":
+            return reply_xml
+        else:
+            return crypto.encrypt_message(reply_xml, nonce, timestamp)
+
 @app.callback(
     Output('content-container-root', 'children'),
     [Input('global-url', 'pathname')],
     [State('user-local-storage-reader', 'value'),
      State(gen_id("main_cart_reader"), 'value')])
 def display_page(pathname, user_info_str, cart_info_str):
+    logger.debug("print path")
+    logger.debug(pathname)
     app_controller.create_remote_ip_activity(request.remote_addr)
     if not pathname:
         return user_service_list.layout()
@@ -110,6 +169,10 @@ def display_page(pathname, user_info_str, cart_info_str):
         return user_shopcart.layout(user_info_str, cart_info_str)
     if "/shop/order" in p:
         return user_orders.layout(user_info_str)
+
+    if "/api_v1" in p and "wechat" in p:
+        return wechat(CLUB_NAME)
+
 
     return user_service_list.layout()
 
