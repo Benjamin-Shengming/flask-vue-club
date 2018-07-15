@@ -43,7 +43,6 @@ import filestore
 import club_monitor
 import club_order
 import club_service_analyse
-import club_user_analyse
 
 def gen_id(name):
     # user module as name prefix

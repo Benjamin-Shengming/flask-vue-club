@@ -69,6 +69,12 @@ class User(Base, BaseMixin, UserMixin):
                          back_populates="users")
     orders = relationship("Order", backref="user", cascade="all, delete", order_by="desc(Order.time)")
 
+    def total_order_value(self):
+        total = 0
+        for o in self.orders:
+            total +=  o.total_price()
+        return total
+
     def is_active(self):
         return False if self.activate_code else True
 
