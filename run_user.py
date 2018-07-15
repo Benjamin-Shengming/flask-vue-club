@@ -86,7 +86,7 @@ def generate_main_layout():
 
 app.layout = generate_main_layout
 
-
+@app.server.route("/api_v1/{club_name}/wechat")
 def wechat(club_name):
     logger.debug(club_name)
     query = request.args
