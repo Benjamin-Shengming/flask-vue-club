@@ -125,10 +125,10 @@ total = html.Div(className="container-fluid", children=[
 app.layout = html.Div(children=[
     # walkalround that let client download js bundle, *bugs* in dash
     Redirect("click me to redirect", href="", style={"display": "none"}),
-    LocalStorageWriter(id="global-local-storage-writer", label=USER_STORAGE),
     LocalStorageReader(id="user-local-storage-reader", label=USER_STORAGE),
     LocalStorageReader(id="cart-local-storage-reader", label=CART_STORAGE),
     sd_material_ui.Snackbar(id='snackbar', open=False, message='Polo', action='Reveal'),
+    LocalStorageWriter(id="global-local-storage-writer", label=USER_STORAGE),
     total,
     # This Location component represents the URL bar
     dcc.Location(id='url', refresh=False),
