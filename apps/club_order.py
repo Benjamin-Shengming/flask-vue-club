@@ -21,15 +21,22 @@ import dash_table_experiments as dt
 import coloredlogs, logging
 logger = logging.getLogger(__name__)
 coloredlogs.install(level='DEBUG', logger=logger)
+from dateutil.relativedelta import *
 
 def gen_id(name):
     # user module as name prefix
     s_id = g_id(__name__, name)
     return s_id
 
-def generate_layout(orders):
-    orders_data = [{"id":item.id, "time":item.time} for item in orders]
+def generate_order_data(orders):
+    orders_data = [{"id":item.id,
+                    "paid": item.paid,
+                    "total": item.total_price(),
+                    "time":item.time} for item in orders]
+    return orders_data
 
+def generate_layout(orders):
+    orders_data = generate_order_data(orders)
     return html.Div([
         html.H4('All orders'),
         dcc.Dropdown(
@@ -52,7 +59,7 @@ def generate_layout(orders):
             filterable=True,
             sortable=True,
             editable=False,
-            selected_row_indices=[0],
+            selected_row_indices=[],
             id=gen_id(TABLE)
         ),
         html.Hr(),
@@ -105,6 +112,9 @@ def generate_order(order):
                 html.Span("order id: {}".format(order.id))
             ]),
             html.Div(className="p-2", children=[
+                html.Span("Total: {}".format(order.total_price()))
+            ]),
+            html.Div(className="p-2", children=[
                 html.Span("Paid: {}".format(order.paid))
             ]),
             html.Div(className="p-2",children=[
@@ -117,6 +127,16 @@ def generate_order(order):
         detail.append(generate_order_detail(item))
     detail.append(html.Hr())
 
+    user = order.user
+    footer = html.Div(className="d-flex justify-content-between",children=[
+            html.Div(className="p-2", children=[
+                html.Span("user id: {}".format(user.id))
+            ]),
+            html.Div(className="p-2", children=[
+                html.Span("Email: {}".format(user.email))
+            ])
+        ])
+    detail.append(footer)
     return html.Div(children=detail)
 
 def generate_order_card(order_id):
@@ -145,7 +165,22 @@ def update_order_cards(rows, selected_row_indices):
 )
 def update_order_table(value):
     logger.debug(value)
-    app_controller.get_club_order_list(CLUB_NAME)
+    all_order = app_controller.get_club_order_list(CLUB_NAME)
+    ret_order = None
+    first_day = None
+    last_day = None
+    if value.lower() == "all":
+        ret_order = all_order
+    elif value.lower() == "day":
+        first_day = datetime.datetime.utcnow().replace(day=1, hour=0, minute=0, second=0)
+        last_day = first_day + relativedelta(days=1)
+    elif value.lower() == 'month':
+        first_day = datetime.datetime.utcnow().replace(day=1, hour=0, minute=0, second=0)
+        last_day = first_day + relativedelta(months=1)
+    elif value.lower() == 'year':
+        first_day = datetime.datetime.utcnow().replace(day=1, hour=0, minute=0, second=0)
+        last_day = first_day + relativedelta(years=1)
 
-    raise PreventUpdate()
+    ret_order = [item for item in all_order if item.between_time(first_day, last_day)]
+    return generate_order_data(ret_order)
 

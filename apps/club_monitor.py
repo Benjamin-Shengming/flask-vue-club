@@ -110,10 +110,13 @@ def update_activity_graph(n):
         xaxis = dict(
                     title="HOUR",
                     tickangle=-45,
-                     ticks='outside',
-                     tick0=0,
-                     dtick=1
-                     ),
+                    ticks='outside',
+                    tick0=0,
+                    dtick=2,
+                    tickfont=dict(
+                        size=7
+                    )
+                ),
         yaxis = dict(
                      title="ACTIVITY",
                      ticks='outside',

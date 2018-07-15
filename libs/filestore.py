@@ -30,6 +30,19 @@ def get_service_img_link(service_id, img_id):
     logger.debug(link)
     return link
 
+def get_service_img_link_alt(service_id):
+    img_id = 0
+    while img_id < 10:
+        p = get_service_img_path(service_id, img_id)
+        if p:
+            break
+    if img_id >= 10:
+        img_id = MAJOR_IMG
+
+    link = "/assets/filestore/services/" + service_id + "/" + str(img_id) + DEF_EXT
+    logger.debug(link)
+    return link
+
 def make_service_txt_path(service_id, txt_index):
     p = os.path.join(service_dir(service_id), "{}.txt".format(txt_index))
     if not os.path.exists(os.path.dirname(p)):

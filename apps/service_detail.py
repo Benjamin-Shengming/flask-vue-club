@@ -95,7 +95,7 @@ float_button = html.A(className="float", children=[
                         n_clicks=0,
                         className="btn btn-outline-primary")
         ])
-float_button_del = html.A(className=".secondfloat", children=[
+float_button_del = html.A(className="secondfloat", children=[
             html.Button("Delete",
                         id=gen_id("button-del"),
                         n_clicks=0,

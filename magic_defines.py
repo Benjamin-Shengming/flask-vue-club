@@ -8,7 +8,7 @@ EMAIL_SALT = 'email-confirmation-salt'
 
 MAX_IMG_TXT = 10
 CLUB_NAME = "haoduoyu"
-IMAGE_SIZE = 1024, 1024
+IMAGE_SIZE = 1200, 1200
 MAJOR_IMG = "major"
 DEF_EXT = ".jpg"
 

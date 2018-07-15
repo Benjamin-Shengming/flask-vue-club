@@ -177,9 +177,18 @@ class Order(Base, BaseMixin):
 
     def total_price(self):
         total = 0
-        for item in details:
-            total += item.price()
+        for item in self.details:
+            total += item.calc_price()
         return total
+
+    def between_time(self, start_time=None, end_time=None): # inclusive start utc time
+        ret = True
+        if start_time:
+            ret = ret and (self.time >= start_time)
+        if end_time:
+            ret = ret and (self.time < end_time)
+        return ret
+
 
 class OrderDetail(Base, BaseMixin): # this just copy the content of Service include images
     __tablename__ = 'orderdetail'

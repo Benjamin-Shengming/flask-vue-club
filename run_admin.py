@@ -67,7 +67,7 @@ sider_bar = html.Div(className="col-md-3 float-left col-1 pl-0 pr-0 collapse wid
                         dcc.Link("New", href="/service/new", className="list-group-item", style={"cursor":"pointer"}),
                     ]),
                     dcc.Link(href="/client/list", className="list-group-item d-inline-block collapsed", style={"cursor": "pointer"}, children=[
-                        html.I(className="fa fa-film"),
+                        html.I(className="fas fa-user"),
                         html.Span("Users", className="d-none d-md-inline")
                     ]),
                     dcc.Link(href="/order/list", className="list-group-item d-inline-block collapsed", style={"cursor": "pointer"}, children=[
@@ -75,16 +75,12 @@ sider_bar = html.Div(className="col-md-3 float-left col-1 pl-0 pr-0 collapse wid
                         html.Span("Orders", className="d-none d-md-inline")
                     ]),
                     html.A(**{"data-toggle":"collapse","aria-expanded":"false"}, href="#menu3", className="list-group-item d-inline-block collapsed", children=[
-                        html.I(className="fa fa-book"),
+                        html.I(className="fas fa-chart-pie"),
                         html.Span("Analyse & Report", className="d-none d-md-inline")
                     ]),
                     html.Div(**{"data-parent":'#sidebar'}, className="collapse", id="menu3", children=[
-                        html.A("By user", **{"data-parent":'#menu3'},
-                               href="#",
-                               className="list-group-item"),
-                        html.A("By Service", **{"data-parent":'#menu3'},
-                               href="#",
-                               className="list-group-item")
+                        dcc.Link("Service Analyse", href="/service/analyse", className="list-group-item", style={"cursor":"pointer"}),
+                        dcc.Link("User Analyse", href="/user/analyse", className="list-group-item", style={"cursor":"pointer"})
                     ])
                 ])
 

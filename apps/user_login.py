@@ -13,7 +13,6 @@ from app import app
 from app import app_controller
 import filestore
 from flask import redirect
-import coloredlogs, logging
 from sd_material_ui import Snackbar
 from magic_defines import *
 from utils import *
@@ -21,6 +20,7 @@ from autolink import Redirect
 from localstorage_writer import LocalStorageWriter
 from localstorage_reader import LocalStorageReader
 
+import coloredlogs, logging
 logger = logging.getLogger(__name__)
 coloredlogs.install(level='DEBUG', logger=logger)
 

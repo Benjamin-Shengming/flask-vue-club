@@ -168,3 +168,12 @@
   }
 }
 
+.carousel-item {
+  max-height: 50vh;!important
+  min-width: auto;
+}
+
+
+.carousel-inner img {
+  margin: auto;!important
+}
