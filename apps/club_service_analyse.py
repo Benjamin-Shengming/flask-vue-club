@@ -21,7 +21,6 @@ import dash_table_experiments as dt
 import coloredlogs, logging
 import datetime
 import plotly
-from pyorbital.orbital import Orbital
 import plotly.plotly as py
 import plotly.graph_objs as go
 import numpy as np
