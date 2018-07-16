@@ -250,7 +250,7 @@ class AppController(object):
         article['title'] = service.name
         article['description'] = service.description
         article['image'] = filestore.get_service_img_link(service.id, MAJOR_IMG)
-        article['path'] = "/service/book/{}".format(service.id)
+        article['url'] = "/service/book/{}".format(service.id)
         return article
     # given a set of keywords and search the service contains the key word
     # if keyword is empty, just return most important
