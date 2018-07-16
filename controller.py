@@ -258,7 +258,7 @@ class AppController(object):
         services = self.get_club_service_list(club_name)
         ret = [item for item in services if self._service_has_keyword(item , key_words)]
         if not ret:
-            ret = service[:min(5, len(services))]
+            ret = services[:min(5, len(services))]
         return [self.service_to_article(item, club_name) for item in ret]
 
     def create_remote_ip_activity(self, ip_addr):
