@@ -15,6 +15,8 @@ import jwt
 from utils import caller_info, RespExcept, CodeNotMatch
 from email_smtp import EmailClientSMTP
 from flask_apispec import ResourceMeta, Ref, doc, marshal_with, use_kwargs
+import filestore
+
 logger = logging.getLogger(__name__)
 coloredlogs.install(level='DEBUG', logger=logger)
 from marshmallow import fields, Schema
