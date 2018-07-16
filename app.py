@@ -1,7 +1,7 @@
 import dash
 import os
 
-from flask import send_from_directory, Flask, request
+from flask import send_from_directory, Flask, request, send_file
 
 import coloredlogs, logging
 logger = logging.getLogger(__name__)
@@ -57,22 +57,18 @@ app.config.supress_callback_exceptions = True
 
 app.scripts.config.serve_locally = False
 
-# css logical
-css_directory = os.path.dirname(__name__) + "/assets/css/"
-stylesheets_local =  ['sidebar.css']   # local style sheet need to use
-def serve_stylesheet(stylesheet):
-    if stylesheet not in stylesheets_local:
-        raise Exception(
-                    '"{}" is excluded from the allowed static files'.format(
-                        stylesheet
-                    )
-                )
-    return flask.send_from_directory(css_directory, stylesheet)
 
-external_css = [
-]
-for css in external_css:
-    app.css.append_css({"external_url": css})
+# servce statid files
+file_directory = os.path.abspath(os.path.dirname(__name__)) + "/assets"
+@server.route('/assets/<path:path>')
+def serve_files(path):
+    full_file_path = os.path.join(file_directory, path)
+    if os.path.exists(full_file_path):
+        return send_file(full_file_path)
+    else:
+        logger.debug("file does not exist {}".format(full_file_path))
+        return
+
 
 app.css.append_css({"external_url":
                     "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css"})
@@ -89,6 +85,5 @@ app.scripts.append_script({"external_url":
 app.scripts.append_script({"external_url":
                     "https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"})
 # append local css
-for stylesheet in stylesheets_local:
-    app.css.append_css({"external_url": "/assets/css/{}".format(stylesheet)})
+app.css.append_css({"external_url": "/assets/css/sidebar.css"})
 
