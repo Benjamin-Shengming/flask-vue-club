@@ -78,7 +78,7 @@ S_CONTINUE_SHOP = "Continue Shopping"
 # wechat token
 TOKEN = '1234567890google.com'
 AES_KEY = '1234567890'
-APP_ID = '1234567890'
-
+APP_ID = 'wx3e9dba3130c08266'
+APP_SECRET = '30ce30ee5f13d70c09215ab2b6211f63'
 def get_host():
     return "http://35.198.210.78"

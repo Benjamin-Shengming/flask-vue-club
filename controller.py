@@ -210,6 +210,14 @@ class AppController(object):
     def get_club_headline_service(self, club_name):
         return self.db_model.get_club_headline_service(club_name)
 
+    def get_club_top_one_service_id(self, club_name):
+        services= self.db_model.get_club_headline_service(club_name)
+        if services:
+            return services[0].id
+
+        service = self.get_club_service_list(CLUB_NAME)
+        return service[0].id
+
     def get_club_service_paginate_date(self, club_name, start, numbers=20):
         return self.db_model.get_club_service_paginate_date(club_name, start, numbers)
 

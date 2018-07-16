@@ -19,6 +19,7 @@ from wechatpy.exceptions import InvalidSignatureException
 from wechatpy import parse_message
 from wechatpy.replies import TextReply, VoiceReply, create_reply, ImageReply, ArticlesReply
 from wechatpy.crypto import WeChatCrypto
+from wechatpy import WeChatClient
 
 # add current folder and lib to syspath
 sys.path.append(os.path.join(os.path.dirname(__file__)))
@@ -176,7 +177,62 @@ def display_page(pathname, user_info_str, cart_info_str):
 
     return user_service_list.layout()
 
-
+def create_wechat_menu():
+    client = WeChatClient(APP_ID, APP_SECRET)
+    client.menu.create({
+        "button":[
+                    {
+                        "name":CLUB_NAME,
+                        "sub_button":[
+                            {
+                                "type":"view",
+                                "name":"Hot Travel",
+                                "url":get_host()
+                            },
+                            {
+                                "type":"view",
+                                "name":"精彩瞬间",
+                                "url":"{}/service/book/{}".format(get_host(), app_controller.get_club_top_one_service_id(CLUB_NAME))
+                            },
+                            {
+                                "type":"view",
+                                "name":"Search",
+                                "url":"http://baidu.com"
+                            }
+                        ]
+                    },
+                    {
+                        "name":"USER",
+                        "sub_button":[
+                            {
+                                "type":"view",
+                                "name":"Login",
+                                "url":"{}{}".format(get_host(), "/user/login")
+                            },
+                            {
+                                "type":"click",
+                                "name":"赞一下我们",
+                                "key":"V1001_GOOD"
+                            }
+                        ]
+                     },
+                    {
+                        "name":"Finacial",
+                        "sub_button":[
+                            {
+                                "type":"view",
+                                "name":"Borrow Money",
+                                "url": "https://www.cebbank.com/"
+                            },
+                            {
+                                "type":"view",
+                                "name":"Save Money",
+                                "url":"http://v.qq.com/"
+                            },
+                        ]
+                    }
+        ]
+    })
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Run finishing app')
@@ -188,6 +244,7 @@ if __name__ == '__main__':
     else:
         for rule in app.server.url_map.iter_rules():
             logger.debug(rule)
+        create_wechat_menu()
         #app.run_server(debug=True, host='0.0.0.0', port=80, ssl_context='adhoc')
         #app.run_server(debug=True, host='0.0.0.0', port=80)
         cherrypy.tree.graft(app.server.wsgi_app, '/')
