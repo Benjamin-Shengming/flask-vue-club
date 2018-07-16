@@ -125,8 +125,8 @@ def wechat(club_name):
             key_words = [item.strip() for item in str(msg.content).split(" ")]
             articles = app_controller.search_club_service_article(club_name, key_words)
             for article in articles:
-                article['image'] = get_host() + '/api_v1' + article['image']
-                article['url'] = get_host() + article['url']
+                article['image'] = "{}{}".format(get_host(), article['image'])
+                article['url'] = "{}{}".format(get_host(), article['url'])
             reply =  ArticlesReply(articles=articles, message=msg)
             reply_xml = reply.render()
         else:
