@@ -1,0 +1,57 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR ORGANIZATION
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"POT-Creation-Date: 2018-07-17 21:20+1000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: pygettext.py 1.5\n"
+
+
+#: user_orders.py:34
+msgid "All orders"
+msgstr "所有订单"
+
+#: user_orders.py:36
+msgid "No order"
+msgstr "没有订单"
+
+#: user_orders.py:49
+msgid "click one order to view detail"
+msgstr "点击一个订单查看详细信息"
+
+#: user_orders.py:63
+msgid "Please login firstly"
+msgstr "请先登录"
+
+#: user_orders.py:84
+msgid "price: {}*{}={}"
+msgstr "价格: {}*{}={}"
+
+#: user_orders.py:89
+msgid "Qty: {}"
+msgstr "数量: {}"
+
+#: user_orders.py:92
+msgid "Subtotal:"
+msgstr "小计:"
+
+#: user_orders.py:101
+msgid "order id: {}"
+msgstr "订单编号: {}"
+
+#: user_orders.py:104
+msgid "Paid: {}"
+msgstr "已付款: {}"
+
+#: user_orders.py:107
+msgid "time:"
+msgstr "时间"
+

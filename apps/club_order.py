@@ -23,6 +23,11 @@ logger = logging.getLogger(__name__)
 coloredlogs.install(level='DEBUG', logger=logger)
 from dateutil.relativedelta import *
 
+import gettext
+zh = gettext.translation("club_order", locale_d(), languages=["zh_CN"])
+zh.install(True)
+_ = zh.gettext
+
 def gen_id(name):
     # user module as name prefix
     s_id = g_id(__name__, name)
@@ -38,14 +43,14 @@ def generate_order_data(orders):
 def generate_layout(orders):
     orders_data = generate_order_data(orders)
     return html.Div([
-        html.H4('All orders'),
+        html.H4(_("All orders")),
         dcc.Dropdown(
                 id=gen_id('all-day-month-year'),
                 options=[
-                    {'label': 'All', 'value': 'all'},
-                    {'label': 'Today', 'value': 'day'},
-                    {'label': 'This Month', 'value': 'month'},
-                    {'label': 'This year', 'value': 'year'}
+                    {'label': _("All"), 'value': 'all'},
+                    {'label': _("Today"), 'value': 'day'},
+                    {'label': _("This Month"), 'value': 'month'},
+                    {'label': _("This year"), 'value': 'year'}
                 ],
                 value='all'
         ),
@@ -63,7 +68,7 @@ def generate_layout(orders):
             id=gen_id(TABLE)
         ),
         html.Hr(),
-        html.Div("click one order to view detail"),
+        html.Div(_("click one order to view detail")),
         html.Div(id=gen_id("order-cards")),
         html.Hr()
     ])
@@ -73,7 +78,7 @@ def layout():
     club = app_controller.get_club_by_name(CLUB_NAME)
 
     if not club or not club.orders:
-        return html.H1("No orders!")
+        return html.H1(_("No orders!"))
     return generate_layout(club.orders)
 
 def generate_order_detail(order_detail):
@@ -92,15 +97,15 @@ def generate_order_detail(order_detail):
             ])
         ]),
         html.Div(className="d-flex justify-content-between",children=[
-            html.Div(className="p-2", children=["price: {}*{}={}".format(order_detail.price,
+            html.Div(className="p-2", children=[_("price: {}*{}={}").format(order_detail.price,
                                                             order_detail.discount_percent_str(),
                                                             order_detail.final_price())
             ]),
             html.Div(className="p-2", children=[
-                html.Span("Qty: {}".format(order_detail.quantity))
+                html.Span(_("Qty: {}").format(order_detail.quantity))
             ]),
             html.Div(className="p-2",children=[
-                html.Div(children=["Subtotal:",order_detail.calc_price()]),
+                html.Div(children=[_("Subtotal:"),order_detail.calc_price()]),
             ])
         ])
     ])
@@ -118,7 +123,7 @@ def generate_order(order):
                 html.Span("Paid: {}".format(order.paid))
             ]),
             html.Div(className="p-2",children=[
-                html.Div(children=["time:",order.time]),
+                html.Div(children=[_("time:"),order.time]),
             ])
         ])
     detail.append(header)
@@ -129,12 +134,13 @@ def generate_order(order):
 
     user = order.user
     footer = html.Div(className="d-flex justify-content-between",children=[
-            html.Div(className="p-2", children=[
-                html.Span("user id: {}".format(user.id))
-            ]),
-            html.Div(className="p-2", children=[
-                html.Span("Email: {}".format(user.email))
-            ])
+                html.Div(className="p-2", children=[
+                    html.Span(_("user id: {}").format(user.id))
+                ]),
+                html.Div(className="p-2", children=[
+                    html.Span(_("Email: {}").format(user.email))
+                ]),
+
         ])
     detail.append(footer)
     return html.Div(children=detail)

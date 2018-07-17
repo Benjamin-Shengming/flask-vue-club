@@ -14,14 +14,19 @@ from app import app_controller
 from magic_defines import *
 
 
+import gettext
+zh = gettext.translation("client_list", locale_d(), languages=["zh_CN"])
+zh.install(True)
+_ = zh.gettext
+
 def generate_client_card(user_id):
   user = app_controller.get_club_user_by_id(CLUB_NAME, user_id)
   return html.Div(className="card", children=[
         html.Div(str(user.id), className="card-header"),
         html.Div(className="card-body", children=[
-            html.Div("Email:" + str(user.email) if user.email else "Email:"),
-            html.Div("Tel:" + str(user.tel) if user.tel else "Tel"),
-            html.Div("Activate code:" + str(user.activate_code) if user.activate_code else "Activate Code"),
+            html.Div(_("Email:") + str(user.email) if user.email else _("Email:")),
+            html.Div(_("Tel:") + str(user.tel) if user.tel else _("Tel")),
+            html.Div(_("Activate code:") + str(user.activate_code) if user.activate_code else _("Activate Code")),
         ]),
         html.Hr()
      ])
@@ -30,7 +35,7 @@ def layout():
     all_clients = app_controller.get_club_user_list(CLUB_NAME)
     user_data = [item.to_dict() for item in all_clients]
     return html.Div([
-        html.H4('All registered users'),
+        html.H4(_("All registered users")),
         dt.DataTable(
             rows=user_data,
 
@@ -45,7 +50,7 @@ def layout():
             id='datatable-client-list'
         ),
         html.Hr(),
-        html.Div("choose users to view details"),
+        html.Div(_("choose users to view details")),
         html.Div(id="client_list_details"),
         html.Hr()
     ])

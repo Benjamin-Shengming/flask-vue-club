@@ -25,6 +25,11 @@ import plotly.plotly as py
 import plotly.graph_objs as go
 import numpy as np
 
+import gettext
+zh = gettext.translation("club_service_analyse", locale_d(), languages=["zh_CN"])
+zh.install(True)
+_ = zh.gettext
+
 logger = logging.getLogger(__name__)
 coloredlogs.install(level='DEBUG', logger=logger)
 
@@ -77,7 +82,7 @@ def generate_layout():
         }]
 
     return html.Div([
-        html.Div("service quantity percentage"),
+        html.Div(_("service quantity percentage")),
         dcc.Graph(id=gen_id("quantity-pie"),
                   figure={
                     'data': data_quantity,
@@ -92,7 +97,7 @@ def generate_layout():
                       'textfont':dict(size=20),
                   }),
         html.Hr(),
-        html.Div("service value percentage"),
+        html.Div(_("service value percentage")),
         dcc.Graph(id=gen_id("money-pie"),
                   figure={
                     'data': data_value,

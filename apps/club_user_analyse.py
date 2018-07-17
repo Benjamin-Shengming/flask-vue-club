@@ -28,6 +28,12 @@ import numpy as np
 logger = logging.getLogger(__name__)
 coloredlogs.install(level='DEBUG', logger=logger)
 
+
+
+import gettext
+zh = gettext.translation("club_user_analyse", locale_d(), languages=["zh_cn"])
+zh.install(True)
+_ = zh.gettext
 def gen_id(name):
     # user module as name prefix
     s_id = g_id(__name__, name)
@@ -63,7 +69,7 @@ def generate_layout():
         }]
 
     return html.Div([
-        html.Div("service quantity percentage"),
+        html.Div(_("service quantity percentage")),
         dcc.Graph(id=gen_id("quantity-pie"),
                   figure={
                     'data': data_quantity,
@@ -77,7 +83,7 @@ def generate_layout():
                     },
                   }),
         html.Hr(),
-        html.Div("service value percentage"),
+        html.Div(_("service value percentage")),
         dcc.Graph(id=gen_id("money-pie"),
                   figure={
                     'data': data_value,

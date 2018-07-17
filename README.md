@@ -34,3 +34,9 @@ cd ..
 FLASK_APP=run.py flask run
 ```
 
+
+#replace single quote to double quotes
+%s/'\([^']*\)'/"\1"/g
+
+# 
+

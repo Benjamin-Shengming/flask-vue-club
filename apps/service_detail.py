@@ -20,6 +20,13 @@ import coloredlogs, logging
 logger = logging.getLogger(__name__)
 coloredlogs.install(level='DEBUG', logger=logger)
 
+
+import gettext
+zh = gettext.translation("service_detail", locale_d(), languages=["zh_CN"])
+zh.install(True)
+_ = zh.gettext
+
+
 def gen_id(name):
     return g_id(__name__, name)
 
@@ -76,7 +83,7 @@ def generate_img_txt(service_id, index):
         html.Div(className="row", children=[
                 html.Div(className="col-sm-12", children=[
                     dcc.Textarea(id=txt_id,
-                            placeholder="Please input picture description",
+                            placeholder=_("Please input picture description"),
                             style={'width':'100%'},
                             value=txt_content if txt_content else "",
                             className="form-control form-control-lg")
@@ -87,16 +94,16 @@ def generate_img_txt(service_id, index):
     return img_txt_section
 
 float_msg = html.A(className="topfloat", children=[
-            html.Label(id="service_detail_msg", children=["mesage show here"])
+            html.Label(id="service_detail_msg", children=[_("mesage show here")])
         ])
 float_button = html.A(className="float", children=[
-            html.Button("Submit",
+            html.Button(_("Submit"),
                         id="service_detail_button_submit",
                         n_clicks=0,
                         className="btn btn-outline-primary")
         ])
 float_button_del = html.A(className="secondfloat", children=[
-            html.Button("Delete",
+            html.Button(_("Delete"),
                         id=gen_id("button-del"),
                         n_clicks=0,
                         className="btn btn-outline-danger")
@@ -115,26 +122,26 @@ def layout(service_id):
         ),
         html.Div(className="row", children=[
                 html.Div(className="col-sm-12", children=[
-                    html.Label("Title:")
+                    html.Label(_("Title:"))
                 ]),
         ]),
         html.Div(className="row", children=[
                 html.Div(className="col-sm-12", children=[
                     dcc.Input(id="service_detail_title",
-                            placeholder="Please input title",
+                            placeholder=_("Please input title"),
                             value=service.name,
                             className="form-control form-control-lg")
                 ])
         ]),
         html.Div(className="row", children=[
                 html.Div(className="col-sm-12", children=[
-                    html.Label("Description:")
+                    html.Label(_("Description:"))
                 ]),
         ]),
         html.Div(className="row", children=[
                 html.Div(className="col-sm-12", children=[
                     dcc.Textarea(id="service_detail_description",
-                            placeholder="Please input service description",
+                            placeholder=_("Please input service description"),
                             value=service.description,
                             style={'width':'100%'},
                             className="form-control form-control-lg")
@@ -142,13 +149,13 @@ def layout(service_id):
         ]),
         html.Div(className="row", children=[
                 html.Div(className="col-sm-12", children=[
-                    html.Label("Price:")
+                    html.Label(_("Price:"))
                 ]),
         ]),
         html.Div(className="row", children=[
                 html.Div(className="col-sm-12", children=[
                     dcc.Input(id="service_detail_price",
-                            placeholder="Please input service price",
+                            placeholder=_("Please input service price"),
                             style={'width':'100%'},
                             type="number",
                             value=service.price,
@@ -158,13 +165,13 @@ def layout(service_id):
         ]),
         html.Div(className="row", children=[
                 html.Div(className="col-sm-12", children=[
-                    html.Label("discount:")
+                    html.Label(_("discount:"))
                 ]),
         ]),
         html.Div(className="row", children=[
                 html.Div(className="col-sm-12", children=[
                     dcc.Input(id="service_detail_discount",
-                            placeholder="Please input service price",
+                            placeholder=_("Please input service price"),
                             style={'width':'100%'},
                             type="number",
                             value=service.discount,
@@ -176,7 +183,7 @@ def layout(service_id):
         ]),
         html.Div(className="row", children=[
                 html.Div(className="col-sm-12", children=[
-                    html.Label("major picture:")
+                    html.Label(_("major picture:"))
                 ]),
         ]),
         html.Div(className="row", children=[
@@ -261,12 +268,12 @@ def update_service(n_clicks,
     assert(service_id)
     print(title)
     if not title:
-        return html.Label("please input title")
+        return html.Label(_("please input title"))
     print(description)
     if not description:
-        return html.Label("please input description")
+        return html.Label(_("please input description"))
     if not img_major_src:
-        return html.Label("please choose major image")
+        return html.Label(_("please choose major image"))
     #save image and txt to files
     img_list = img_txt[:10]
     txt_list = img_txt[10:]
@@ -280,7 +287,7 @@ def update_service(n_clicks,
     # save txt to file
     for i, txt_content in enumerate(txt_list):
         filestore.save_service_txt(service_id, i, txt_content)
-    return html.Label("service updated successfully")
+    return html.Label(_("service updated successfully"))
 
 state_list = [
             State('service_detail_uuid', 'title'),

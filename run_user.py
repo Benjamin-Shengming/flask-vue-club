@@ -1,21 +1,14 @@
 #!/usr/bin/python3
 import sys
 import os
-from random import *
-from flask_cors import CORS
 from flask import Flask, render_template, jsonify, abort, make_response, request
-import requests
 import cherrypy
 import argparse
-import dash
 from dash.dependencies import Input, State, Output
 import dash_html_components as html
 import dash_core_components as dcc
-import pandas as pd
-from dash.exceptions import PreventUpdate
 import sd_material_ui
 from wechatpy.utils import check_signature
-from wechatpy.exceptions import InvalidSignatureException
 from wechatpy import parse_message
 from wechatpy.replies import TextReply, VoiceReply, create_reply, ImageReply, ArticlesReply
 from wechatpy.crypto import WeChatCrypto
@@ -23,12 +16,12 @@ from wechatpy import WeChatClient
 
 # add current folder and lib to syspath
 sys.path.append(os.path.join(os.path.dirname(__file__)))
-sys.path.append(os.path.join(os.path.dirname(__file__), 'libs'))
-sys.path.append(os.path.join(os.path.dirname(__file__), 'apps'))
+sys.path.append(os.path.join(os.path.dirname(__file__), "libs"))
+sys.path.append(os.path.join(os.path.dirname(__file__), "apps"))
 
 import coloredlogs, logging
 logger = logging.getLogger(__name__)
-coloredlogs.install(level='DEBUG', logger=logger)
+coloredlogs.install(level="DEBUG", logger=logger)
 
 import user_service_list
 import user_service_book
@@ -47,9 +40,20 @@ from autolink import Redirect
 from localstorage_writer import LocalStorageWriter
 from localstorage_reader import LocalStorageReader
 import dash_table_experiments as dt
+
+import gettext
+zh = gettext.translation("run_user", locale_d(), languages=["zh_CN"])
+zh.install(True)
+
+
 nav_bar = NavBarDropMenu(CLUB_NAME)
-nav_bar.add_drop_menu("Home", ["Service","Contact"])
-nav_bar.add_drop_menu("User", ["Login", "Register", "Profile"])
+nav_bar.add_drop_menu(_("Home"),
+                     [_("Service"),_("Contact")],
+                     ["/home/service", "/home/contact"])
+nav_bar.add_drop_menu(_("User"),
+                     [_("Login"), _("Register"), _("Profile")],
+                     ["/user/login", "/user/register", "/user/profile"])
+
 nav_bar.add_shop_cart_button("navbar-shopcart-button")
 nav_bar.add_shop_order_button("navbar-shoporder-button")
 
@@ -75,26 +79,26 @@ def generate_main_layout():
                         selected_row_indices=[]),
 
         ]),
-        sd_material_ui.Snackbar(id='snackbar', open=False, message='Polo', action='Reveal'),
+        sd_material_ui.Snackbar(id="snackbar", open=False, message=_("Polo"), action="Reveal"),
         nav_bar.components_tree(),
         # This Location component represents the URL bar
-        dcc.Location(id='global-url', refresh=False),
+        dcc.Location(id="global-url", refresh=False),
         # Each "page" will modify this element
-        html.Div(id='content-container-root'),
+        html.Div(id="content-container-root"),
         html.Div(id=DUMMY_ID)
 
     ], className="container-fluid")
 
 app.layout = generate_main_layout
 
-@server.route('/api_v1/<club_name>/wechat', methods=['GET', 'POST'])
+@server.route("/api_v1/<club_name>/wechat", methods=["GET", "POST"])
 def wechat(club_name):
     logger.debug(club_name)
     query = request.args
     logger.debug(query)
-    signature = query.get('signature', '')
-    timestamp = query.get('timestamp', '')
-    nonce = query.get('nonce', '')
+    signature = query.get("signature", "")
+    timestamp = query.get("timestamp", "")
+    nonce = query.get("nonce", "")
     logger.debug(request.args)
     try:
         check_signature(TOKEN, signature, timestamp, nonce)
@@ -102,14 +106,14 @@ def wechat(club_name):
         logger.debug("invalid request!")
         abort(403)
 
-    if request.method == 'GET':
-        return make_response(request.args.get('echostr', ''))
+    if request.method == "GET":
+        return make_response(request.args.get("echostr", ""))
     else:
         logger.debug("start make response")
-        encrypt_type = request.args.get('encrypt_type', 'raw')
+        encrypt_type = request.args.get("encrypt_type", "raw")
         xml = request.data
         msg = None
-        if encrypt_type == 'raw':
+        if encrypt_type == "raw":
             # plain mode
             logger.debug("plain mode")
             msg = parse_message(xml)
@@ -122,16 +126,16 @@ def wechat(club_name):
                 abort(403)
 
         reply_xml = None
-        if msg.type == 'text':
+        if msg.type == "text":
             key_words = [item.strip() for item in str(msg.content).split(" ")]
             articles = app_controller.search_club_service_article(club_name, key_words)
             for article in articles:
-                article['image'] = "{}{}".format(get_host(), article['image'])
-                article['url'] = "{}{}".format(get_host(), article['url'])
+                article["image"] = "{}{}".format(get_host(), article["image"])
+                article["url"] = "{}{}".format(get_host(), article["url"])
             reply =  ArticlesReply(articles=articles, message=msg)
             reply_xml = reply.render()
         else:
-            reply = TextReply(content='Not supported!', message=msg)
+            reply = TextReply(content="Not supported!", message=msg)
             reply_xml = reply.render()
 
         logger.debug("xml:" + reply_xml)
@@ -141,10 +145,10 @@ def wechat(club_name):
             return crypto.encrypt_message(reply_xml, nonce, timestamp)
 
 @app.callback(
-    Output('content-container-root', 'children'),
-    [Input('global-url', 'pathname')],
-    [State('user-local-storage-reader', 'value'),
-     State(gen_id("main_cart_reader"), 'value')])
+    Output("content-container-root", "children"),
+    [Input("global-url", "pathname")],
+    [State("user-local-storage-reader", "value"),
+     State(gen_id("main_cart_reader"), "value")])
 def display_page(pathname, user_info_str, cart_info_str):
     logger.debug("print path")
     logger.debug(pathname)
@@ -186,47 +190,47 @@ def create_wechat_menu():
                         "sub_button":[
                             {
                                 "type":"view",
-                                "name":"Hot Travel",
+                                "name":_("Hot Travel"),
                                 "url":get_host()
                             },
                             {
                                 "type":"view",
-                                "name":"精彩瞬间",
+                                "name":_("Execellent time"),
                                 "url":"{}/service/book/{}".format(get_host(), app_controller.get_club_top_one_service_id(CLUB_NAME))
                             },
                             {
                                 "type":"view",
-                                "name":"Search",
+                                "name":_("Search"),
                                 "url":"http://baidu.com"
                             }
                         ]
                     },
                     {
-                        "name":"USER",
+                        "name":_("USER"),
                         "sub_button":[
                             {
                                 "type":"view",
-                                "name":"Login",
+                                "name":_("Login"),
                                 "url":"{}{}".format(get_host(), "/user/login")
                             },
                             {
                                 "type":"click",
-                                "name":"赞一下我们",
+                                "name":_("Give a star"),
                                 "key":"V1001_GOOD"
                             }
                         ]
                      },
                     {
-                        "name":"Finacial",
+                        "name":_("Finacial"),
                         "sub_button":[
                             {
                                 "type":"view",
-                                "name":"Borrow Money",
+                                "name":_("Borrow Money"),
                                 "url": "https://www.cebbank.com/"
                             },
                             {
                                 "type":"view",
-                                "name":"Save Money",
+                                "name":_("Save Money"),
                                 "url":"http://v.qq.com/"
                             },
                         ]
@@ -234,9 +238,9 @@ def create_wechat_menu():
         ]
     })
 
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='Run finishing app')
-    parser.add_argument('-i', '--init', help="Init all databasee etc", action='store_true')
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Run finishing app")
+    parser.add_argument("-i", "--init", help="Init all databasee etc", action="store_true")
     args = parser.parse_args()
     if args.init:
         init_all()
@@ -244,13 +248,13 @@ if __name__ == '__main__':
     else:
         for rule in app.server.url_map.iter_rules():
             logger.debug(rule)
-        create_wechat_menu()
-        #app.run_server(debug=True, host='0.0.0.0', port=80, ssl_context='adhoc')
-        #app.run_server(debug=True, host='0.0.0.0', port=80)
-        cherrypy.tree.graft(app.server.wsgi_app, '/')
-        cherrypy.config.update({'server.socket_host': '0.0.0.0',
-                                'server.socket_port':80,
-                                'engine.autoreload.on':False})
+        #create_wechat_menu()
+        #app.run_server(debug=True, host="0.0.0.0", port=80, ssl_context="adhoc")
+        #app.run_server(debug=True, host="0.0.0.0", port=80)
+        cherrypy.tree.graft(app.server.wsgi_app, "/")
+        cherrypy.config.update({"server.socket_host": "0.0.0.0",
+                                "server.socket_port":80,
+                                "engine.autoreload.on":False})
         try:
             cherrypy.engine.start()
         except KeyboardInterrupt:

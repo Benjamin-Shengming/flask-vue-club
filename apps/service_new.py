@@ -15,6 +15,11 @@ from libs import filestore
 from magic_defines import *
 
 
+
+import gettext
+zh = gettext.translation("service_new", locale_d(), languages=["zh_CN"])
+zh.install(True)
+_ = zh.gettext
 def generate_id(index):
     section_id = "service_new_img_section_{}".format(index)
     upload_id ='service_new_upload_{}'.format(index)
@@ -41,8 +46,8 @@ def generate_new_img_txt(index):
                 dcc.Upload(
                     id=upload_id,
                     children=html.Div([
-                        'Drag and Drop or ',
-                        html.A('Select a File'),
+                        _("Drag and Drop or "),
+                        html.A(_("Select a File")),
                     ]),
                     style={
                         'width': '100%',
@@ -65,7 +70,7 @@ def generate_new_img_txt(index):
         html.Div(className="row", children=[
                 html.Div(className="col-sm-12", children=[
                     dcc.Textarea(id=txt_id,
-                            placeholder="Please input picture description",
+                            placeholder=_("Please input picture description"),
                             style={'width':'100%'},
                             className="form-control form-control-lg")
                 ]),
@@ -84,38 +89,38 @@ def layout():
         ),
         html.Div(className="row", children=[
                 html.Div(className="col-sm-12", children=[
-                    html.Label("Title:")
+                    html.Label(_("Title:"))
                 ]),
         ]),
         html.Div(className="row", children=[
                 html.Div(className="col-sm-12", children=[
                     dcc.Input(id="service_new_title",
-                            placeholder="Please input title",
+                            placeholder=_("Please input title"),
                             className="form-control form-control-lg")
                 ])
         ]),
         html.Div(className="row", children=[
                 html.Div(className="col-sm-12", children=[
-                    html.Label("Description:")
+                    html.Label(_("Description:"))
                 ]),
         ]),
         html.Div(className="row", children=[
                 html.Div(className="col-sm-12", children=[
                     dcc.Textarea(id="service_new_description",
-                            placeholder="Please input service description",
+                            placeholder=_("Please input service description"),
                             style={'width':'100%'},
                             className="form-control form-control-lg")
                 ])
         ]),
         html.Div(className="row", children=[
                 html.Div(className="col-sm-12", children=[
-                    html.Label("Price:")
+                    html.Label(_("Price:"))
                 ]),
         ]),
         html.Div(className="row", children=[
                 html.Div(className="col-sm-12", children=[
                     dcc.Input(id="service_new_price",
-                            placeholder="Please input service price",
+                            placeholder=_("Please input service price"),
                             style={'width':'100%'},
                             type="number",
                             value=500,
@@ -125,13 +130,13 @@ def layout():
         ]),
         html.Div(className="row", children=[
                 html.Div(className="col-sm-12", children=[
-                    html.Label("discount:")
+                    html.Label(_("discount:"))
                 ]),
         ]),
         html.Div(className="row", children=[
                 html.Div(className="col-sm-12", children=[
                     dcc.Input(id="service_new_discount",
-                            placeholder="Please input service price",
+                            placeholder=_("Please input service price"),
                             style={'width':'100%'},
                             type="number",
                             value=80,
@@ -143,7 +148,7 @@ def layout():
         ]),
         html.Div(className="row", children=[
                 html.Div(className="col-sm-12", children=[
-                    html.Label("major picture:")
+                    html.Label(_("major picture:"))
                 ]),
         ]),
         html.Div(className="row", children=[
@@ -151,8 +156,8 @@ def layout():
                     dcc.Upload(
                         id='service_new_upload_major',
                         children=html.Div([
-                            'Drag and Drop or ',
-                            html.A('Select a File'),
+                            _("Drag and Drop or "),
+                            html.A(_("Select a File")),
                         ]),
                         style={
                             'width': '100%',
@@ -177,7 +182,7 @@ def layout():
                     dcc.Checklist(
                         id="service_new_checklist_online",
                         options=[
-                            {'label': 'online', 'value': 'online'},
+                            {'label': _("online"), 'value': 'online'},
                         ],
                         values=['online']
                     )
@@ -186,7 +191,7 @@ def layout():
                     dcc.Checklist(
                         id="service_new_checklist_headline",
                         options=[
-                            {'label': 'headline', 'value': 'headline'},
+                            {'label': _("headline"), 'value': 'headline'},
                         ],
                         values=['headline']
                     )
@@ -197,10 +202,10 @@ def layout():
         ]),
         html.Hr(),
         html.A(className="topfloat", children=[
-            html.Label(id="service_new_msg", children=["mesage show here"])
+            html.Label(id="service_new_msg", children=[_("mesage show here")])
         ]),
         html.A(className="float", children=[
-            html.Button("Submit",
+            html.Button(_("Submit"),
                         id="service_new_button_submit",
                         n_clicks=0,
                         className="btn btn-outline-primary")
@@ -250,12 +255,12 @@ def create_new_service(n_clicks,
     assert(service_id)
     print(title)
     if not title:
-        return html.Label("please input title")
+        return html.Label(_("please input title"))
     print(description)
     if not description:
-        return html.Label("please input description")
+        return html.Label(_("please input description"))
     if not img_major_src:
-        return html.Label("please choose major image")
+        return html.Label(_("please choose major image"))
     #save image and txt to files
     img_list = img_txt[:10]
     txt_list = img_txt[10:]
@@ -281,7 +286,7 @@ def create_new_service(n_clicks,
         "slide": bool(headline)
     }
     app_controller.create_club_service(CLUB_NAME, service_dict)
-    return html.Label("service created successfully")
+    return html.Label(_("service created successfully"))
 
 
 for i in range(MAX_IMG_TXT):

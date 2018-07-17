@@ -87,11 +87,11 @@ class NavBarDropMenu(object):
         self.shop_cart = None
         self.shop_order = None
         self.buttons = []
-    def add_drop_menu(self, menu_name, menu_items):
+    def add_drop_menu(self, menu_name, menu_items, item_links):
         menu= html.Div(className="btn-group", children=[
             html.Button(menu_name, **{"data-toggle":"dropdown","aria-haspopup":"true","aria-expanded":"false"},className="btn btn-dark dropdown-toggle"),
             html.Div(className="dropdown-menu", children=[
-                dcc.Link(item, className="dropdown-item" ,href="/"+menu_name + "/" + item, style={"cursor": "pointer"}) for item in menu_items
+                dcc.Link(item, className="dropdown-item" ,href=item_link, style={"cursor": "pointer"}) for item, item_link in zip(menu_items, item_links)
             ])
          ])
         self.drop_menus.append(menu)

@@ -1,0 +1,37 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR ORGANIZATION
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"POT-Creation-Date: 2018-07-17 20:39+1000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: pygettext.py 1.5\n"
+
+
+#: club_monitor.py:108
+msgid "Hourly user activity"
+msgstr "24小时用户活动图"
+
+#: club_monitor.py:120
+msgid "ACTIVITY"
+msgstr "活动率"
+
+#: club_monitor.py:145 club_monitor.py:152
+msgid "Popular service"
+msgstr "热门服务产品"
+
+#: club_monitor.py:154
+msgid "Service"
+msgstr "服务产品"
+
+#: club_monitor.py:159
+msgid "Viewed"
+msgstr "查看率"
+

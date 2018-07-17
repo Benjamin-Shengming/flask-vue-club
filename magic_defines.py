@@ -1,4 +1,13 @@
 #!/usr/bin/python
+import os
+
+def locale_d():
+    return  os.path.abspath(os.path.dirname(__name__)) + "/locale"
+
+import gettext
+zh = gettext.translation("magic_defines", locale_d(), languages=["zh_cn"])
+zh.install(True)
+
 SECRET_KEY = 'Thisissupposedtobesecret!'
 UPLOAD_FOLDER = 'filestore/'
 JWT_SECRET_KEY = 'super-secret'  # Change this!
@@ -45,29 +54,29 @@ CONTINUE_SHOP = "continue-shopping"
 STORAGE_R2 = "storage-reader-2"
 TABLE = "table"
 # constant string defines, need translation
-S_INPUT_EMAIL = "Please input email!"
-S_INPUT_PWD = "Please input password!"
-S_INPUT_PWD_CONFIRM = "Please input password!"
-S_INPUT_PWD_NOT_MATCH = "Password not match!"
-S_USER_EXIST = "User already exist!"
-S_USER_NOT_EXIST = "User does not exist!"
+S_INPUT_EMAIL = _("Please input email!")
+S_INPUT_PWD = _("Please input password!")
+S_INPUT_PWD_CONFIRM = _("Please input password!")
+S_INPUT_PWD_NOT_MATCH = _("Password not match!")
+S_USER_EXIST = _("User already exist!")
+S_USER_NOT_EXIST = _("User does not exist!")
 
-S_USER_ID = "User ID"
-S_TEL= "Tel"
-S_PWD= "Password"
-S_PWD_CONFIRM= "Password Confirmed"
-S_EMAIL = "Email"
-S_ACTIVATE="Activated"
-S_EDIT = "Edit"
-S_CONFIRM = "Confirm"
-S_ACTIVATE = "Activate"
-S_INPUT_ACTIVATE_CODE = "Input Activate Code"
-S_ACTIVE_STATUS = "Active Status"
-S_ACTIVE_NO = "Not Active"
-S_ACTIVE_YES = "Active"
-S_LOGOUT = "Logout"
-S_CHECKOUT= "Checkout"
-S_CONTINUE_SHOP = "Continue Shopping"
+S_USER_ID = _("User ID")
+S_TEL= _("Tel")
+S_PWD= _("Password")
+S_PWD_CONFIRM= _("Password Confirmed")
+S_EMAIL = _("Email")
+S_ACTIVATE=_("Activated")
+S_EDIT = _("Edit")
+S_CONFIRM = _("Confirm")
+S_ACTIVATE = _("Activate")
+S_INPUT_ACTIVATE_CODE = _("Input Activate Code")
+S_ACTIVE_STATUS = _("Active Status")
+S_ACTIVE_NO = _("Not Active")
+S_ACTIVE_YES = _("Active")
+S_LOGOUT = _("Logout")
+S_CHECKOUT= _("Checkout")
+S_CONTINUE_SHOP = _("Continue Shopping")
 
 
 
@@ -82,3 +91,6 @@ APP_ID = 'wx3e9dba3130c08266'
 APP_SECRET = '30ce30ee5f13d70c09215ab2b6211f63'
 def get_host():
     return "http://35.198.210.78"
+
+
+

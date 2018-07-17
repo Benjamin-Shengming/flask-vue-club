@@ -24,6 +24,10 @@ import coloredlogs, logging
 logger = logging.getLogger(__name__)
 coloredlogs.install(level='DEBUG', logger=logger)
 
+import gettext
+zh = gettext.translation("user_login", locale_d(), languages=["zh_CN"])
+zh.install(True)
+_ = zh.gettext
 
 def gen_id(name):
     # user module as name prefix
@@ -33,13 +37,13 @@ def gen_id(name):
 login_title_row = html.Div(className="row", children=[
                 html.Div(className="col-md-3"),
                 html.Div(className="col-md-6", children=[
-                    html.H2("User Login"),
+                    html.H2(_("User Login")),
                     html.Hr()
                 ])
             ])
 email_row = html.Div(className="row", children=[
                 html.Div(className="col-md-3 field-label-responsive", children=[
-                    html.Label("E-Mail Address", htmlFor="email")
+                    html.Label(_("E-Mail Address"), htmlFor="email")
                 ]),
                 html.Div(className="col-md-6", children=[
                     html.Div(className="form-group", children=[
@@ -65,7 +69,7 @@ email_row = html.Div(className="row", children=[
             ])
 password_row = html.Div(className="row", children=[
                 html.Div(className="col-md-3 field-label-responsive", children=[
-                    html.Label("Password", htmlFor="password")
+                    html.Label(_("Password"), htmlFor="password")
                 ]),
                 html.Div(className="col-md-6", children=[
                     html.Div(className="form-group has-danger", children=[
@@ -77,7 +81,7 @@ password_row = html.Div(className="row", children=[
                                       name="password",
                                       className="form-control",
                                       id=gen_id(PASSWD),
-                                      placeholder="Password",
+                                      placeholder=_("Password"),
                                       required ="true")
                         ])
                     ])
@@ -89,7 +93,7 @@ login_button  = html.Button(type="submit",
                             id=gen_id(LOGIN),
                             className="btn btn-success",
                             children=[
-                                "Login",
+                                _("Login"),
                                 html.I(className="fa fa-user-plus")
                              ])
 
@@ -101,7 +105,7 @@ login_button_row = html.Div(id=gen_id(LOGIN),
                                     login_button,
                                 ]),
                             ])
-err_msg_row = Snackbar(id=gen_id(SNACK_BAR), open=False, message='fill login information')
+err_msg_row = Snackbar(id=gen_id(SNACK_BAR), open=False, message=_("fill login information"))
 user_storage_w = LocalStorageWriter(id=gen_id(STORAGE_W), label=USER_STORAGE)
 auto_redirect = Redirect(id=gen_id(REDIRECT))
 

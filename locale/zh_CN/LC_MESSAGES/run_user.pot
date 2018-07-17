@@ -1,0 +1,81 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR ORGANIZATION
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"POT-Creation-Date: 2018-07-17 00:27+AEST\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: utf8\n"
+"Generated-By: pygettext.py 1.5\n"
+
+
+#: run_user.py:50
+msgid "Contact"
+msgstr "联系我们"
+
+#: run_user.py:50
+msgid "Home"
+msgstr "首页"
+
+#: run_user.py:50
+msgid "Service"
+msgstr "服务产品"
+
+#: run_user.py:51
+msgid "Profile"
+msgstr "基本信息"
+
+#: run_user.py:51
+msgid "Register"
+msgstr "注册"
+
+#: run_user.py:51
+msgid "User"
+msgstr "用户"
+
+#: run_user.py:51 run_user.py:208
+msgid "Login"
+msgstr "登录"
+
+#: run_user.py:77
+msgid "Polo"
+msgstr "消息"
+
+#: run_user.py:188
+msgid "Hot Travel"
+msgstr "热门服务"
+
+#: run_user.py:193
+msgid "Execellent time"
+msgstr "精彩时刻"
+
+#: run_user.py:198
+msgid "Search"
+msgstr "搜索"
+
+#: run_user.py:204
+msgid "USER"
+msgstr "用户"
+
+#: run_user.py:213
+msgid "Give a star"
+msgstr "点个赞"
+
+#: run_user.py:219
+msgid "Finacial"
+msgstr "财务"
+
+#: run_user.py:223
+msgid "Borrow Money"
+msgstr "打白条"
+
+#: run_user.py:228
+msgid "Save Money"
+msgstr "省钱"
+

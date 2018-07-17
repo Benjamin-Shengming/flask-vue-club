@@ -22,6 +22,12 @@ import coloredlogs, logging
 logger = logging.getLogger(__name__)
 coloredlogs.install(level='DEBUG', logger=logger)
 
+
+
+import gettext
+zh = gettext.translation("user_orders", locale_d(), languages=["zh_CN"])
+zh.install(True)
+_ = zh.gettext
 def gen_id(name):
     # user module as name prefix
     s_id = g_id(__name__, name)
@@ -31,9 +37,9 @@ def generate_layout(orders):
     orders_data = [{"id":item.id, "time":item.time} for item in orders]
 
     return html.Div([
-        html.H4('All orders'),
+        html.H4(_("All orders")),
         dt.DataTable(
-            rows= orders_data if orders_data else [{"No order": "No order"}],
+            rows= orders_data if orders_data else [{_("No order"): _("No order")}],
 
             # optional - sets the order of columns
             #columns=sorted(DF_GAPMINDER.columns),
@@ -46,7 +52,7 @@ def generate_layout(orders):
             id=gen_id(TABLE)
         ),
         html.Hr(),
-        html.Div("click one order to view detail"),
+        html.Div(_("click one order to view detail")),
         html.Div(id=gen_id("order-cards")),
         html.Hr()
     ])
@@ -60,7 +66,7 @@ def layout(user_info):
         return dcc.Link(href="/user/login",
                     className="col btn btn-warning float-left ", children=[
             html.I(className="fa fa-angle-left"),
-            "Please login firstly"
+            _("Please login firstly")
         ]),
 
     return generate_layout(user.orders)
@@ -81,15 +87,15 @@ def generate_order_detail(order_detail):
             ])
         ]),
         html.Div(className="d-flex justify-content-between",children=[
-            html.Div(className="p-2", children=["price: {}*{}={}".format(order_detail.price,
+            html.Div(className="p-2", children=[_("price: {}*{}={}").format(order_detail.price,
                                                             order_detail.discount_percent_str(),
                                                             order_detail.final_price())
             ]),
             html.Div(className="p-2", children=[
-                html.Span("Qty: {}".format(order_detail.quantity))
+                html.Span(_("Qty: {}").format(order_detail.quantity))
             ]),
             html.Div(className="p-2",children=[
-                html.Div(children=["Subtotal:",order_detail.calc_price()]),
+                html.Div(children=[_("Subtotal:"),order_detail.calc_price()]),
             ])
         ])
     ])
@@ -98,13 +104,13 @@ def generate_order(order):
     detail = []
     header = html.Div(className="d-flex justify-content-between",children=[
             html.Div(className="p-2", children=[
-                html.Span("order id: {}".format(order.id))
+                html.Span(_("order id: {}").format(order.id))
             ]),
             html.Div(className="p-2", children=[
-                html.Span("Paid: {}".format(order.paid))
+                html.Span(_("Paid: {}").format(order.paid))
             ]),
             html.Div(className="p-2",children=[
-                html.Div(children=["time:",order.time]),
+                html.Div(children=[_("time:"),order.time]),
             ])
         ])
     detail.append(header)

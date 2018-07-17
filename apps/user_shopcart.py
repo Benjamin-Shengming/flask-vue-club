@@ -22,6 +22,11 @@ import coloredlogs, logging
 logger = logging.getLogger(__name__)
 coloredlogs.install(level='DEBUG', logger=logger)
 
+import gettext
+zh = gettext.translation("user_shopcart", locale_d(), languages=["zh_CN"])
+zh.install(True)
+_ = zh.gettext
+
 def gen_id(name):
     # user module as name prefix
     s_id = g_id(__name__, name)
@@ -56,7 +61,7 @@ class ShoppingCart(object):
 
     def header(self):
         return html.Div(children=[
-                    html.H3("Your Shopping Cart"),
+                    html.H3(_("Your Shopping Cart")),
                     html.Hr()
                 ])
 
@@ -64,7 +69,7 @@ class ShoppingCart(object):
         return html.Div(className="container-fluid", children=[
             html.Div(className="row", children=[
                 html.Div(className="col-12", children=[
-                 html.Strong("Total {}".format(self.total_price()), className="float-right")
+                 html.Strong(_("Total {}").format(self.total_price()), className="float-right")
                 ])
             ]),
             html.Div(className="row", children=[
@@ -103,18 +108,18 @@ class ShoppingCart(object):
                 ])
             ]),
             html.Div(className="d-flex justify-content-between",children=[
-                html.Div(className="p-2", children=["price: {}*{}={}".format(service.price,
+                html.Div(className="p-2", children=[_("price: {}*{}={}").format(service.price,
                                                                 service.discount_percent_str(),
                                                                 service.final_price())
                 ]),
                 html.Div(className="p-2", children=[
-                    html.Span("Qty: "),
+                    html.Span(_("Qty: ")),
                     dcc.Input(type="tel", value=quantity, size="5")
                 ]),
             ]),
             html.Div(className="d-flex justify-content-between",children=[
                 html.Div(className="p-2",children=[
-                    html.Div(children=["Subtotal:",service.calc_price(quantity)]),
+                    html.Div(children=[_("Subtotal:"),service.calc_price(quantity)]),
                 ]),
                 html.Div(className="", children=[
                     html.Button(id=gen_id("del_service_{}".format(service.id)),

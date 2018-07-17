@@ -1,0 +1,101 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR ORGANIZATION
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"POT-Creation-Date: 2018-07-17 22:05+1000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: pygettext.py 1.5\n"
+
+
+#: magic_defines.py:54
+msgid "Please input email!"
+msgstr ""
+
+#: magic_defines.py:55 magic_defines.py:56
+msgid "Please input password!"
+msgstr ""
+
+#: magic_defines.py:57
+msgid "Password not match!"
+msgstr ""
+
+#: magic_defines.py:58
+msgid "User already exist!"
+msgstr ""
+
+#: magic_defines.py:59
+msgid "User does not exist!"
+msgstr ""
+
+#: magic_defines.py:61
+msgid "User ID"
+msgstr ""
+
+#: magic_defines.py:62
+msgid "Tel"
+msgstr ""
+
+#: magic_defines.py:63
+msgid "Password"
+msgstr ""
+
+#: magic_defines.py:64
+msgid "Password Confirmed"
+msgstr ""
+
+#: magic_defines.py:65
+msgid "Email"
+msgstr ""
+
+#: magic_defines.py:66
+msgid "Activated"
+msgstr ""
+
+#: magic_defines.py:67
+msgid "Edit"
+msgstr ""
+
+#: magic_defines.py:68
+msgid "Confirm"
+msgstr ""
+
+#: magic_defines.py:69
+msgid "Activate"
+msgstr ""
+
+#: magic_defines.py:70
+msgid "Input Activate Code"
+msgstr ""
+
+#: magic_defines.py:71
+msgid "Active Status"
+msgstr ""
+
+#: magic_defines.py:72
+msgid "Not Active"
+msgstr ""
+
+#: magic_defines.py:73
+msgid "Active"
+msgstr ""
+
+#: magic_defines.py:74
+msgid "Logout"
+msgstr ""
+
+#: magic_defines.py:75
+msgid "Checkout"
+msgstr ""
+
+#: magic_defines.py:76
+msgid "Continue Shopping"
+msgstr ""
+

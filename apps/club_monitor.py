@@ -28,6 +28,11 @@ import numpy as np
 logger = logging.getLogger(__name__)
 coloredlogs.install(level='DEBUG', logger=logger)
 
+import gettext
+zh = gettext.translation("club_monitor", locale_d(), languages=["zh_CN"])
+zh.install(True)
+_ = zh.gettext
+
 def gen_id(name):
     # user module as name prefix
     s_id = g_id(__name__, name)
@@ -105,7 +110,7 @@ def update_activity_graph(n):
     )
 
     layout = go.Layout(
-        title = 'Hourly user activity',
+        title = _("Hourly user activity"),
         xaxis = dict(
                     title="HOUR",
                     tickangle=-45,
@@ -117,7 +122,7 @@ def update_activity_graph(n):
                     )
                 ),
         yaxis = dict(
-                     title="ACTIVITY",
+                     title=_("ACTIVITY"),
                      ticks='outside',
                      tick0=0,
                      rangemode='nonnegative'
@@ -142,21 +147,21 @@ def update_popular_graph(n):
     trace = go.Bar(
         x= x_data,
         y= y_data,
-        name="Popular srevice",
+        name=_("Popular service"),
         marker=dict(
             color='orange'
         )
     )
 
     layout = go.Layout(
-        title = 'Popular service',
+        title = _("Popular service"),
         xaxis = dict(
-                    title="Service",
+                    title=_("Service"),
                     tickangle=-45,
                     ticks='outside',
                     ),
         yaxis = dict(
-                     title="Viewed",
+                     title=_("Viewed"),
                      ticks='outside',
                      tick0=0,
                      rangemode='nonnegative'

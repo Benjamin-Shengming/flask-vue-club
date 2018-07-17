@@ -23,6 +23,11 @@ logger = logging.getLogger(__name__)
 coloredlogs.install(level='DEBUG', logger=logger)
 
 
+
+import gettext
+zh = gettext.translation("user_register", locale_d(), languages=["zh_CN"])
+zh.install(True)
+_ = zh.gettext
 def gen_id(name):
     # user module as name prefix
     s_id = g_id(__name__, name)
@@ -32,13 +37,13 @@ def gen_id(name):
 register_title_row = html.Div(className="row", children=[
                 html.Div(className="col-md-3"),
                 html.Div(className="col-md-6", children=[
-                    html.H2("Register New User"),
+                    html.H2(_("Register New User")),
                     html.Hr()
                 ])
             ])
 email_row = html.Div(className="row", children=[
                 html.Div(className="col-md-3 field-label-responsive", children=[
-                    html.Label("E-Mail Address", htmlFor="email")
+                    html.Label(_("E-Mail Address"), htmlFor="email")
                 ]),
                 html.Div(className="col-md-6", children=[
                     html.Div(className="form-group", children=[
@@ -58,7 +63,7 @@ email_row = html.Div(className="row", children=[
             ])
 password_row = html.Div(className="row", children=[
                 html.Div(className="col-md-3 field-label-responsive", children=[
-                    html.Label("Password", htmlFor="password")
+                    html.Label(_("Password"), htmlFor="password")
                 ]),
                 html.Div(className="col-md-6", children=[
                     html.Div(className="form-group has-danger", children=[
@@ -70,7 +75,7 @@ password_row = html.Div(className="row", children=[
                                       name="password",
                                       className="form-control",
                                       id=gen_id(PASSWD),
-                                      placeholder="Password",
+                                      placeholder=_("Password"),
                                       required ="true")
                         ])
                     ])
@@ -79,7 +84,7 @@ password_row = html.Div(className="row", children=[
 
 confirm_pwd_row = html.Div(className="row", children=[
                     html.Div(className="col-md-3 field-label-responsive", children=[
-                        html.Label("Confirm Password", htmlFor="password")
+                        html.Label(_("Confirm Password"), htmlFor="password")
                     ]),
                     html.Div(className="col-md-6", children=[
                         html.Div(className="form-group", children=[
@@ -91,7 +96,7 @@ confirm_pwd_row = html.Div(className="row", children=[
                                           name="password-confirmation",
                                           className="form-control",
                                           id=gen_id(PASSWD_CONFIRM),
-                                          placeholder="Password",
+                                          placeholder=_("Password"),
                                           required="true")
                             ])
                         ])
@@ -102,7 +107,7 @@ register_button_row = html.Div(className="row", children=[
                 html.Div(className="col-md-3"),
                 html.Div(className="col-md-6", children=[
                     html.Button(type="submit", id=gen_id(REGISTER), className="btn btn-success", children=[
-                        "Register", html.I(className="fa fa-user-plus")
+                        _("Register"), html.I(className="fa fa-user-plus")
                     ])
                 ])
             ])

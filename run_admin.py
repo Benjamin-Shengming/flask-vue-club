@@ -21,8 +21,8 @@ import numpy as np
 import plotly
 # add current folder and lib to syspath
 sys.path.append(os.path.join(os.path.dirname(__file__)))
-sys.path.append(os.path.join(os.path.dirname(__file__), 'libs'))
-sys.path.append(os.path.join(os.path.dirname(__file__), 'apps'))
+sys.path.append(os.path.join(os.path.dirname(__file__), "libs"))
+sys.path.append(os.path.join(os.path.dirname(__file__), "apps"))
 from utils import *
 from autolink import Redirect
 from localstorage_writer import LocalStorageWriter
@@ -30,7 +30,7 @@ from localstorage_reader import LocalStorageReader
 
 import coloredlogs, logging
 logger = logging.getLogger(__name__)
-coloredlogs.install(level='DEBUG', logger=logger)
+coloredlogs.install(level="DEBUG", logger=logger)
 
 from app import app
 from app import app_controller
@@ -45,6 +45,12 @@ import club_order
 import club_service_analyse
 import club_user_analyse
 
+import gettext
+print(locale_d())
+#catalogs = gettext.find("run_user", locale_d(), all=True)
+zh = gettext.translation("run_admin", locale_d(), languages=["zh_CN"])
+zh.install(True)
+
 def gen_id(name):
     # user module as name prefix
     s_id = g_id(__name__, name)
@@ -57,41 +63,41 @@ sider_bar = html.Div(className="col-md-3 float-left col-1 pl-0 pr-0 collapse wid
                              style={"cursor": "pointer"},
                              children=[
                                 html.I(**{"aria-hidden":"true"},className="fa fa-home"),
-                                html.Span("Home", className="d-none d-md-inline")
+                                html.Span(_("Home"), className="d-none d-md-inline")
                     ]),
                     html.A(**{"data-toggle": "collapse", "aria-expanded": "false"}, href="#serviceMenu", className="list-group-item d-inline-block collapsed", children=[
                         html.I(**{"aria-hidden":"true"},className="fab fa-servicestack"),
-                        html.Span("Service", className="d-none d-md-inline")
+                        html.Span(_("Service"), className="d-none d-md-inline")
                     ]),
                     html.Div(**{"data-parent":"#sidebar"}, className="collapse", id="serviceMenu", children=[
-                        dcc.Link("List", href="/service/list", className="list-group-item", style={"cursor":"pointer"}),
-                        dcc.Link("New", href="/service/new", className="list-group-item", style={"cursor":"pointer"}),
+                        dcc.Link(_("List"), href="/service/list", className="list-group-item", style={"cursor":"pointer"}),
+                        dcc.Link(_("New"), href="/service/new", className="list-group-item", style={"cursor":"pointer"}),
                     ]),
                     dcc.Link(href="/client/list", className="list-group-item d-inline-block collapsed", style={"cursor": "pointer"}, children=[
                         html.I(className="fas fa-user"),
-                        html.Span("Users", className="d-none d-md-inline")
+                        html.Span(_("Users"), className="d-none d-md-inline")
                     ]),
                     dcc.Link(href="/order/list", className="list-group-item d-inline-block collapsed", style={"cursor": "pointer"}, children=[
                         html.I(className="fa fa-film"),
-                        html.Span("Orders", className="d-none d-md-inline")
+                        html.Span(_("Orders"), className="d-none d-md-inline")
                     ]),
                     html.A(**{"data-toggle":"collapse","aria-expanded":"false"}, href="#menu3", className="list-group-item d-inline-block collapsed", children=[
                         html.I(className="fas fa-chart-pie"),
-                        html.Span("Analyse & Report", className="d-none d-md-inline")
+                        html.Span(_("Analyse & Report"), className="d-none d-md-inline")
                     ]),
-                    html.Div(**{"data-parent":'#sidebar'}, className="collapse", id="menu3", children=[
-                        dcc.Link("Service Analyse", href="/service/analyse", className="list-group-item", style={"cursor":"pointer"}),
-                        dcc.Link("User Analyse", href="/user/analyse", className="list-group-item", style={"cursor":"pointer"})
+                    html.Div(**{"data-parent":"#sidebar"}, className="collapse", id="menu3", children=[
+                        dcc.Link(_("Service Analyse"), href="/service/analyse", className="list-group-item", style={"cursor":"pointer"}),
+                        dcc.Link(_("User Analyse"), href="/user/analyse", className="list-group-item", style={"cursor":"pointer"})
                     ])
                 ])
 
 ])
 
 fig = plotly.tools.make_subplots(rows=2, cols=1, vertical_spacing=0.2)
-fig['layout']['margin'] = {
-    'l': 30, 'r': 10, 'b': 30, 't': 10
+fig["layout"]["margin"] = {
+    "l": 30, "r": 10, "b": 30, "t": 10
 }
-fig['layout']['legend'] = {'x': 0, 'y': 1, 'xanchor': 'left'}
+fig["layout"]["legend"] = {"x": 0, "y": 1, "xanchor": "left"}
 
 main_area = html.Main(id="main-area", className="col-md-9 float-left col px-5 pl-md-2 pt-2 main", children=[
                 html.A(**{"data-target":"#sidebar", "data-toggle":"collapse"}, href="#",  children=[
@@ -107,13 +113,13 @@ total = html.Div(className="container-fluid", children=[
     html.Div(className="row d-flex d-md-block flex-nowrap wrapper", children=[
         html.Div(style={"display":"none"},
                  children=[
-                    dcc.Graph(id='temp-id-graph'),
+                    dcc.Graph(id="temp-id-graph"),
             dcc.Interval(
-                id='temp-id',
+                id="temp-id",
                 interval=60*1000*60*24*365, # in milliseconds
                 n_intervals=0),
             dcc.Dropdown(
-                id=gen_id('tempid-dropdown'),
+                id=gen_id("tempid-dropdown"),
                 options=[ ],
             )
         ]),
@@ -127,16 +133,16 @@ app.layout = html.Div(children=[
     Redirect("click me to redirect", href="", style={"display": "none"}),
     LocalStorageReader(id="user-local-storage-reader", label=USER_STORAGE),
     LocalStorageReader(id="cart-local-storage-reader", label=CART_STORAGE),
-    sd_material_ui.Snackbar(id='snackbar', open=False, message='Polo', action='Reveal'),
+    sd_material_ui.Snackbar(id="snackbar", open=False, message="Polo", action="Reveal"),
     LocalStorageWriter(id="global-local-storage-writer", label=USER_STORAGE),
     total,
     # This Location component represents the URL bar
-    dcc.Location(id='url', refresh=False),
+    dcc.Location(id="url", refresh=False),
 ])
 
 @app.callback(
-    Output('content-container-root', 'children'),
-    [Input('url', 'pathname')])
+    Output("content-container-root", "children"),
+    [Input("url", "pathname")])
 def display_page(pathname):
     if not pathname:
         p = "/"
@@ -163,9 +169,9 @@ def display_page(pathname):
     print("other layout! {}".format(pathname))
     return club_monitor.layout()
 
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='Run finishing app')
-    parser.add_argument('-i', '--init', help="Init all databasee etc", action='store_true')
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Run finishing app")
+    parser.add_argument("-i", "--init", help="Init all databasee etc", action="store_true")
     args = parser.parse_args()
     if args.init:
         init_all()
@@ -173,17 +179,17 @@ if __name__ == '__main__':
     else:
         for rule in app.server.url_map.iter_rules():
             logger.debug(rule)
-        app.run_server(debug=True, host='0.0.0.0', port=8080)
+        app.run_server(debug=True, host="0.0.0.0", port=8080)
 
 
     '''
     else:
         for rule in app.server.url_map.iter_rules():
             logger.debug(rule)
-        cherrypy.tree.graft(app.server.wsgi_app, '/')
-        cherrypy.config.update({'server.socket_host': '0.0.0.0',
-                                'server.socket_port':8080,
-                                'engine.autoreload.on':False})
+        cherrypy.tree.graft(app.server.wsgi_app, "/")
+        cherrypy.config.update({"server.socket_host": "0.0.0.0",
+                                "server.socket_port":8080,
+                                "engine.autoreload.on":False})
         try:
             cherrypy.engine.start()
         except KeyboardInterrupt:

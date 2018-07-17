@@ -17,6 +17,13 @@ import coloredlogs, logging
 logger = logging.getLogger(__name__)
 coloredlogs.install(level='DEBUG', logger=logger)
 
+
+import gettext
+gettext.translation("user_service_list", locale_d(), languages=["zh_CN"])
+zh.install(True)
+_ = zh.gettext
+
+
 def generate_carousel():
     headline_services = app_controller.get_club_headline_service(CLUB_NAME)
     if not headline_services:
@@ -107,6 +114,6 @@ def layout():
         html.Hr(),
         generate_carousel(),
         html.Hr(),
-        html.H4("All services"),
+        html.H4(_("All services")),
         generate_cards()
     ])

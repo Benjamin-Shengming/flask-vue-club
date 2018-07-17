@@ -13,6 +13,14 @@ from app import app
 from app import app_controller
 from magic_defines import *
 
+
+
+
+import gettext
+zh = gettext.translation("service_list", locale_d(), languages=["zh_CN"])
+zh.install(True)
+_ = zh.gettext
+
 def generate_service_card(service_id):
   major_img_link = filestore.get_service_img_link(service_id, MAJOR_IMG)
   print(major_img_link)
@@ -35,9 +43,9 @@ def layout():
     all_services = app_controller.get_club_service_list(CLUB_NAME)
     services_data = [item.to_dict() for item in all_services]
     return html.Div([
-        html.H4('All services'),
+        html.H4(_('All services')),
         dt.DataTable(
-            rows= services_data if services_data else [{"No service":"No Service"}],
+            rows= services_data if services_data else [{_("No service"):_("No Service")}],
 
             # optional - sets the order of columns
             #columns=sorted(DF_GAPMINDER.columns),
@@ -50,7 +58,7 @@ def layout():
             id='datatable-gapminder'
         ),
         html.Hr(),
-        html.Div("click one service to edit"),
+        html.Div(_("click one service to edit")),
         html.Div(id="service_list_service_cards"),
         html.Hr()
     ])

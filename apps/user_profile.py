@@ -27,6 +27,13 @@ import coloredlogs, logging
 logger = logging.getLogger(__name__)
 coloredlogs.install(level='DEBUG', logger=logger)
 
+
+
+import gettext
+zh = gettext.translation("user_profile", locale_d(), languages=["zh_CN"])
+zh.install(True)
+_ = zh.gettext
+
 def gen_id(name):
     # user module as name prefix
     s_id = g_id(__name__, name)
@@ -173,14 +180,14 @@ auto_link = Redirect(id=gen_id(REDIRECT), href="")
 
 def layout(jwt):
     if not jwt:
-        return dcc.Link("Please login firstly!",
+        return dcc.Link(_("Please login firstly!"),
                          href="/user/login",
                          style={"cursor":"pointer"}
                         )
 
     user = app_controller.get_club_user_by_jwt(CLUB_NAME, jwt)
     if not user:
-        return dcc.Link("Please login firstly!",
+        return dcc.Link(_("Please login firstly!"),
                          href="/user/login",
                          style={"cursor":"pointer"}
                         )

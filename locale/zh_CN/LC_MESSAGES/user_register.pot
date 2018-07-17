@@ -1,0 +1,37 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR ORGANIZATION
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"POT-Creation-Date: 2018-07-17 21:21+1000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: pygettext.py 1.5\n"
+
+
+#: user_register.py:35
+msgid "Register New User"
+msgstr "注册新用户"
+
+#: user_register.py:41
+msgid "E-Mail Address"
+msgstr "电子邮件地址"
+
+#: user_register.py:61 user_register.py:73 user_register.py:94
+msgid "Password"
+msgstr "密码"
+
+#: user_register.py:82
+msgid "Confirm Password"
+msgstr "重复密码"
+
+#: user_register.py:105
+msgid "Register"
+msgstr "注册"
+

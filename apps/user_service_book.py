@@ -18,6 +18,11 @@ from localstorage_writer import LocalStorageWriter
 from localstorage_reader import LocalStorageReader
 
 
+
+import gettext
+zh = gettext.translation("user_service_book", locale_d(), languages=["zh_CN"])
+zh.install(True)
+_ = zh.gettext
 import coloredlogs, logging
 logger = logging.getLogger(__name__)
 coloredlogs.install(level='DEBUG', logger=logger)
@@ -86,12 +91,12 @@ def layout(service_id):
         ]),
         html.Div(className="row", children=[
                 html.Div(className="col-sm-12", children=[
-                    html.Label("Price: {}".format(service.price))
+                    html.Label(_("Price: {}").format(service.price))
                 ])
         ]),
         html.Div(className="row", children=[
                 html.Div(className="col-sm-12", children=[
-                    html.Label("Discount:{}".format(service.discount))
+                    html.Label(_("Discount:{}").format(service.discount))
                 ])
         ]),
         html.Div(className="row", children=[
@@ -107,10 +112,10 @@ def layout(service_id):
         html.Hr(),
         dcc.Link(href= "/shop/cart",
                     className="btn btn-primary secondfloat",
-                    children=["Goto cart"]),
+                    children=[_("Goto cart")]),
         html.Button(id="service_book_add_to_cart",
                     className="btn btn-primary float",
-                    children=[ "Add to cart"]),
+                    children=[ _("Add to cart")]),
         LocalStorageWriter(id="service_book_cart_storage_writer", label=CART_STORAGE),
         LocalStorageReader(id="service_book_cart_storage_reader", label=CART_STORAGE),
     ])
