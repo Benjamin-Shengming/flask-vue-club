@@ -44,7 +44,7 @@ import dash_table_experiments as dt
 import gettext
 zh = gettext.translation("run_user", locale_d(), languages=["zh_CN"])
 zh.install(True)
-
+_ = zh.gettext
 
 nav_bar = NavBarDropMenu(CLUB_NAME)
 nav_bar.add_drop_menu(_("Home"),

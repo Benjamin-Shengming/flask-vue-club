@@ -19,7 +19,7 @@ coloredlogs.install(level='DEBUG', logger=logger)
 
 
 import gettext
-gettext.translation("user_service_list", locale_d(), languages=["zh_CN"])
+zh = gettext.translation("user_service_list", locale_d(), languages=["zh_CN"])
 zh.install(True)
 _ = zh.gettext
 
