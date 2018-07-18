@@ -5,49 +5,48 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2018-07-17 20:20+1000\n"
+"POT-Creation-Date: 2018-07-18 21:34+1000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: pygettext.py 1.5\n"
 
-
-#: run_admin.py:60
+#: run_admin.py:66
 msgid "Home"
 msgstr "首页"
 
-#: run_admin.py:64
+#: run_admin.py:70
 msgid "Service"
 msgstr "服务与产品"
 
-#: run_admin.py:67
+#: run_admin.py:73
 msgid "List"
 msgstr "列表"
 
-#: run_admin.py:68
+#: run_admin.py:74
 msgid "New"
 msgstr "新建"
 
-#: run_admin.py:72
+#: run_admin.py:78
 msgid "Users"
 msgstr "客户"
 
-#: run_admin.py:76
+#: run_admin.py:82
 msgid "Orders"
 msgstr "订单"
 
-#: run_admin.py:80
+#: run_admin.py:86
 msgid "Analyse & Report"
 msgstr "分析与报表"
 
-#: run_admin.py:83
+#: run_admin.py:89
 msgid "Service Analyse"
 msgstr "产品分析"
 
-#: run_admin.py:84
+#: run_admin.py:90
 msgid "User Analyse"
 msgstr "客户分析"
-

@@ -5,33 +5,32 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2018-07-17 21:21+1000\n"
+"POT-Creation-Date: 2018-07-18 21:34+1000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: pygettext.py 1.5\n"
 
-
-#: user_register.py:35
+#: apps/user_register.py:40
 msgid "Register New User"
 msgstr "注册新用户"
 
-#: user_register.py:41
+#: apps/user_register.py:46
 msgid "E-Mail Address"
 msgstr "电子邮件地址"
 
-#: user_register.py:61 user_register.py:73 user_register.py:94
+#: apps/user_register.py:66 apps/user_register.py:78 apps/user_register.py:99
 msgid "Password"
 msgstr "密码"
 
-#: user_register.py:82
+#: apps/user_register.py:87
 msgid "Confirm Password"
 msgstr "重复密码"
 
-#: user_register.py:105
+#: apps/user_register.py:110
 msgid "Register"
 msgstr "注册"
-

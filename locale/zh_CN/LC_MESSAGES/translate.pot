@@ -1,0 +1,79 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR ORGANIZATION
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"POT-Creation-Date: 2018-07-18 21:34+1000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: pygettext.py 1.5\n"
+
+#~ msgid "Please input email!"
+#~ msgstr "请输入电子邮件！"
+
+#~ msgid "Please input password!"
+#~ msgstr "请输入密码！"
+
+#~ msgid "Password not match!"
+#~ msgstr "密码不匹配"
+
+#~ msgid "User already exist!"
+#~ msgstr "用户已经存在"
+
+#~ msgid "User does not exist!"
+#~ msgstr "用户不存在"
+
+#~ msgid "User ID"
+#~ msgstr "用户ID"
+
+#~ msgid "Tel"
+#~ msgstr "电话"
+
+#~ msgid "Password"
+#~ msgstr "密码"
+
+#~ msgid "Password Confirmed"
+#~ msgstr "确认密码"
+
+#~ msgid "Email"
+#~ msgstr "电子邮件"
+
+#~ msgid "Activated"
+#~ msgstr "已经激活"
+
+#~ msgid "Edit"
+#~ msgstr "编辑"
+
+#~ msgid "Confirm"
+#~ msgstr "确认"
+
+#~ msgid "Activate"
+#~ msgstr "激活"
+
+#~ msgid "Input Activate Code"
+#~ msgstr "输入激活码"
+
+#~ msgid "Active Status"
+#~ msgstr "激活状态"
+
+#~ msgid "Not Active"
+#~ msgstr "未激活"
+
+#~ msgid "Active"
+#~ msgstr "激活"
+
+#~ msgid "Logout"
+#~ msgstr "退出"
+
+#~ msgid "Checkout"
+#~ msgstr "结账"
+
+#~ msgid "Continue Shopping"
+#~ msgstr "继续购物"

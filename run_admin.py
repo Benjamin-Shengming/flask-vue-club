@@ -19,6 +19,7 @@ import json
 import pandas as pd
 import numpy as np
 import plotly
+from sd_material_ui import Snackbar
 # add current folder and lib to syspath
 sys.path.append(os.path.join(os.path.dirname(__file__)))
 sys.path.append(os.path.join(os.path.dirname(__file__), "libs"))

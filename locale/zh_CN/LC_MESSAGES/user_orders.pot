@@ -5,53 +5,52 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2018-07-17 21:20+1000\n"
+"POT-Creation-Date: 2018-07-18 21:34+1000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: pygettext.py 1.5\n"
 
-
-#: user_orders.py:34
+#: apps/user_orders.py:40
 msgid "All orders"
 msgstr "所有订单"
 
-#: user_orders.py:36
+#: apps/user_orders.py:42
 msgid "No order"
 msgstr "没有订单"
 
-#: user_orders.py:49
+#: apps/user_orders.py:55
 msgid "click one order to view detail"
 msgstr "点击一个订单查看详细信息"
 
-#: user_orders.py:63
+#: apps/user_orders.py:69
 msgid "Please login firstly"
 msgstr "请先登录"
 
-#: user_orders.py:84
+#: apps/user_orders.py:90
 msgid "price: {}*{}={}"
 msgstr "价格: {}*{}={}"
 
-#: user_orders.py:89
+#: apps/user_orders.py:95
 msgid "Qty: {}"
 msgstr "数量: {}"
 
-#: user_orders.py:92
+#: apps/user_orders.py:98
 msgid "Subtotal:"
 msgstr "小计:"
 
-#: user_orders.py:101
+#: apps/user_orders.py:107
 msgid "order id: {}"
 msgstr "订单编号: {}"
 
-#: user_orders.py:104
+#: apps/user_orders.py:110
 msgid "Paid: {}"
 msgstr "已付款: {}"
 
-#: user_orders.py:107
+#: apps/user_orders.py:113
 msgid "time:"
 msgstr "时间"
-

@@ -23,7 +23,7 @@ _ = zh.gettext
 def filter_and_map_dict(d):
     #change column name
     map_d = {
-        "id": _("id"),
+        "id": "ID",
         "email": _("email"),
         "email_confirm": _("email_confirm"),
         "tel": _("tel"),
@@ -79,8 +79,8 @@ def layout():
 def update_service_cards(rows, selected_row_indices):
     all_cards = []
     for i in selected_row_indices:
-        print(rows[i]["id"])
-        all_cards.append(generate_client_card(rows[i]["id"]))
+        print(rows[i]["ID"])
+        all_cards.append(generate_client_card(rows[i]["ID"]))
     return all_cards
 
 if __name__ == '__main__':

@@ -5,15 +5,40 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2018-07-17 21:20+1000\n"
+"POT-Creation-Date: 2018-07-18 21:34+1000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: pygettext.py 1.5\n"
 
+#: apps/service_list.py:28
+msgid "name"
+msgstr "名称"
 
+#: apps/service_list.py:29
+msgid "service_price"
+msgstr "产品价格"
+
+#: apps/service_list.py:30
+msgid "service_discount"
+msgstr "产品折扣"
+
+#: apps/service_list.py:31
+msgid "user_view"
+msgstr "用户浏览量"
+
+#: apps/service_list.py:63
 msgid "All services"
 msgstr "所有服务产品"
+
+#: apps/service_list.py:65
+msgid "No Service"
+msgstr "无服务产品"
+
+#: apps/service_list.py:78
+msgid "click one service to edit"
+msgstr "选择并点击产品查看细节"

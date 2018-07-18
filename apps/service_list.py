@@ -21,6 +21,22 @@ zh = gettext.translation("service_list", locale_d(), languages=["zh_CN"])
 zh.install(True)
 _ = zh.gettext
 
+def filter_and_map_dict(d):
+    #change column name
+    map_d = {
+        "id": "ID",
+        "name": _("name"),
+        "price": _("service_price"),
+        "discount": _("service_discount"),
+        "user_view": _("user_view")
+    }
+    new_d = {}
+    for k, v in d.items():
+        if k in map_d.keys():
+            new_key = map_d[k]
+            new_d[new_key] = v
+    return new_d
+
 def generate_service_card(service_id):
   major_img_link = filestore.get_service_img_link(service_id, MAJOR_IMG)
   print(major_img_link)
@@ -41,7 +57,8 @@ def generate_service_card(service_id):
 
 def layout():
     all_services = app_controller.get_club_service_list(CLUB_NAME)
-    services_data = [item.to_dict() for item in all_services]
+    s_data = [item.to_dict() for item in all_services]
+    services_data = [filter_and_map_dict(item) for item in s_data]
     return html.Div([
         html.H4(_('All services')),
         dt.DataTable(
@@ -71,7 +88,7 @@ def layout():
 def update_service_cards(rows, selected_row_indices):
     all_cards = []
     for i in selected_row_indices:
-        print(rows[i]["id"])
-        all_cards.append(generate_service_card(rows[i]["id"]))
+        print(rows[i]["ID"])
+        all_cards.append(generate_service_card(rows[i]["ID"]))
     return all_cards
 

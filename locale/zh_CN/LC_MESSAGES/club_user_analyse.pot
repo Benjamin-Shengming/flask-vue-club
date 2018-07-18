@@ -5,21 +5,20 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2018-07-17 21:19+1000\n"
+"POT-Creation-Date: 2018-07-18 21:34+1000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: pygettext.py 1.5\n"
 
-
-#: club_user_analyse.py:66
+#: apps/club_user_analyse.py:72
 msgid "service quantity percentage"
 msgstr "客户订购产品数量比例"
 
-#: club_user_analyse.py:80
+#: apps/club_user_analyse.py:86
 msgid "service value percentage"
 msgstr "客户订购价值比例"
-

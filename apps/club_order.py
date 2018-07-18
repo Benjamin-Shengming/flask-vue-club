@@ -33,12 +33,28 @@ def gen_id(name):
     s_id = g_id(__name__, name)
     return s_id
 
+def filter_and_map_dict(d):
+    #change column name
+    map_d = {
+        "id": "ID",
+        "paid": _("paid"),
+        "total_price": _("total_price"),
+        "time_order": _("time_order")
+    }
+    new_d = {}
+    for k, v in d.items():
+        if k in map_d.keys():
+            new_key = map_d[k]
+            new_d[new_key] = v
+    return new_d
+
 def generate_order_data(orders):
     orders_data = [{"id":item.id,
                     "paid": item.paid,
-                    "total": item.total_price(),
-                    "time":item.time} for item in orders]
-    return orders_data
+                    "total_price": item.total_price(),
+                    "time_order":item.time} for item in orders]
+
+    return [filter_and_map_dict(item) for item in orders_data]
 
 def generate_layout(orders):
     orders_data = generate_order_data(orders)
@@ -159,8 +175,8 @@ def generate_order_card(order_id):
 def update_order_cards(rows, selected_row_indices):
     all_cards = []
     for i in selected_row_indices:
-        logger.debug(rows[i]["id"])
-        all_cards.append(generate_order_card(rows[i]["id"]))
+        logger.debug(rows[i]["ID"])
+        all_cards.append(generate_order_card(rows[i]["ID"]))
         all_cards.append(html.Br())
     return all_cards
 

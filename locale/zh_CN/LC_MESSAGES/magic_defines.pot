@@ -5,97 +5,96 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2018-07-17 22:05+1000\n"
+"POT-Creation-Date: 2018-07-18 21:34+1000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: pygettext.py 1.5\n"
 
-
-#: magic_defines.py:54
+#: magic_defines.py:57
 msgid "Please input email!"
 msgstr "请输入电子邮件！"
 
-#: magic_defines.py:55 magic_defines.py:56
+#: magic_defines.py:58 magic_defines.py:59
 msgid "Please input password!"
 msgstr "请输入密码！"
 
-#: magic_defines.py:57
+#: magic_defines.py:60
 msgid "Password not match!"
 msgstr "密码不匹配"
 
-#: magic_defines.py:58
+#: magic_defines.py:61
 msgid "User already exist!"
 msgstr "用户已经存在"
 
-#: magic_defines.py:59
+#: magic_defines.py:62
 msgid "User does not exist!"
 msgstr "用户不存在"
 
-#: magic_defines.py:61
+#: magic_defines.py:64
 msgid "User ID"
 msgstr "用户ID"
 
-#: magic_defines.py:62
+#: magic_defines.py:65
 msgid "Tel"
 msgstr "电话"
 
-#: magic_defines.py:63
+#: magic_defines.py:66
 msgid "Password"
 msgstr "密码"
 
-#: magic_defines.py:64
+#: magic_defines.py:67
 msgid "Password Confirmed"
 msgstr "确认密码"
 
-#: magic_defines.py:65
+#: magic_defines.py:68
 msgid "Email"
 msgstr "电子邮件"
 
-#: magic_defines.py:66
+#: magic_defines.py:69
 msgid "Activated"
 msgstr "已经激活"
 
-#: magic_defines.py:67
+#: magic_defines.py:70
 msgid "Edit"
 msgstr "编辑"
 
-#: magic_defines.py:68
+#: magic_defines.py:71
 msgid "Confirm"
 msgstr "确认"
 
-#: magic_defines.py:69
+#: magic_defines.py:72
 msgid "Activate"
 msgstr "激活"
 
-#: magic_defines.py:70
+#: magic_defines.py:73
 msgid "Input Activate Code"
 msgstr "输入激活码"
 
-#: magic_defines.py:71
+#: magic_defines.py:74
 msgid "Active Status"
 msgstr "激活状态"
 
-#: magic_defines.py:72
+#: magic_defines.py:75
 msgid "Not Active"
 msgstr "未激活"
 
-#: magic_defines.py:73
+#: magic_defines.py:76
 msgid "Active"
 msgstr "激活"
 
-#: magic_defines.py:74
+#: magic_defines.py:77
 msgid "Logout"
 msgstr "退出"
 
-#: magic_defines.py:75
+#: magic_defines.py:78
 msgid "Checkout"
 msgstr "结账"
 
-#: magic_defines.py:76
+#: magic_defines.py:79
 msgid "Continue Shopping"
 msgstr "继续购物"
-

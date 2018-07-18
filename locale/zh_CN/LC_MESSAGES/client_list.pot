@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2018-07-18 20:04+1000\n"
+"POT-Creation-Date: 2018-07-18 21:34+1000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -14,10 +14,6 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: pygettext.py 1.5\n"
-
-#: apps/client_list.py:26
-msgid "id"
-msgstr "客户编号"
 
 #: apps/client_list.py:27
 msgid "email"
@@ -70,3 +66,6 @@ msgstr "所有注册客户"
 #: apps/client_list.py:69
 msgid "choose users to view details"
 msgstr "选择客户查看详情"
+
+#~ msgid "id"
+#~ msgstr "客户编号"

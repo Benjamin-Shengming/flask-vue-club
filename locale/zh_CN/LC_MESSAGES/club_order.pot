@@ -5,65 +5,82 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2018-07-17 21:18+1000\n"
+"POT-Creation-Date: 2018-07-18 21:34+1000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: pygettext.py 1.5\n"
 
+#: apps/club_order.py:40
+msgid "paid"
+msgstr "已付金额"
 
-#: club_order.py:41
+#: apps/club_order.py:41
+msgid "total_price"
+msgstr "总计"
+
+#: apps/club_order.py:42
+msgid "time_order"
+msgstr "下单时间"
+
+#: apps/club_order.py:62
 msgid "All orders"
 msgstr "所有订单"
 
-#: club_order.py:45
+#: apps/club_order.py:66
 msgid "All"
 msgstr "所有订单"
 
-#: club_order.py:46
+#: apps/club_order.py:67
 msgid "Today"
 msgstr "今日"
 
-#: club_order.py:47
+#: apps/club_order.py:68
 msgid "This Month"
 msgstr "本月"
 
-#: club_order.py:48
+#: apps/club_order.py:69
 msgid "This year"
 msgstr "本年"
 
-#: club_order.py:66
+#: apps/club_order.py:87
 msgid "click one order to view detail"
 msgstr "点击订单查看详情"
 
-#: club_order.py:76
+#: apps/club_order.py:97
 msgid "No orders!"
 msgstr "没有订单"
 
-#: club_order.py:95
+#: apps/club_order.py:116
 msgid "price: {}*{}={}"
 msgstr "价格: {}*{}={}"
 
-#: club_order.py:100
+#: apps/club_order.py:121
 msgid "Qty: {}"
 msgstr "数量: {}"
 
-#: club_order.py:103
+#: apps/club_order.py:124
 msgid "Subtotal:"
 msgstr "小计："
 
-#: club_order.py:121
+#: apps/club_order.py:142
 msgid "time:"
 msgstr "时间："
 
-#: club_order.py:133
+#: apps/club_order.py:154
 msgid "user id: {}"
 msgstr "客户 ID"
 
-#: club_order.py:136
+#: apps/club_order.py:157
 msgid "Email: {}"
 msgstr "电子邮件: {}"
 
+#~ msgid "id"
+#~ msgstr "用户编号"
+
+#~ msgid "time"
+#~ msgstr "时间："

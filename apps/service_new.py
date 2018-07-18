@@ -6,6 +6,7 @@ import dash
 import json
 import dash_core_components as dcc
 import dash_html_components as html
+from dash.exceptions import PreventUpdate
 import sd_material_ui
 from dash.dependencies import Event, State, Input, Output
 from pprint import pprint
@@ -13,13 +14,23 @@ from app import app
 from app import app_controller
 from libs import filestore
 from magic_defines import *
-
-
+from sd_material_ui import Snackbar
+from utils import *
+from autolink import Redirect
 
 import gettext
 zh = gettext.translation("service_new", locale_d(), languages=["zh_CN"])
 zh.install(True)
 _ = zh.gettext
+
+
+SUCCESS_CREATE = _("service created successfully")
+
+def gen_id(name):
+    # user module as name prefix
+    s_id = g_id(__name__, name)
+    return s_id
+
 def generate_id(index):
     section_id = "service_new_img_section_{}".format(index)
     upload_id ='service_new_upload_{}'.format(index)
@@ -79,6 +90,9 @@ def generate_new_img_txt(index):
     ])
     return img_txt_section
 
+
+snack_bar = Snackbar(id=gen_id(SNACK_BAR), open=False, message=_("message show here"))
+auto_link = Redirect(id=gen_id(REDIRECT), href="")
 
 def layout():
     return html.Div(children=[
@@ -201,9 +215,8 @@ def layout():
             generate_new_img_txt(i) for i in range(MAX_IMG_TXT)
         ]),
         html.Hr(),
-        html.A(className="topfloat", children=[
-            html.Label(id="service_new_msg", children=[_("mesage show here")])
-        ]),
+        snack_bar,
+        auto_link,
         html.A(className="float", children=[
             html.Button(_("Submit"),
                         id="service_new_button_submit",
@@ -235,8 +248,23 @@ state_list = [
 state_list.extend([State(generate_img_id(i), 'src') for i in range(MAX_IMG_TXT)])
 state_list.extend([State(generate_txt_id(i), 'value') for i in range(MAX_IMG_TXT)])
 
+@app.callback(Output(gen_id(REDIRECT), 'href'),
+             [Input(gen_id(SNACK_BAR), 'message')],
+             [State(gen_id(SNACK_BAR), 'open')])
+def redirect_to_list(msg, open_snack_bar):
+    if msg ==  SUCCESS_CREATE and open_snack_bar == False:
+        return "/service/list"
+    raise PreventUpdate()
 
-@app.callback(Output('service_new_msg', 'children'),
+@app.callback(Output(gen_id(SNACK_BAR), 'open'),
+             [Input(gen_id(SNACK_BAR), 'message')])
+def show_message(msg):
+    if msg:
+        return True
+    else:
+        return False
+
+@app.callback(Output(gen_id(SNACK_BAR), 'message'),
               [Input('service_new_button_submit', 'n_clicks')],
               state_list
               )
@@ -286,7 +314,7 @@ def create_new_service(n_clicks,
         "slide": bool(headline)
     }
     app_controller.create_club_service(CLUB_NAME, service_dict)
-    return html.Label(_("service created successfully"))
+    return _("service created successfully")
 
 
 for i in range(MAX_IMG_TXT):
