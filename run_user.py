@@ -89,7 +89,7 @@ def generate_main_layout():
 
     ], className="container-fluid")
 
-app.layout = generate_main_layout
+app.layout = generate_main_layout()
 
 @server.route("/api_v1/<club_name>/wechat", methods=["GET", "POST"])
 def wechat(club_name):
@@ -250,7 +250,8 @@ if __name__ == "__main__":
             logger.debug(rule)
         #create_wechat_menu()
         #app.run_server(debug=True, host="0.0.0.0", port=80, ssl_context="adhoc")
-        #app.run_server(debug=True, host="0.0.0.0", port=80)
+        app.run_server(debug=True, host="0.0.0.0", port=80)
+        '''
         cherrypy.tree.graft(app.server.wsgi_app, "/")
         cherrypy.config.update({"server.socket_host": "0.0.0.0",
                                 "server.socket_port":80,
@@ -260,6 +261,6 @@ if __name__ == "__main__":
         except KeyboardInterrupt:
             cherrypy.engine.stop()
 
-
+        '''
 
 

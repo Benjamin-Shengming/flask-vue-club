@@ -62,6 +62,7 @@ app.scripts.config.serve_locally = False
 file_directory = os.path.abspath(os.path.dirname(__name__)) + "/assets"
 @server.route('/assets/<path:path>')
 def serve_files(path):
+    log.debug("request file " + path)
     full_file_path = os.path.join(file_directory, path)
     if os.path.exists(full_file_path):
         return send_file(full_file_path)

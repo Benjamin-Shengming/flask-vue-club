@@ -84,11 +84,7 @@ def layout(service_id):
                     html.H1(service.name)
                 ])
         ]),
-        html.Div(className="row", children=[
-                html.Div(className="col-sm-12", children=[
-                    html.P(service.description)
-                ])
-        ]),
+        html.Hr(),
         html.Div(className="row", children=[
                 html.Div(className="col-sm-12", children=[
                     html.Label(_("Price: {}").format(service.price))
@@ -97,6 +93,12 @@ def layout(service_id):
         html.Div(className="row", children=[
                 html.Div(className="col-sm-12", children=[
                     html.Label(_("Discount:{}").format(service.discount))
+                ])
+        ]),
+        html.Hr(),
+        html.Div(className="row", children=[
+                html.Div(className="col-sm-12", children=[
+                    html.P(service.description)
                 ])
         ]),
         html.Div(className="row", children=[

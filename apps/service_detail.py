@@ -243,6 +243,8 @@ def layout(service_id):
 
 # callbacks setup
 def preview_img(contents):
+    if not contents:
+        raise PreventUpdate()
     content_type, content_string = contents.split(',')
     if 'image' in content_type:
         return contents

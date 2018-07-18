@@ -32,14 +32,12 @@ def get_service_img_link(service_id, img_id):
 
 def get_service_img_link_alt(service_id):
     img_id = 0
-    while img_id < 10:
-        p = get_service_img_path(service_id, img_id)
-        if p:
-            break
-    if img_id >= 10:
-        img_id = MAJOR_IMG
-
-    link = "/assets/filestore/services/" + service_id + "/" + str(img_id) + DEF_EXT
+    for img_id in range(0, 10):
+        link = get_service_img_link(service_id, img_id)
+        if link:
+            logger.debug(link)
+            return link
+    link = get_service_img_link(service_id, MAJOR_IMG)
     logger.debug(link)
     return link
 

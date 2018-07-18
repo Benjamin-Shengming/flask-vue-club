@@ -25,12 +25,16 @@ _ = zh.gettext
 
 
 def generate_carousel():
+    logger.debug("generate carousel")
     headline_services = app_controller.get_club_headline_service(CLUB_NAME)
     if not headline_services:
         print("no headline")
         return html.Div()
     service_count = len(headline_services)
-    carousel = html.Div(**{"data-ride":"carousel"},
+    logger.debug("generate carouse al")
+    logger.debug("service count " + str(service_count))
+
+    carousel = html.Div(**{"data-ride": "carousel"},
                         id="carouselExampleIndicators",
                         className="carousel slide",
                         children=[
@@ -44,8 +48,8 @@ def generate_carousel():
                         html.Img(className="img-fluid",
                                 src=filestore.get_service_img_link(service.id, MAJOR_IMG),
                                 alt="Second slide")
-                    ]),
 
+                    ]),
                     dcc.Link(className="col",href="/service/book/{}".format(service.id), children=[
                         html.Img(className="img-fluid",
                                 src=filestore.get_service_img_link_alt(service.id),
@@ -63,13 +67,15 @@ def generate_carousel():
             html.Span("Next", className="sr-only")
         ]),
     ])
+    logger.debug("return carousel")
     return carousel
 
 def generate_cards():
     logger.debug("generate cards")
     club_services = app_controller.get_club_service_list(CLUB_NAME)
     if not club_services:
-        return html.Div()
+        return html.Div("No club service!")
+    logger.debug(club_services)
     cards = []
     for service in club_services:
         card =  html.Div(className="card col-sm-4", children=[
@@ -106,10 +112,12 @@ def generate_cards():
         row_list.append(html.Div(className="row", children=row_child))
         idx += 3
 
+    logger.debug("end generate")
     return html.Div(children=row_list)
 
 
 def layout():
+    logger.debug("service list layout")
     return  html.Div(children=[
         html.Hr(),
         generate_carousel(),
