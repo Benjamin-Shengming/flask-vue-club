@@ -19,6 +19,25 @@ zh = gettext.translation("client_list", locale_d(), languages=["zh_CN"])
 zh.install(True)
 _ = zh.gettext
 
+
+def filter_and_map_dict(d):
+    #change column name
+    map_d = {
+        "id": _("id"),
+        "email": _("email"),
+        "email_confirm": _("email_confirm"),
+        "tel": _("tel"),
+        "tel_confirmed": _("tel_confirmed"),
+        "activate_code": _("activate_code"),
+        "last_active_time": _("last_active_time")
+    }
+    new_d = {}
+    for k, v in d.items():
+        if k in map_d.keys():
+            new_key = map_d[k]
+            new_d[new_key] = v
+    return new_d
+
 def generate_client_card(user_id):
   user = app_controller.get_club_user_by_id(CLUB_NAME, user_id)
   return html.Div(className="card", children=[
@@ -33,15 +52,12 @@ def generate_client_card(user_id):
 
 def layout():
     all_clients = app_controller.get_club_user_list(CLUB_NAME)
-    user_data = [item.to_dict() for item in all_clients]
+    users = [item.to_dict() for item in all_clients]
+    user_data = [filter_and_map_dict(item) for item in users]
     return html.Div([
         html.H4(_("All registered users")),
         dt.DataTable(
             rows=user_data,
-
-            # optional - sets the order of columns
-            #columns=sorted(DF_GAPMINDER.columns),
-
             row_selectable=True,
             filterable=True,
             sortable=True,

@@ -9,64 +9,65 @@ msgstr ""
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: pygettext.py 1.5\n"
 
-#: apps/client_list.py:26
+
+#: ./apps/client_list.py:26
 msgid "id"
-msgstr "客户编号"
+msgstr ""
 
-#: apps/client_list.py:27
+#: ./apps/client_list.py:27
 msgid "email"
-msgstr "电子邮件"
+msgstr ""
 
-#: apps/client_list.py:28
+#: ./apps/client_list.py:28
 msgid "email_confirm"
-msgstr "邮件确认"
+msgstr ""
 
-#: apps/client_list.py:29
+#: ./apps/client_list.py:29
 msgid "tel"
-msgstr "电话号码"
+msgstr ""
 
-#: apps/client_list.py:30
+#: ./apps/client_list.py:30
 msgid "tel_confirmed"
-msgstr "电话确认"
+msgstr ""
 
-#: apps/client_list.py:31
+#: ./apps/client_list.py:31
 msgid "activate_code"
-msgstr "激活码"
+msgstr ""
 
-#: apps/client_list.py:32
+#: ./apps/client_list.py:32
 msgid "last_active_time"
-msgstr "最后活跃时间"
+msgstr ""
 
-#: apps/client_list.py:46
+#: ./apps/client_list.py:46
 msgid "Email:"
 msgstr ""
 
-#: apps/client_list.py:47
+#: ./apps/client_list.py:47
 msgid "Tel"
-msgstr "电话号码"
+msgstr ""
 
-#: apps/client_list.py:47
+#: ./apps/client_list.py:47
 msgid "Tel:"
-msgstr "电话号码:"
+msgstr ""
 
-#: apps/client_list.py:48
+#: ./apps/client_list.py:48
 msgid "Activate Code"
-msgstr "激活码"
+msgstr ""
 
-#: apps/client_list.py:48
+#: ./apps/client_list.py:48
 msgid "Activate code:"
-msgstr "激活码:"
+msgstr ""
 
-#: apps/client_list.py:58
+#: ./apps/client_list.py:58
 msgid "All registered users"
-msgstr "所有注册客户"
+msgstr ""
 
-#: apps/client_list.py:69
+#: ./apps/client_list.py:69
 msgid "choose users to view details"
-msgstr "选择客户查看详情"
+msgstr ""
+

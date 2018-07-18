@@ -85,6 +85,7 @@ class User(Base, BaseMixin, UserMixin):
     def update_active_time(self):
         self.last_active_time = datetime.datetime.now()
 
+
 class Club(Base, BaseMixin):
     __tablename__ = 'club'
     id = Column(Integer, primary_key=True)
