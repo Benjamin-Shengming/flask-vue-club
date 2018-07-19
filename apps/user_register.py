@@ -186,11 +186,12 @@ def register_user(n_clicks, email, password, password_confirm):
     }
     try:
         user = app_controller.create_club_user(CLUB_NAME, user_data)
-    except:
+    except Exception as e:
+        logger.debug(str(e))
         raise PreventUpdate()
     if user.tel:
         raise PreventUpdate()
     if user.email:
         pass
-        #app_controller.resend_active_code_by_email(CLUB_NAME, user.email)
+        app_controller.resend_active_code_by_email(CLUB_NAME, user.email)
     return "/user/login"

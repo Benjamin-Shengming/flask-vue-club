@@ -506,34 +506,13 @@ def init_all():
     m = AppModel()
     haoduoyu = m.create_club({'name': 'haoduoyu',
                               'description':"haoduoyu club",
-                              'smtp_server':'smtp.gmail.com',
+                              'smtp_server':'smtp.live.com',
                               'smtp_port':'587',
                               'smtp_encryption': 'starttls',
-                              'email':"shengming.hu@gmail.com",
-                              'email_pwd':"xidian96faa98002",
-                              'tel':'13379506367'
+                              'email':"haoduoyutest@hotmail.com",
+                              'email_pwd':"test1232018",
+                              'tel':'13379506333'
                             })
-    haoduomao = m.create_club({'name': 'haoduomao', 'description':"haoduomao club"})
     role_user1 = m.create_club_role(haoduoyu.name, {'name':'user', 'description':"normal usr"})
-    role_user2 = m.create_club_role(haoduomao.name, {'name':'user', 'description':"normal usr"})
-    user1 = User()
-    user1.club_id = haoduoyu.id
-    user1.email = "abc@abc.com"
-    user1.tel = '13311111'
-    user1.password_hash = "abc"
-    user1.roles.append(role_user1)
-
-    user2 = User()
-    user2.club_id = haoduomao.id
-    user2.email = "123@abc.com"
-    user2.tel = '13311111'
-    user2.password_hash = "123"
-    user2.roles = [role_user2]
-    user2.roles.append(role_user2)
     m._add(haoduoyu)
-    m._add(haoduomao)
-    m._add(role_user1)
-    m._add(role_user2)
-    m._add(user1)
-    m._add(user2)
     m._commit()

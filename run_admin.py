@@ -180,13 +180,7 @@ if __name__ == "__main__":
     else:
         for rule in app.server.url_map.iter_rules():
             logger.debug(rule)
-        app.run_server(debug=True, host="0.0.0.0", port=8080)
-
-
-    '''
-    else:
-        for rule in app.server.url_map.iter_rules():
-            logger.debug(rule)
+        #app.run_server(debug=True, host="0.0.0.0", port=8080)
         cherrypy.tree.graft(app.server.wsgi_app, "/")
         cherrypy.config.update({"server.socket_host": "0.0.0.0",
                                 "server.socket_port":8080,
@@ -195,8 +189,5 @@ if __name__ == "__main__":
             cherrypy.engine.start()
         except KeyboardInterrupt:
             cherrypy.engine.stop()
-    '''
-
-
 
 
