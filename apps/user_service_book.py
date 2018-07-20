@@ -16,7 +16,7 @@ from magic_defines import *
 import json
 from localstorage_writer import LocalStorageWriter
 from localstorage_reader import LocalStorageReader
-
+from utils import *
 
 
 import gettext
@@ -129,16 +129,21 @@ def layout(service_id):
                ]
               )
 def add_service_to_cart(n_clicks, service_id, cart_json_str):
-    global i
+    logger.debug("add service to cart json string")
     logger.debug(cart_json_str)
     cart = {}
     try:
-        cart = json.loads(cart_json_str)
-    except:
+        cart = load_cart_info_from_storage(cart_json_str)
+        logger.debug(cart_json_str)
+    except Exception as e:
+        raise e
+        logger.debug("loading failed")
         pass
     if not isinstance(cart, dict):
         cart = {}
-    old_value = cart.get(service_id, 0)
+    old_value = int(cart.get(service_id, 0))
+    logger.debug(service_id)
     cart[service_id] = old_value + 1
-
+    logger.debug("new cart")
+    logger.debug(cart)
     return json.dumps(cart)

@@ -5,7 +5,7 @@ import datetime
 import calendar
 from dash.exceptions import PreventUpdate
 import coloredlogs, logging
-
+from collections import OrderedDict
 
 logger = logging.getLogger(__name__)
 coloredlogs.install(level='DEBUG', logger=logger)
@@ -64,12 +64,21 @@ def get_user_jwt(user_info_str):
 
 def load_cart_info_from_storage(cart_info_str):
     try:
-        cart_info = json.loads(cart_info_str)
+        logger.debug("load str")
+        logger.debug(cart_info_str)
+        cart_info = json.loads(cart_info_str, object_pairs_hook=OrderedDict)
     except:
-        cart_info = {}
+        cart_info = OrderedDict()
     if not isinstance(cart_info, dict):
-        cart_info = {}
-    return cart_info
+        cart_info = OrderedDict()
+    cart  = OrderedDict()
+    for k, v in cart_info.items():
+        try:
+            cart[k] = int(v)
+        except Exception as e:
+            logger.debug(str(e))
+            continue
+    return cart
 
 def assert_button_clicks(clicks):
     if not clicks or clicks <= 0:

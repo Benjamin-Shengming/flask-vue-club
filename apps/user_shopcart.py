@@ -27,6 +27,24 @@ zh = gettext.translation("user_shopcart", locale_d(), languages=["zh_CN"])
 zh.install(True)
 _ = zh.gettext
 
+MAX_ITEMS = 100
+
+def gen_del_button_id(i):
+    return gen_id("del_service_{}".format(i))
+
+def gen_quantity_input_id(i):
+    return gen_id("quantity_input{}".format(i))
+
+def generate_del_button(idx):
+    return  html.Button(id=gen_del_button_id(idx),
+                        className="btn btn-danger btn-sm float-right",
+                        children=[html.I(className="fa fa-trash")])
+
+def generate_quantity_input(idx, quantity):
+    return dcc.Input(id = gen_quantity_input_id(idx),
+                     type="number",
+                     value=quantity, size="5")
+
 def gen_id(name):
     # user module as name prefix
     s_id = g_id(__name__, name)
@@ -40,7 +58,7 @@ class ShoppingCart(object):
         self.cart_service = []
         try:
             logger.debug("loading cart_info_str")
-            self.cart_dict = json.loads(cart_info_str)
+            self.cart_dict = load_cart_info_from_storage(cart_info_str)
         except:
             logger.debug("except happen")
             pass
@@ -49,14 +67,14 @@ class ShoppingCart(object):
         if self.cart_dict:
             for s_id, quantity in self.cart_dict.items():
                 service = self.controller.get_club_service(CLUB_NAME, s_id)
-                if service and quantity > 0:
+                if service and int(quantity) > 0:
                     self.cart_service.append((quantity, service))
 
     def total_price(self):
         total = 0
         for item  in self.cart_service:
             quantity, service = item
-            total += service.calc_price(quantity)
+            total += service.calc_price(int(quantity))
         return total
 
     def header(self):
@@ -92,7 +110,7 @@ class ShoppingCart(object):
            ])
         ])
 
-    def service_item(self, service, quantity):
+    def service_item(self, idx, service, quantity):
         return  html.Div(className="container-fluid border border-info", children = [
             html.Div(className="d-flex",children=[
                 html.Div(className="p-2",children =[
@@ -112,9 +130,11 @@ class ShoppingCart(object):
                                                                 service.discount_percent_str(),
                                                                 service.final_price())
                 ]),
+            ]),
+            html.Div(className="d-flex justify-content-between",children=[
                 html.Div(className="p-2", children=[
                     html.Span(_("Qty: ")),
-                    dcc.Input(type="tel", value=quantity, size="5")
+                    generate_quantity_input(idx, quantity)
                 ]),
             ]),
             html.Div(className="d-flex justify-content-between",children=[
@@ -122,20 +142,16 @@ class ShoppingCart(object):
                     html.Div(children=[_("Subtotal:"),service.calc_price(quantity)]),
                 ]),
                 html.Div(className="", children=[
-                    html.Button(id=gen_id("del_service_{}".format(service.id)),
-                                className="btn btn-danger btn-sm float-right",
-                                children=[
-                        html.I(className="fa fa-trash")
-                    ])
+                    generate_del_button(idx)
                 ])
             ])
         ])
 
     def all_cart_service(self, cart_service):
         item_list = []
-        for item in cart_service:
+        for idx, item in enumerate(cart_service):
             quantity, service = item
-            item_list.append(self.service_item(service, quantity))
+            item_list.append(self.service_item(idx, service, quantity))
             item_list.append(html.Br())
         return item_list
 
@@ -143,11 +159,14 @@ class ShoppingCart(object):
         return html.Div(children= self.all_cart_service(self.cart_service))
 
     def layout(self):
+        all_left_buttons = [generate_del_button(i) for i in range(len(self.cart_service), MAX_ITEMS)]
+        all_left_inputs = [generate_quantity_input(i, 0) for i in range(len(self.cart_service), MAX_ITEMS)]
         return html.Div(id=gen_id(PLACEHOLDER), children = [
             self.header(),
             self.body(),
             html.Hr(),
-            self.footer()
+            self.footer(),
+            html.Div(style={"display":"none"}, children = all_left_buttons + all_left_inputs)
         ])
 
 def layout(user_info, cart_info):
@@ -156,15 +175,78 @@ def layout(user_info, cart_info):
     shop_cart = ShoppingCart(cart_info, app_controller)
     return html.Div(className="container", children=[
         LocalStorageWriter(id=gen_id(STORAGE_W), label=CART_STORAGE),
+        LocalStorageWriter(id=gen_id("STORAGE_CHANGE_DELETE"), label=CART_STORAGE),
+        LocalStorageWriter(id=gen_id("STORAGE_CHANGE_QUANTITY"), label=CART_STORAGE),
         LocalStorageReader(id=gen_id(STORAGE_R), label=CART_STORAGE),
         LocalStorageReader(id=gen_id(STORAGE_R2), label=USER_STORAGE),
         Redirect(id=gen_id(REDIRECT), href=""),
         html.Div(id=gen_id(CART), className="container-fluid", children=[
             shop_cart.layout()
-        ])
+        ]),
+
     ])
 
+buttons_list =[Input(gen_del_button_id(i), "n_clicks_timestamp") for i in range(0, MAX_ITEMS)]
+inputs_list =[Input(gen_quantity_input_id(i), "value") for i in range(0, MAX_ITEMS)]
 
+def determine_which_button(click_timestamp):
+    if not click_timestamp:
+        return None
+    pos = 0
+    largest = 0
+    for idx, item in enumerate(click_timestamp):
+       if largest < item:
+           largest = item
+           pos = idx
+    return pos
+
+@app.callback(Output(gen_id("STORAGE_CHANGE_DELETE"), 'value'),
+              buttons_list,
+              [State(gen_id(STORAGE_R), "value")]
+              )
+def delete_cart_item(*args):
+    cart_info_str = args[MAX_ITEMS]
+    cart = load_cart_info_from_storage(cart_info_str)
+    button_clicks = args[:len(cart)]
+    if not cart:
+        raise PreventUpdate()
+
+    items = list(cart.items())
+    del_key_pos = determine_which_button(button_clicks)
+    del_key, _ = items[del_key_pos]
+    del cart[del_key]
+    return json.dumps(cart)
+
+@app.callback(Output(gen_id(CART), 'children'),
+              [Input(gen_id(STORAGE_R), "value")],
+              [State(gen_id(REDIRECT), 'href')]
+              )
+def refresh_cart(cart_info_str, href):
+    if href:
+        raise PreventUpdate()
+    cart = load_cart_info_from_storage(cart_info_str)
+    shop_cart = ShoppingCart(cart_info_str, app_controller)
+    return shop_cart.layout()
+
+
+@app.callback(Output(gen_id("STORAGE_CHANGE_QUANTITY"), 'value'),
+              inputs_list,
+              [State(gen_id(STORAGE_R), "value")]
+              )
+def change_quantity_cart(*args):
+    input_values = args[:MAX_ITEMS]
+    cart_info_str = args[MAX_ITEMS]
+    logger.debug(cart_info_str)
+    cart = load_cart_info_from_storage(cart_info_str)
+    count = len(cart)
+    items = list(cart.items())
+    for i  in range(0, count):
+       key, value = items[i]
+       cart[key] = input_values[i]
+
+    if len(cart):
+        return json.dumps(cart)
+    raise PreventUpdate()
 
 @app.callback(Output(gen_id(REDIRECT), 'href'),
               [Input(gen_id(STORAGE_R), "value")],
