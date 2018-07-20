@@ -4,35 +4,12 @@ from uuid import uuid1
 import dash
 import dash_html_components as html
 import dash_core_components as dcc
-'''
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
-  <a class="navbar-brand" href="#">Navbar w/ text</a>
-  <button class="navbar-toggler" type="button"
-            data-toggle="collapse"
-            data-target="#navbarText"
-            aria-controls="navbarText"
-            aria-expanded="false"
-            aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon"></span>
-  </button>
-  <div class="collapse navbar-collapse" id="navbarText">
-    <ul class="navbar-nav mr-auto">
-      <li class="nav-item active">
-        <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="#">Features</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="#">Pricing</a>
-      </li>
-    </ul>
-    <span class="navbar-text">
-      Navbar text with an inline element
-    </span>
-  </div>
-</nav>
-'''
+from  magic_defines import locale_d
+import gettext
+zh = gettext.translation("navbar", locale_d(), languages=["zh_CN"])
+zh.install(True)
+_ = zh.gettext
+
 class NavBarLinks(object):
     def __init__(self, brand_name="HaoduoYu", bg_color="bg-primary", navbar_color="navbar-dark"):
         self.brand_name = brand_name
@@ -98,12 +75,12 @@ class NavBarDropMenu(object):
 
     def add_shop_cart_button(self, shop_cart_id):
         self.shop_cart = dcc.Link(href="/shop/cart", className="btn btn-outline-info", children=[
-            html.I("Cart",id=shop_cart_id, className="fa fa-shopping-cart")
+            html.I(_("Cart"),id=shop_cart_id, className="fa fa-shopping-cart")
         ])
 
     def add_shop_order_button(self, shop_order_id):
         self.shop_order = dcc.Link(href="/shop/order", className="btn btn-outline-info", children=[
-            html.I("Order",id=shop_order_id, className="fas fa-shipping-fast")
+            html.I(_("Order"),id=shop_order_id, className="fas fa-shipping-fast")
         ])
 
     def add_button(self, button_id, button_text):

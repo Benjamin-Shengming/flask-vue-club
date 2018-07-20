@@ -51,7 +51,13 @@ email_row = html.Div(className="row", children=[
                             html.Div(className="input-group-addon", style={"width": "2.6rem"}, children=[
                                 html.I(className="fa fa-at")
                             ]),
-                            dcc.Input(type="text", name="email",className="form-control",id=gen_id(EMAIL), placeholder="you@example.com",required="true", autofocus="true")
+                            dcc.Input(type="text",
+                                      name="email",
+                                      className="form-control",
+                                      id=gen_id(EMAIL),
+                                      placeholder="you@example.com",
+                                      required="true",
+                                      autofocus="true")
                         ])
                     ])
                 ]),

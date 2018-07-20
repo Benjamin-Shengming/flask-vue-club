@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2018-07-18 21:34+1000\n"
+"POT-Creation-Date: 2018-07-21 09:22+1000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -23,14 +23,14 @@ msgstr "注册新用户"
 msgid "E-Mail Address"
 msgstr "电子邮件地址"
 
-#: apps/user_register.py:66 apps/user_register.py:78 apps/user_register.py:99
+#: apps/user_register.py:72 apps/user_register.py:84 apps/user_register.py:105
 msgid "Password"
 msgstr "密码"
 
-#: apps/user_register.py:87
+#: apps/user_register.py:93
 msgid "Confirm Password"
 msgstr "重复密码"
 
-#: apps/user_register.py:110
+#: apps/user_register.py:116
 msgid "Register"
 msgstr "注册"

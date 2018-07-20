@@ -135,6 +135,7 @@ def generate_field_user_activate_status(user):
             dcc.Input(id=gen_id(STATUS + ACTIVATE),
                         className="form-control",
                         type="text",
+                        disabled=True,
                         value= S_ACTIVE_YES if user.is_active() else S_ACTIVE_NO)
         ])
     ])

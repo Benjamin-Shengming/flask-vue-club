@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2018-07-18 21:34+1000\n"
+"POT-Creation-Date: 2018-07-21 09:22+1000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -15,22 +15,22 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: pygettext.py 1.5\n"
 
-#: apps/user_shopcart.py:64
+#: apps/user_shopcart.py:91
 msgid "Your Shopping Cart"
 msgstr "你的购物车"
 
-#: apps/user_shopcart.py:72
+#: apps/user_shopcart.py:99
 msgid "Total {}"
 msgstr "总计 {}"
 
-#: apps/user_shopcart.py:111
+#: apps/user_shopcart.py:139
 msgid "price: {}*{}={}"
 msgstr "价格：{}*{}={}"
 
-#: apps/user_shopcart.py:116
+#: apps/user_shopcart.py:146
 msgid "Qty: "
 msgstr "数量: "
 
-#: apps/user_shopcart.py:122
+#: apps/user_shopcart.py:152
 msgid "Subtotal:"
 msgstr "小计:"

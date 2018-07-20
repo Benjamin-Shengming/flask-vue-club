@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2018-07-18 21:34+1000\n"
+"POT-Creation-Date: 2018-07-21 09:22+1000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -15,78 +15,79 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: pygettext.py 1.5\n"
 
-#: apps/service_new.py:49 apps/service_new.py:159
+#: apps/service_new.py:27 apps/service_new.py:317
+msgid "service created successfully"
+msgstr "服务产品创建成功"
+
+#: apps/service_new.py:60 apps/service_new.py:173
 msgid "Drag and Drop or "
 msgstr "拖拽 或者"
 
-#: apps/service_new.py:50 apps/service_new.py:160
+#: apps/service_new.py:61 apps/service_new.py:174
 msgid "Select a File"
 msgstr "选择一个文件"
 
-#: apps/service_new.py:73
+#: apps/service_new.py:84
 msgid "Please input picture description"
 msgstr ""
 
-#: apps/service_new.py:92
+#: apps/service_new.py:94
+#, fuzzy
+msgid "message show here"
+msgstr "消息"
+
+#: apps/service_new.py:106
 msgid "Title:"
 msgstr "标题:"
 
-#: apps/service_new.py:98
+#: apps/service_new.py:112
 msgid "Please input title"
 msgstr "请输入标题"
 
-#: apps/service_new.py:104
+#: apps/service_new.py:118
 msgid "Description:"
 msgstr "描述:"
 
-#: apps/service_new.py:110
+#: apps/service_new.py:124
 msgid "Please input service description"
 msgstr "请输入服务产品描述"
 
-#: apps/service_new.py:117
+#: apps/service_new.py:131
 msgid "Price:"
 msgstr "价格:"
 
-#: apps/service_new.py:123 apps/service_new.py:139
+#: apps/service_new.py:137 apps/service_new.py:153
 msgid "Please input service price"
 msgstr "请输入服务产品价格"
 
-#: apps/service_new.py:133
+#: apps/service_new.py:147
 msgid "discount:"
 msgstr "折扣:"
 
-#: apps/service_new.py:151
+#: apps/service_new.py:165
 msgid "major picture:"
 msgstr "主要图片:"
 
-#: apps/service_new.py:185
+#: apps/service_new.py:199
 msgid "online"
 msgstr "服务上线"
 
-#: apps/service_new.py:194
+#: apps/service_new.py:208
 msgid "headline"
 msgstr "头条服务"
 
-#: apps/service_new.py:205
-msgid "mesage show here"
-msgstr "消息"
-
-#: apps/service_new.py:208
+#: apps/service_new.py:221
 msgid "Submit"
 msgstr "提交"
 
-#: apps/service_new.py:258
+#: apps/service_new.py:286
 msgid "please input title"
 msgstr "请输入标题"
 
-#: apps/service_new.py:261
+#: apps/service_new.py:289
 msgid "please input description"
 msgstr "请输入描述"
 
-#: apps/service_new.py:263
+#: apps/service_new.py:291
 msgid "please choose major image"
 msgstr "请选择主要图片"
-
-#: apps/service_new.py:289
-msgid "service created successfully"
-msgstr "服务产品创建成功"

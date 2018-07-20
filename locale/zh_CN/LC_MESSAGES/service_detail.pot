@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2018-07-18 21:34+1000\n"
+"POT-Creation-Date: 2018-07-21 09:22+1000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -63,18 +63,18 @@ msgstr "折扣"
 msgid "major picture:"
 msgstr "主要图片"
 
-#: apps/service_detail.py:271
+#: apps/service_detail.py:273
 msgid "please input title"
 msgstr "请输入标题"
 
-#: apps/service_detail.py:274
+#: apps/service_detail.py:276
 msgid "please input description"
 msgstr "请输入描述"
 
-#: apps/service_detail.py:276
+#: apps/service_detail.py:278
 msgid "please choose major image"
 msgstr "请选择产品图片"
 
-#: apps/service_detail.py:290
+#: apps/service_detail.py:292
 msgid "service updated successfully"
 msgstr "成功创建服务产品"

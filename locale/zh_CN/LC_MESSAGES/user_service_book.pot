@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2018-07-18 21:34+1000\n"
+"POT-Creation-Date: 2018-07-21 09:22+1000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -15,18 +15,18 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: pygettext.py 1.5\n"
 
-#: apps/user_service_book.py:94
+#: apps/user_service_book.py:90
 msgid "Price: {}"
 msgstr "价格: {}"
 
-#: apps/user_service_book.py:99
+#: apps/user_service_book.py:95
 msgid "Discount:{}"
 msgstr "折扣:{}"
 
-#: apps/user_service_book.py:115
+#: apps/user_service_book.py:117
 msgid "Goto cart"
 msgstr "去购物车"
 
-#: apps/user_service_book.py:118
+#: apps/user_service_book.py:120
 msgid "Add to cart"
 msgstr "添加到购物车"
