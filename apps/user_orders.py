@@ -67,7 +67,7 @@ def layout(user_info):
                     className="col btn btn-warning float-left ", children=[
             html.I(className="fa fa-angle-left"),
             _("Please login firstly")
-        ]),
+        ])
 
     return generate_layout(user.orders)
 

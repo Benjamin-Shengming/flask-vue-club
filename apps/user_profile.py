@@ -178,19 +178,19 @@ user_info_writer= LocalStorageWriter(id=gen_id(STORAGE_W),
 
 auto_link = Redirect(id=gen_id(REDIRECT), href="")
 
+login_firstly = dcc.Link(href="/user/login",
+                    className="col btn btn-warning float-left ", children=[
+                    html.I(className="fa fa-angle-left"),
+                    _("Please login firstly!")
+                ])
+
 def layout(jwt):
     if not jwt:
-        return dcc.Link(_("Please login firstly!"),
-                         href="/user/login",
-                         style={"cursor":"pointer"}
-                        )
-
+        return login_firstly
     user = app_controller.get_club_user_by_jwt(CLUB_NAME, jwt)
     if not user:
-        return dcc.Link(_("Please login firstly!"),
-                         href="/user/login",
-                         style={"cursor":"pointer"}
-                        )
+        return login_firstly
+
     return html.Div(id=gen_id(ROOT), children=[
         user_info_reader,
         user_info_writer,
