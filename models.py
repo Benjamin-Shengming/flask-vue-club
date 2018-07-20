@@ -506,7 +506,7 @@ def init_all():
     m = AppModel()
     haoduoyu = m.create_club({'name': 'haoduoyu',
                               'description':"haoduoyu club",
-                              'smtp_server':'smtp.live.com',
+                              'smtp_server':'smtp-mail.outlook.com',
                               'smtp_port':'587',
                               'smtp_encryption': 'starttls',
                               'email':"haoduoyutest@hotmail.com",
