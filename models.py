@@ -12,6 +12,7 @@ from utils import *
 import coloredlogs, logging
 import filestore
 from uuid import uuid1
+from magic_defines import *
 
 logger = logging.getLogger(__name__)
 coloredlogs.install(level='DEBUG', logger=logger)
@@ -504,7 +505,7 @@ def init_all():
     Base.metadata.drop_all(bind=engine)
     Base.metadata.create_all(bind=engine)
     m = AppModel()
-    haoduoyu = m.create_club({'name': 'haoduoyu',
+    haoduoyu = m.create_club({'name': CLUB_NAME,
                               'description':"haoduoyu club",
                               'smtp_server':'smtp-mail.outlook.com',
                               'smtp_port':'587',

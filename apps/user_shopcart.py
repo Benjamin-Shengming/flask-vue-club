@@ -5,7 +5,6 @@ import dash_html_components as html
 from dash.dependencies import State, Input, Output
 from app import app
 from app import app_controller
-from utils import g_id, load_cart_info_from_storage
 from dash.exceptions import PreventUpdate
 from localstorage_writer import LocalStorageWriter
 from localstorage_reader import LocalStorageReader
@@ -13,13 +12,18 @@ from autolink import Redirect
 import gettext
 import coloredlogs
 import logging
+from sd_material_ui import Snackbar
 from magic_defines import (CLUB_NAME, S_CONTINUE_SHOP,
-                           locale_d, CHECKOUT,S_CHECKOUT,
+                           locale_d, CHECKOUT, S_CHECKOUT,
                            REDIRECT, STORAGE_R, STORAGE_R2,
                            STORAGE_W, USER_STORAGE, CART,
-                           CART_STORAGE
+                           CART_STORAGE, PLACEHOLDER, MAJOR_IMG,
+                           SNACK_BAR
                            )
-from utils import assert_has_value, assert_button_clicks
+from utils import (assert_has_value, assert_button_clicks,
+                   load_cart_info_from_storage, calc_cart_total_price,
+                   g_id,
+                   )
 
 logger = logging.getLogger(__name__)
 coloredlogs.install(level='DEBUG', logger=logger)
@@ -59,6 +63,7 @@ def gen_id(name):
     return s_id
 
 
+err_msg_row = Snackbar(id=gen_id(SNACK_BAR), open=False, message=_("checkout"))
 class ShoppingCart(object):
     def __init__(self, cart_info_str, controller):
         logger.debug(cart_info_str)
@@ -194,7 +199,7 @@ def layout(user_info, cart_info):
         html.Div(id=gen_id(CART), className="container-fluid", children=[
             shop_cart.layout()
         ]),
-
+        err_msg_row,
     ])
 
 
@@ -289,3 +294,32 @@ def checkout(n_clicks, cart_info_str, jwt):
     if order:
         return "/shop/order"
     raise PreventUpdate()
+
+
+@app.callback(Output(gen_id(SNACK_BAR), 'message'),
+              [Input(gen_id(CHECKOUT), "n_clicks")],
+              [State(gen_id(STORAGE_R), "value"),
+               State(gen_id(STORAGE_R2), "value")]
+              )
+def change_message(n_clicks, cart_info_str, jwt):
+    assert_button_clicks(n_clicks)
+    if not jwt:
+        return _("Please login firstly!")
+    user = app_controller.get_club_user_by_jwt(CLUB_NAME, jwt)
+    if not user:
+        return _("Please login firstly!")
+    cart = load_cart_info_from_storage(cart_info_str)
+    if not cart or calc_cart_total_price(cart) <= 0:
+        return _("Nothing in your shopping cart")
+
+    return ""
+
+
+@app.callback(Output(gen_id(SNACK_BAR), 'open'),
+              [Input(gen_id(SNACK_BAR), "message")]
+              )
+def show_message(msg):
+    if msg:
+        return True
+    else:
+        return False

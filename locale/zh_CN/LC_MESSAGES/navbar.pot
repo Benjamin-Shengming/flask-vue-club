@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2018-07-21 09:22+1000\n"
+"POT-Creation-Date: 2018-07-21 10:52+1000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -15,11 +15,11 @@ msgstr ""
 "Content-Transfer-Encoding: utf8\n"
 "Generated-By: pygettext.py 1.5\n"
 
-#: navbar.py:101
+#: navbar.py:78
 msgid "Cart"
 msgstr "购物车"
 
-#: navbar.py:106
+#: navbar.py:83
 msgid "Order"
 msgstr "订单"
 

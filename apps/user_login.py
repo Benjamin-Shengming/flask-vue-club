@@ -1,115 +1,117 @@
 #!/usr/bin/python3
-from collections import OrderedDict
-from uuid import uuid1
-import base64
-import dash
-import json
 import dash_core_components as dcc
 import dash_html_components as html
 from dash.exceptions import PreventUpdate
-from dash.dependencies import Event, State, Input, Output
-from pprint import pprint
+from dash.dependencies import State, Input, Output
 from app import app
 from app import app_controller
-import filestore
-from flask import redirect
 from sd_material_ui import Snackbar
-from magic_defines import *
-from utils import *
 from autolink import Redirect
 from localstorage_writer import LocalStorageWriter
 from localstorage_reader import LocalStorageReader
+import gettext
+import coloredlogs
+import logging
+from utils import g_id
+from magic_defines import (locale_d, EMAIL, LOGIN,
+                           PASSWD, SNACK_BAR, HIDDEN_DIV,
+                           STORAGE_R, STORAGE_W,
+                           S_INPUT_PWD, S_INPUT_EMAIL, REDIRECT,
+                           S_USER_NOT_EXIST, CLUB_NAME,
+                           USER_STORAGE
+                           )
 
-import coloredlogs, logging
+
 logger = logging.getLogger(__name__)
 coloredlogs.install(level='DEBUG', logger=logger)
 
-import gettext
 zh = gettext.translation("user_login", locale_d(), languages=["zh_CN"])
 zh.install(True)
 _ = zh.gettext
+
 
 def gen_id(name):
     # user module as name prefix
     s_id = g_id(__name__, name)
     return s_id
 
+
 login_title_row = html.Div(className="row", children=[
-                html.Div(className="col-md-3"),
-                html.Div(className="col-md-6", children=[
-                    html.H2(_("User Login")),
-                    html.Hr()
-                ])
-            ])
+    html.Div(className="col-md-3"),
+    html.Div(className="col-md-6", children=[
+        html.H2(_("User Login")),
+        html.Hr()
+    ])
+])
 email_row = html.Div(className="row", children=[
-                html.Div(className="col-md-3 field-label-responsive", children=[
-                    html.Label(_("E-Mail Address"), htmlFor="email")
+    html.Div(className="col-md-3 field-label-responsive", children=[
+        html.Label(_("E-Mail Address"), htmlFor="email")
+    ]),
+    html.Div(className="col-md-6", children=[
+        html.Div(className="form-group", children=[
+            html.Div(className="input-group mb-2 mr-sm-2 mb-sm-0", children=[
+                html.Div(className="input-group-addon", style={"width": "2.6rem"}, children=[
+                    html.I(className="fa fa-at")
                 ]),
-                html.Div(className="col-md-6", children=[
-                    html.Div(className="form-group", children=[
-                        html.Div(className="input-group mb-2 mr-sm-2 mb-sm-0", children=[
-                            html.Div(className="input-group-addon", style={"width": "2.6rem"}, children=[
-                                html.I(className="fa fa-at")
-                            ]),
-                            dcc.Input(type="text",
-                                      name="email",
-                                      className="form-control",
-                                      id=gen_id(EMAIL),
-                                      placeholder="you@example.com",
-                                      required="true",
-                                      autofocus="true")
-                        ])
-                    ])
-                ]),
-                html.Div(className="col-md-3", children=[
-                    html.Div(className="form-control-feedback", children=[
-                        html.Span(className="text-danger align-middle")
-                    ])
-                ])
+                dcc.Input(type="text",
+                          name="email",
+                          className="form-control",
+                          id=gen_id(EMAIL),
+                          placeholder="you@example.com",
+                          required="true",
+                          autofocus="true")
             ])
+        ])
+    ]),
+    html.Div(className="col-md-3", children=[
+        html.Div(className="form-control-feedback", children=[
+            html.Span(className="text-danger align-middle")
+        ])
+    ])
+])
 password_row = html.Div(className="row", children=[
-                html.Div(className="col-md-3 field-label-responsive", children=[
-                    html.Label(_("Password"), htmlFor="password")
+    html.Div(className="col-md-3 field-label-responsive", children=[
+        html.Label(_("Password"), htmlFor="password")
+    ]),
+    html.Div(className="col-md-6", children=[
+        html.Div(className="form-group has-danger", children=[
+            html.Div(className="input-group mb-2 mr-sm-2 mb-sm-0", children=[
+                html.Div(className="input-group-addon", style={"width": "2.6rem"}, children=[
+                    html.I(className="fa fa-key")
                 ]),
-                html.Div(className="col-md-6", children=[
-                    html.Div(className="form-group has-danger", children=[
-                        html.Div(className="input-group mb-2 mr-sm-2 mb-sm-0", children=[
-                            html.Div(className="input-group-addon", style={"width": "2.6rem"}, children=[
-                                html.I(className="fa fa-key")
-                            ]),
-                            dcc.Input(type="password",
-                                      name="password",
-                                      className="form-control",
-                                      id=gen_id(PASSWD),
-                                      placeholder=_("Password"),
-                                      required ="true")
-                        ])
-                    ])
-                ])
+                dcc.Input(type="password",
+                          name="password",
+                          className="form-control",
+                          id=gen_id(PASSWD),
+                          placeholder=_("Password"),
+                          required="true")
             ])
+        ])
+    ])
+])
 
 
-login_button  = html.Button(type="submit",
-                            id=gen_id(LOGIN),
-                            className="btn btn-success",
-                            children=[
+login_button = html.Button(type="submit",
+                           id=gen_id(LOGIN),
+                           className="btn btn-success",
+                           children=[
                                 _("Login"),
                                 html.I(className="fa fa-user-plus")
-                             ])
+                           ])
 
-login_button_row = html.Div(id=gen_id(LOGIN),
-                            className="row",
-                            children= [
+login_button_row = html.Div(className="row",
+                            children=[
                                 html.Div(className="col-md-3"),
                                 html.Div(className="col-md-3", children=[
                                     login_button,
                                 ]),
-                            ])
+])
 err_msg_row = Snackbar(id=gen_id(SNACK_BAR), open=False, message=_("fill login information"))
 user_storage_w = LocalStorageWriter(id=gen_id(STORAGE_W), label=USER_STORAGE)
 auto_redirect = Redirect(id=gen_id(REDIRECT))
 
 user_storage_r = LocalStorageReader(id=gen_id(STORAGE_R), label=USER_STORAGE)
+
 
 def layout():
     logger.debug("login layout")
@@ -124,7 +126,6 @@ def layout():
         user_storage_w,
         user_storage_r
     ])
-
 
 
 # callbacks
@@ -160,7 +161,6 @@ def change_message(n_clicks, email, pwd):
     return ""
 
 
-
 @app.callback(Output(gen_id(STORAGE_W), 'value'),
               [Input(gen_id(SNACK_BAR), "message")],
               [State(gen_id(EMAIL), "value"),
@@ -177,6 +177,7 @@ def store_user_info(msg, email, password):
     jwt = app_controller.generate_user_jwt(CLUB_NAME, user)
     return jwt
 
+
 @app.callback(Output(gen_id(REDIRECT), 'href'),
               [Input(gen_id(STORAGE_R), "value")])
 def redirect(jwt):
@@ -188,4 +189,3 @@ def redirect(jwt):
         raise PreventUpdate()
 
     return "/user/profile"
-

@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2018-07-21 09:22+1000\n"
+"POT-Creation-Date: 2018-07-21 10:52+1000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -15,22 +15,22 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: pygettext.py 1.5\n"
 
-#: apps/user_login.py:40
+#: apps/user_login.py:42
 msgid "User Login"
 msgstr "用户登录"
 
-#: apps/user_login.py:46
+#: apps/user_login.py:48
 msgid "E-Mail Address"
 msgstr "电子邮件地址"
 
-#: apps/user_login.py:72 apps/user_login.py:84
+#: apps/user_login.py:74 apps/user_login.py:86
 msgid "Password"
 msgstr "密码"
 
-#: apps/user_login.py:96
+#: apps/user_login.py:98
 msgid "Login"
 msgstr "登录"
 
-#: apps/user_login.py:108
+#: apps/user_login.py:109
 msgid "fill login information"
 msgstr "请填写登录信息"

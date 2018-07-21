@@ -112,7 +112,7 @@ def update_activity_graph(n):
     layout = go.Layout(
         title = _("Hourly user activity"),
         xaxis = dict(
-                    title="HOUR",
+                    title=_("HOUR"),
                     tickangle=-45,
                     ticks='outside',
                     tick0=0,

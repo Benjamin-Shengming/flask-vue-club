@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2018-07-21 09:22+1000\n"
+"POT-Creation-Date: 2018-07-21 10:52+1000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -15,27 +15,27 @@ msgstr ""
 "Content-Transfer-Encoding: utf8\n"
 "Generated-By: pygettext.py 1.5\n"
 
-#: models.py:252
+#: models.py:253
 msgid "could not find the club {}"
 msgstr ""
 
-#: models.py:311 models.py:335
+#: models.py:312 models.py:336
 msgid "Please provide password!"
 msgstr ""
 
-#: models.py:332
+#: models.py:333
 msgid "Your email address already has been used!"
 msgstr ""
 
-#: models.py:338
+#: models.py:339
 msgid "Did not assign the user role"
 msgstr ""
 
-#: models.py:345
+#: models.py:346
 msgid "Can't find the user roles{} in {}"
 msgstr ""
 
-#: models.py:365
+#: models.py:366
 msgid "Could not find the club {}"
 msgstr ""
 

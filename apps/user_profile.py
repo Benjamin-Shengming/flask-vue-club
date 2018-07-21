@@ -151,14 +151,21 @@ def generate_field_user_activate(user):
                         placeholder=S_INPUT_ACTIVATE_CODE),
             html.Button(S_ACTIVATE,
                         id=gen_id(CONFIRM+ACTIVATE),
-                        className="btn btn-outline-info"),
-            html.Button(S_LOGOUT,
-                        id=gen_id(LOGOUT),
                         className="btn btn-outline-info")
         ])
     ])
     return field_row
 
+
+def generate_field_user_logout():
+    field_row = html.Div(className="form-group row", children=[
+        html.Div(className="col", children=[
+            html.Button(S_LOGOUT,
+                        id=gen_id(LOGOUT),
+                        className="btn btn-warning btn-block")
+        ])
+    ])
+    return field_row
 
 def generate_user_fields(user):
     list_fields = []
@@ -169,6 +176,7 @@ def generate_user_fields(user):
     list_fields.append(generate_field_user_pwd_confirm(user))
     list_fields.append(generate_field_user_activate_status(user))
     list_fields.append(generate_field_user_activate(user))
+    list_fields.append(generate_field_user_logout())
     return html.Div(className="tab-pane", children= list_fields)
 
 user_info_reader = LocalStorageReader(id=gen_id(STORAGE_R),
@@ -180,9 +188,10 @@ user_info_writer= LocalStorageWriter(id=gen_id(STORAGE_W),
 auto_link = Redirect(id=gen_id(REDIRECT), href="")
 
 login_firstly = dcc.Link(href="/user/login",
-                    className="col btn btn-warning float-left ", children=[
-                    html.I(className="fa fa-angle-left"),
-                    _("Please login firstly!")
+                    className="col btn btn-warning float-left ",
+                    children=[
+                        html.I(className="fa fa-angle-left"),
+                        _("Please login firstly!")
                 ])
 
 def layout(jwt):

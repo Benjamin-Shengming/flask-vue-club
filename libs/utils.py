@@ -80,6 +80,12 @@ def load_cart_info_from_storage(cart_info_str):
             continue
     return cart
 
+def calc_cart_total_price(cart):
+    total = 0
+    for _, v in cart.items():
+        total += v
+    return total
+
 def assert_button_clicks(clicks):
     if not clicks or clicks <= 0:
         raise PreventUpdate()

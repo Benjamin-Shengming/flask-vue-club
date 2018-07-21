@@ -1,36 +1,26 @@
 #!/usr/bin/python
-import os
-from flask import Blueprint, render_template, abort
-from jinja2 import TemplateNotFound
-from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from random import randint
 from models import AppModel
 from werkzeug.security import generate_password_hash, check_password_hash
-from itsdangerous import TimestampSigner, Serializer, URLSafeSerializer, URLSafeTimedSerializer
-from json import loads
-from magic_defines import *
+from itsdangerous import (TimestampSigner, Serializer,
+                          URLSafeSerializer, URLSafeTimedSerializer
+                          )
 import coloredlogs, logging
 from datetime import datetime, timedelta
 import jwt
-from utils import caller_info, RespExcept, CodeNotMatch
+from utils import RespExcept
 from email_smtp import EmailClientSMTP
-from flask_apispec import ResourceMeta, Ref, doc, marshal_with, use_kwargs
 import filestore
+import gettext
+from magic_defines import *
 
 logger = logging.getLogger(__name__)
 coloredlogs.install(level='DEBUG', logger=logger)
-from marshmallow import fields, Schema
-class ServiceSchema(Schema):
-    class Meta:
-        fields = ['id',
-                  'name',
-                  'description',
-                  'price',
-                  'discount',
-                  'major_pic',
-                  'pic_and_text',
-                  'active',
-                  'slide']
+
+zh = gettext.translation("controller", locale_d(), languages=["zh_CN"])
+zh.install(True)
+_ = zh.gettext
+
 
 class AppController(object):
     def __init__(self):
@@ -122,14 +112,15 @@ class AppController(object):
             raise RespExcept("user already activated!")
         code = self.generate_club_user_activate_code(club_name, user)
         club = user.club
+        email_body = _("Your activation code is {}").format(code)
         EmailClientSMTP(club.smtp_server,
                         club.smtp_port,
                         club.smtp_encryption,
                         club.email,
                         club.email_pwd).send_email(
                             user.email,
-                            subject="activate account",
-                            body=code)
+                            subject=_("activate account"),
+                            body=email_body)
 
     def generate_club_user_activate_code(self, club_name, user):
         code = ""
@@ -257,7 +248,8 @@ class AppController(object):
         article = {}
         article['title'] = service.name
         article['description'] = service.description
-        article['image'] = filestore.get_service_img_link(service.id, MAJOR_IMG)
+        article['image'] = filestore.get_service_img_link(service.id,
+                                                          MAJOR_IMG)
         article['url'] = "/service/book/{}".format(service.id)
         return article
     # given a set of keywords and search the service contains the key word
@@ -274,4 +266,3 @@ class AppController(object):
 
     def get_remote_ip_activity(self):
         return self.db_model.search_ip_activity()
-
