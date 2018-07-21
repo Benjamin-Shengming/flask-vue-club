@@ -79,7 +79,7 @@ sider_bar = html.Div(className="col-md-3 float-left col-1 pl-0 pr-0 collapse wid
                         html.Span(_("Users"), className="d-none d-md-inline")
                     ]),
                     dcc.Link(href="/order/list", className="list-group-item d-inline-block collapsed", style={"cursor": "pointer"}, children=[
-                        html.I(className="fa fa-film"),
+                        html.I(className="fas fa-shipping-fast"),
                         html.Span(_("Orders"), className="d-none d-md-inline")
                     ]),
                     html.A(**{"data-toggle":"collapse","aria-expanded":"false"}, href="#menu3", className="list-group-item d-inline-block collapsed", children=[

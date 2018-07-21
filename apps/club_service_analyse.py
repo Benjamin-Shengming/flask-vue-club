@@ -147,14 +147,14 @@ def show_chart_selected(Data):
     logger.debug("show chart")
     logger.debug(Data)
     if not Data or not Data['points']:
-        return ["Pleaes click to view detials"]
+        return [""]
 
     service_name = Data['points'][0]['label']
     logger.debug("service name")
     logger.debug(service_name)
     service = app_controller.get_club_service_by_name(CLUB_NAME, service_name)
     if not service:
-        return ["Pleaes click to view detials"]
+        return [""]
 
     return [gen_service_card(service)]
 
