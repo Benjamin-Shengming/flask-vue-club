@@ -87,7 +87,11 @@ sider_bar = html.Div(className="col-md-3 float-left col-1 pl-0 pr-0 collapse wid
                         html.Span(_("Analyse & Report"), className="d-none d-md-inline")
                     ]),
                     html.Div(**{"data-parent":"#sidebar"}, className="collapse", id="menu3", children=[
-                        dcc.Link(_("Service Analyse"), href="/service/analyse", className="list-group-item", style={"cursor":"pointer"}),
+                        dcc.Link(_("Service Analyse"),
+                                 href="/service/analyse",
+                                 className="list-group-item",
+                                 style={"cursor":"pointer"},
+                                 refresh=False),
                         dcc.Link(_("User Analyse"), href="/user/analyse", className="list-group-item", style={"cursor":"pointer"})
                     ])
                 ])
@@ -112,18 +116,7 @@ main_area = html.Main(id="main-area", className="col-md-9 float-left col px-5 pl
 
 total = html.Div(className="container-fluid", children=[
     html.Div(className="row d-flex d-md-block flex-nowrap wrapper", children=[
-        html.Div(style={"display":"none"},
-                 children=[
-                    dcc.Graph(id="temp-id-graph"),
-            dcc.Interval(
-                id="temp-id",
-                interval=60*1000*60*24*365, # in milliseconds
-                n_intervals=0),
-            dcc.Dropdown(
-                id=gen_id("tempid-dropdown"),
-                options=[ ],
-            )
-        ]),
+        html.Div(style={"display":"none"}, children=[]),
         sider_bar,
         main_area
     ])
@@ -136,6 +129,8 @@ app.layout = html.Div(children=[
     LocalStorageReader(id="cart-local-storage-reader", label=CART_STORAGE),
     sd_material_ui.Snackbar(id="snackbar", open=False, message="Polo", action="Reveal"),
     LocalStorageWriter(id="global-local-storage-writer", label=USER_STORAGE),
+    html.Div(style={"display":"none"}, children=[
+    ]),
     total,
     # This Location component represents the URL bar
     dcc.Location(id="url", refresh=False),
@@ -146,7 +141,7 @@ app.layout = html.Div(children=[
     [Input("url", "pathname")])
 def display_page(pathname):
     if not pathname:
-        p = "/"
+        pathname = "/"
 
     p = pathname.lower()
     if p == "/service/new":

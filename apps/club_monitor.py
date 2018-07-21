@@ -57,8 +57,14 @@ def get_today_24_hour_hit():
     return hour_list
 
 def generate_layout():
+    data = [
+        {
+            'values': [10,90],
+            'type': 'pie',
+        }
+    ]
     return html.Div([
-        html.Div(id=gen_id("34 hours activity")),
+        html.Div(id=gen_id("24-hours-activity-empty")),
         dcc.Graph(id=gen_id("24hours-activity")),
         dcc.Graph(id=gen_id("popular-service")),
         dcc.Interval(
@@ -96,7 +102,6 @@ def get_top_10_service_by_view():
         return top[:10]
     else:
         return top
-
 
 
 # Multiple components can update everytime interval gets fired.

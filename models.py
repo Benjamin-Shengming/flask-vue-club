@@ -305,6 +305,19 @@ class AppModel(object):
         # logger.debug(user.email)
         return user
 
+    def get_club_user_by_tel(self, club_name, tel):
+        club = self._find_club_and_error(club_name)
+        user = User.query.filter_by(tel=tel, club_id=club.id).first()
+        return user
+
+    def get_club_user_by_email_or_tel(self, club_name, tel_or_email):
+        if "@" in tel_or_email:
+            return self.get_club_user_by_email(club_name, tel_or_email)
+        else:
+            return self.get_club_user_by_tel(club_name, tel_or_email)
+
+
+
     def verify_club_user(self, club_name, user_data):
         club = self._find_club_and_error(club_name)
         email = user_data['email']
@@ -437,6 +450,11 @@ class AppModel(object):
         club = self._find_club_and_error(club_name)
         return club.services
 
+    def get_club_service_by_name(self, club_name, service_name):
+        club= self._find_club_and_error(club_name)
+        service = Service.query.filter_by(name=service_name).first()
+        return service
+
     def get_club_headline_service(self, club_name):
         club = self._find_club_and_error(club_name)
         return [item for item in club.services if item.slide]
@@ -514,6 +532,7 @@ def init_all():
                               'email_pwd':"test1232018",
                               'tel':'13379506333'
                             })
-    role_user1 = m.create_club_role(haoduoyu.name, {'name':'user', 'description':"normal usr"})
+    role_user1 = m.create_club_role(haoduoyu.name,
+                                    {'name':'user', 'description':"normal usr"})
     m._add(haoduoyu)
     m._commit()

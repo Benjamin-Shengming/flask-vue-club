@@ -152,6 +152,23 @@ class AppController(object):
         user = self.db_model.get_club_user_by_email(club_name, user_email)
         return  user
 
+    def get_club_user_by_tel(self, club_name, user_tel):
+        user = self.db_model.get_club_user_by_email(club_name, user_tel)
+        return  user
+
+    def get_club_user_by_email_or_tel(self, club_name, tel_or_email):
+        return self.db_model.get_club_user_by_email_or_tel(club_name, tel_or_email)
+
+    def get_club_user_by_tel(self, club_name, tel):
+        user = self.db_model.get_club_user_by_tel(club_name, tel)
+        return user
+
+    def get_club_user_by_tel_or_email(self, club_name, tel_or_email):
+        if "@" in tel_or_email:
+            return self.get_club_user_by_email(tel_or_email)
+        else:
+            return self.get_club_user_by_tel(tel_or_email)
+
     def verify_club_user(self, club_name, user_data):
         user = self.db_model.verify_club_user(club_name, user_data)
         return  user
@@ -197,6 +214,9 @@ class AppController(object):
 
     def get_club_service(self, club_name, service_id):
         return self.db_model.get_club_service(club_name, service_id)
+
+    def get_club_service_by_name(self, club_name, service_name):
+        return self.db_model.get_club_service_by_name(club_name, service_name)
 
     def get_club_headline_service(self, club_name):
         return self.db_model.get_club_headline_service(club_name)
