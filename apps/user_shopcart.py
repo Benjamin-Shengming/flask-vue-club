@@ -208,6 +208,7 @@ inputs_list = [Input(gen_quantity_input_id(i), "value") for i in range(0, MAX_IT
 
 
 def determine_which_button(click_timestamp):
+    logger.debug("button click")
     if not click_timestamp:
         return None
     pos = 0
