@@ -216,6 +216,7 @@ def determine_which_button(click_timestamp):
         if largest < item:
             largest = item
             pos = idx
+    logger.debug(largest)
     return pos
 
 
