@@ -213,6 +213,8 @@ def determine_which_button(click_timestamp):
     pos = 0
     largest = 0
     for idx, item in enumerate(click_timestamp):
+        if item is None:
+            continue
         if largest < item:
             largest = item
             pos = idx
