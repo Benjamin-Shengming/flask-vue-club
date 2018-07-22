@@ -82,9 +82,10 @@ def save_service_img(service_id, img_index, base64_content):
     # adjust size
     im = Image.open(BytesIO(base64.b64decode(content_string)))
     im.thumbnail(IMAGE_SIZE)
+    rgb_im = im.convert('RGB')
     p = make_service_img_path(service_id, img_index)
     # save to file
-    im.save(p)
+    rgb_im.save(p)
 
 def save_service_txt(service_id, txt_index, txt_content):
     if not txt_content:
