@@ -228,6 +228,7 @@ def determine_which_button(click_timestamp):
               [State(gen_id(STORAGE_R), "value")]
               )
 def delete_cart_item(*args):
+    logger.debug("delete cart item")
     cart_info_str = args[MAX_ITEMS]
     cart = load_cart_info_from_storage(cart_info_str)
     button_clicks = args[:len(cart)]
@@ -246,6 +247,7 @@ def delete_cart_item(*args):
               [State(gen_id(REDIRECT), 'href')]
               )
 def refresh_cart(cart_info_str, href):
+    logger.debug("refresh cart item")
     if href:
         raise PreventUpdate()
     cart = load_cart_info_from_storage(cart_info_str)
@@ -258,6 +260,7 @@ def refresh_cart(cart_info_str, href):
               [State(gen_id(STORAGE_R), "value")]
               )
 def change_quantity_cart(*args):
+    logger.debug("change_quantity")
     input_values = args[:MAX_ITEMS]
     cart_info_str = args[MAX_ITEMS]
     logger.debug(cart_info_str)
@@ -289,6 +292,7 @@ def redirect_to_order(cart_info_str, n_clicks):
                State(gen_id(STORAGE_R2), "value"),
                ])
 def checkout(n_clicks, cart_info_str, jwt):
+    logger.debug("checkout")
     assert_button_clicks(n_clicks)
     assert_has_value(jwt)
     shop_cart = ShoppingCart(cart_info_str, app_controller)
