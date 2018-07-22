@@ -239,6 +239,7 @@ def delete_cart_item(*args):
     del_key_pos = determine_which_button(button_clicks)
     del_key, _ = items[del_key_pos]
     del cart[del_key]
+    logger.debug(cart)
     return json.dumps(cart)
 
 
@@ -270,6 +271,7 @@ def change_quantity_cart(*args):
     for i in range(0, count):
         key, value = items[i]
         cart[key] = input_values[i]
+    logger.debug(cart)
 
     if len(cart):
         return json.dumps(cart)
