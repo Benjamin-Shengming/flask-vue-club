@@ -67,7 +67,8 @@ def load_cart_info_from_storage(cart_info_str):
         logger.debug("load str")
         logger.debug(cart_info_str)
         cart_info = json.loads(cart_info_str, object_pairs_hook=OrderedDict)
-    except:
+    except Exception as e:
+        logger.debug(str(e))
         cart_info = OrderedDict()
     if not isinstance(cart_info, dict):
         cart_info = OrderedDict()

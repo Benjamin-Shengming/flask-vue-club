@@ -42,7 +42,6 @@ def gen_del_button_id(i):
 def gen_quantity_input_id(i):
     return gen_id("quantity_input{}".format(i))
 
-
 def generate_del_button(idx):
     return html.Button(id=gen_del_button_id(idx),
                        className="btn btn-danger btn-sm float-right",
@@ -56,7 +55,6 @@ def generate_quantity_input(idx, quantity):
                      value=quantity,
                      size="5")
 
-
 def gen_id(name):
     # user module as name prefix
     s_id = g_id(__name__, name)
@@ -66,23 +64,28 @@ def gen_id(name):
 err_msg_row = Snackbar(id=gen_id(SNACK_BAR), open=False, message=_("checkout"))
 class ShoppingCart(object):
     def __init__(self, cart_info_str, controller):
+        logger.debug("__init__")
         logger.debug(cart_info_str)
         self.cart_dict = None
         self.controller = controller
         self.cart_service = []
         try:
-            logger.debug("loading cart_info_str")
+            logger.debug("loading cart_info_str in init")
             self.cart_dict = load_cart_info_from_storage(cart_info_str)
         except Exception as e:
             logger.debug(e)
             pass
-        logger.debug("cart dict")
+        logger.debug("load finished in __init")
         logger.debug(self.cart_dict)
         if self.cart_dict:
             for s_id, quantity in self.cart_dict.items():
                 service = self.controller.get_club_service(CLUB_NAME, s_id)
+                logger.debug(s_id)
+                logger.debug(quantity)
                 if service and int(quantity) > 0:
                     self.cart_service.append((quantity, service))
+        logger.debug("in init cart service")
+        logger.debug(self.cart_service)
 
     def total_price(self):
         total = 0
@@ -159,15 +162,25 @@ class ShoppingCart(object):
                 html.Div(className="", children=[
                     generate_del_button(idx)
                 ])
-            ])
+            ]),
         ])
 
     def all_cart_service(self, cart_service):
+        # construct index and id map here as well
         item_list = []
+        idx_id_map = {}
         for idx, item in enumerate(cart_service):
             quantity, service = item
             item_list.append(self.service_item(idx, service, quantity))
             item_list.append(html.Br())
+            # rememter the idx and id map
+            idx_id_map[service.id] = idx
+
+        div_map = html.Div(id=gen_id("idx_service_id_map"),
+                           style={"display":"none"},
+                           children=[ json.dumps(idx_id_map) ]
+                           )
+        item_list.append(div_map),
         return item_list
 
     def body(self):
@@ -206,9 +219,8 @@ def layout(user_info, cart_info):
 buttons_list = [Input(gen_del_button_id(i), "n_clicks_timestamp") for i in range(0, MAX_ITEMS)]
 inputs_list = [Input(gen_quantity_input_id(i), "value") for i in range(0, MAX_ITEMS)]
 
-
 def determine_which_button(click_timestamp):
-    logger.debug("button click")
+    logger.debug("determine button click")
     if not click_timestamp:
         return None
     pos = 0
@@ -225,19 +237,31 @@ def determine_which_button(click_timestamp):
 
 @app.callback(Output(gen_id("STORAGE_CHANGE_DELETE"), 'value'),
               buttons_list,
-              [State(gen_id(STORAGE_R), "value")]
+              [State(gen_id(STORAGE_R), "value"),
+               State(gen_id("idx_service_id_map"), "children")]
               )
 def delete_cart_item(*args):
     logger.debug("delete cart item")
     cart_info_str = args[MAX_ITEMS]
-    cart = load_cart_info_from_storage(cart_info_str)
-    button_clicks = args[:len(cart)]
-    if not cart:
-        raise PreventUpdate()
+    id_idx_map_str = args[MAX_ITEMS + 1][0]
 
-    items = list(cart.items())
+    cart = load_cart_info_from_storage(cart_info_str)
+    logger.debug("delete cart item after loading cart")
+    if not cart:
+        logger.debug("cart is empty!")
+        raise PreventUpdate()
+    # judge the button click
+    button_clicks = args[:len(cart)]
     del_key_pos = determine_which_button(button_clicks)
-    del_key, _ = items[del_key_pos]
+    logger.debug("del button index is " + str(del_key_pos))
+
+    #find key from index
+    id_idx_map_dict = json.loads(id_idx_map_str)
+    del_key = None
+    for k, v in id_idx_map_dict.items():
+        if v == del_key_pos:
+            del_key = k
+    logger.debug("need to delete service {}".format(del_key))
     del cart[del_key]
     logger.debug(cart)
     return json.dumps(cart)
@@ -248,7 +272,8 @@ def delete_cart_item(*args):
               [State(gen_id(REDIRECT), 'href')]
               )
 def refresh_cart(cart_info_str, href):
-    logger.debug("refresh cart item")
+    logger.debug("refresh cart item dur to cart change")
+    logger.debug("cart_info_str")
     if href:
         raise PreventUpdate()
     cart = load_cart_info_from_storage(cart_info_str)
@@ -258,24 +283,24 @@ def refresh_cart(cart_info_str, href):
 
 @app.callback(Output(gen_id("STORAGE_CHANGE_QUANTITY"), 'value'),
               inputs_list,
-              [State(gen_id(STORAGE_R), "value")]
+              [State(gen_id(STORAGE_R), "value"),
+               State(gen_id("idx_service_id_map"), "children")]
               )
 def change_quantity_cart(*args):
-    logger.debug("change_quantity")
     input_values = args[:MAX_ITEMS]
     cart_info_str = args[MAX_ITEMS]
-    logger.debug(cart_info_str)
+    logger.debug(args[MAX_ITEMS + 1][0])
+    service_id_map = json.loads(args[MAX_ITEMS + 1][0])
     cart = load_cart_info_from_storage(cart_info_str)
-    count = len(cart)
-    items = list(cart.items())
-    for i in range(0, count):
-        key, value = items[i]
-        cart[key] = input_values[i]
-    logger.debug(cart)
 
-    if len(cart):
-        return json.dumps(cart)
-    raise PreventUpdate()
+    # set up map between id and index
+    index_service_id_map_dict = []
+    for k, idx in service_id_map.items():
+        new_value = input_values[idx]
+        cart[k] = new_value
+    logger.debug("change quantity in cart new cart is ")
+    logger.debug(cart)
+    return json.dumps(cart)
 
 
 @app.callback(Output(gen_id(REDIRECT), 'href'),
@@ -294,9 +319,12 @@ def redirect_to_order(cart_info_str, n_clicks):
                State(gen_id(STORAGE_R2), "value"),
                ])
 def checkout(n_clicks, cart_info_str, jwt):
-    logger.debug("checkout")
     assert_button_clicks(n_clicks)
     assert_has_value(jwt)
+    user = app_controller.get_club_user_by_jwt(jwt)
+    if  not user:
+        raise PreventUpdate()
+    logger.debug("checkout")
     shop_cart = ShoppingCart(cart_info_str, app_controller)
     order = app_controller.create_club_user_order(CLUB_NAME,
                                                   jwt,
