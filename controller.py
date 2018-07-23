@@ -58,7 +58,7 @@ class AppController(object):
         return user_list
 
     def _decode_user_jwt(self, encoded_jwt):
-        payload = jwt.decode(encoded_jwt, JWT_SECRET_KEY, JWT_ALGORITHM)
+        payload = jwt.decode(encoded_jwt.encode('UTF-8'), JWT_SECRET_KEY, JWT_ALGORITHM)
         return payload
 
     def get_club_user_by_jwt(self, club_name, encoded_jwt):
@@ -77,7 +77,7 @@ class AppController(object):
             'exp':datetime.utcnow() + timedelta(hours=JWT_EXP_DELTA_HOURS)
         }
         jwt_token = jwt.encode(payload, JWT_SECRET_KEY, JWT_ALGORITHM)
-        return jwt_token
+        return jwt_token.decode(encoding='UTF-8')
 
 
     def activate_club_user_by_jwt(self, club_name, encoded_jwt, code):

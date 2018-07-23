@@ -175,6 +175,7 @@ def store_user_info(msg, email, password):
         raise PreventUpdate()
 
     jwt = app_controller.generate_user_jwt(CLUB_NAME, user)
+    logger.debug("store jwt " + jwt)
     return jwt
 
 
