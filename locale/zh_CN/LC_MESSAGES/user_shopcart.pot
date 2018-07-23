@@ -41,7 +41,7 @@ msgstr "小计:"
 
 #: apps/user_shopcart.py:307 apps/user_shopcart.py:310
 msgid "Please login firstly!"
-msgstr ""
+msgstr "请先登录!"
 
 #: apps/user_shopcart.py:313
 #, fuzzy
