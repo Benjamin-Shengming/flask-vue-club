@@ -380,6 +380,13 @@ class AppModel(object):
         User.query.filter_by(email=user_email, club_id=club.id).delete()
         self._commit()
 
+    def _delete_all_club_users(self, club_name):
+        club = self.get_club_by_name(club_name)
+        if not club:
+            raise NotFound(_("Could not find the club {}").format(club_name))
+        User.query.filter_by(club_id=club.id).delete()
+        self._commit()
+
     # role related functions
     def get_club_role_list(self, club_name):
         club = self._find_club_and_error(club_name)
@@ -518,6 +525,10 @@ class AppModel(object):
 
 
 
+def del_all_users():
+    Base.metadata.create_all(bind=engine)
+    m = AppModel()
+    m._delete_all_club_users(CLUB_NAME)
 
 def init_all():
     Base.metadata.drop_all(bind=engine)

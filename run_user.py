@@ -32,7 +32,7 @@ import user_profile
 import user_orders
 from app import app, server
 from app import app_controller
-from models import init_all
+from models import init_all, del_all_users
 from navbar import NavBarDropMenu
 from magic_defines import *
 from utils import *
@@ -241,10 +241,12 @@ def create_wechat_menu():
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Run finishing app")
     parser.add_argument("-i", "--init", help="Init all databasee etc", action="store_true")
+    parser.add_argument("-u", "--dusers", help="delete all  users", action="store_true")
     args = parser.parse_args()
     if args.init:
         init_all()
-        pass
+    elif args.dusers:
+        del_all_users()
     else:
         for rule in app.server.url_map.iter_rules():
             logger.debug(rule)
