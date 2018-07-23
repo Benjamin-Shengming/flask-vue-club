@@ -321,7 +321,7 @@ def redirect_to_order(cart_info_str, n_clicks):
 def checkout(n_clicks, cart_info_str, jwt):
     assert_button_clicks(n_clicks)
     assert_has_value(jwt)
-    user = app_controller.get_club_user_by_jwt(jwt)
+    user = app_controller.get_club_user_by_jwt(CLUB_NAME, jwt)
     if  not user:
         raise PreventUpdate()
     logger.debug("checkout")
