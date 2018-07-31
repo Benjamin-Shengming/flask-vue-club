@@ -41,6 +41,32 @@ register_title_row = html.Div(className="row", children=[
                     html.Hr()
                 ])
             ])
+tel_row = html.Div(className="row", children=[
+                html.Div(className="col-md-3 field-label-responsive", children=[
+                    html.Label(_("Mobile Phone Number"), htmlFor="mobile")
+                ]),
+                html.Div(className="col-md-6", children=[
+                    html.Div(className="form-group", children=[
+                        html.Div(className="input-group mb-2 mr-sm-2 mb-sm-0", children=[
+                            html.Div(className="input-group-addon", style={"width": "2.6rem"}, children=[
+                                html.I(className="fas fa-mobile-alt")
+                            ]),
+                            dcc.Input(type="text",
+                                      name="mobile",
+                                      className="form-control",
+                                      id=gen_id(MOBILE),
+                                      placeholder=_("mobile phone number"),
+                                      required="true",
+                                      autofocus="true")
+                        ])
+                    ])
+                ]),
+                html.Div(className="col-md-3", children=[
+                    html.Div(className="form-control-feedback", children=[
+                        html.Span(className="text-danger align-middle")
+                    ])
+                ])
+            ])
 email_row = html.Div(className="row", children=[
                 html.Div(className="col-md-3 field-label-responsive", children=[
                     html.Label(_("E-Mail Address"), htmlFor="email")
@@ -127,6 +153,7 @@ def layout():
     logger.debug("register layout")
     return html.Div(className="container", children=[
             register_title_row,
+            tel_row,
             email_row,
             password_row,
             confirm_pwd_row,
@@ -151,11 +178,20 @@ def show_snackbar(msg):
 
 @app.callback(Output(gen_id(SNACK_BAR), 'message'),
               [Input(gen_id(REGISTER), "n_clicks")],
-              [State(gen_id(EMAIL), "value"),
+              [State(gen_id(MOBILE), "value"),
+               State(gen_id(EMAIL), "value"),
                State(gen_id(PASSWD), "value"),
                State(gen_id(PASSWD_CONFIRM), "value")])
-def show_message(n_clicks, email, pwd, pwd_confirm):
+def show_message(n_clicks, mobile, email, pwd, pwd_confirm):
     logger.debug("change message")
+
+    if not mobile or not str(mobile).isdigit():
+        logger.debug(mobile)
+        return S_INPUT_MOBILE
+    user = app_controller.get_club_user_by_tel(CLUB_NAME, mobile)
+    if user:
+        return S_USER_EXIST
+
     if not email:
         logger.debug(S_INPUT_EMAIL)
         return S_INPUT_EMAIL
@@ -176,17 +212,20 @@ def show_message(n_clicks, email, pwd, pwd_confirm):
 
 @app.callback(Output(gen_id(REDIRECT), 'href'),
               [Input(gen_id(REGISTER), "n_clicks")],
-              [State(gen_id(EMAIL), "value"),
+              [State(gen_id(MOBILE), "value"),
+               State(gen_id(EMAIL), "value"),
                State(gen_id(PASSWD), "value"),
                State(gen_id(PASSWD_CONFIRM), "value")])
-def register_user(n_clicks, email, password, password_confirm):
+def register_user(n_clicks, mobile, email, password, password_confirm):
     if not n_clicks or n_clicks <= 0:
+        raise PreventUpdate()
+    if not mobile or not str(mobile).isdigit():
         raise PreventUpdate()
     if password != password_confirm:
         raise PreventUpdate()
     user_data = {
         'email': email,
-        'tel':None,
+        'tel': mobile,
         'password': password,
         'roles': None
     }
@@ -197,7 +236,6 @@ def register_user(n_clicks, email, password, password_confirm):
         raise PreventUpdate()
     if user.tel:
         raise PreventUpdate()
-    if user.email:
-        pass
-        app_controller.resend_active_code_by_email(CLUB_NAME, user.email)
+    if user.tel:
+        app_controller.resend_active_code_by_tel(CLUB_NAME, user.tel)
     return "/user/login"

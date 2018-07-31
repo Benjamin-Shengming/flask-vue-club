@@ -8,10 +8,11 @@ from itsdangerous import (TimestampSigner, Serializer,
 import coloredlogs, logging
 from datetime import datetime, timedelta
 import jwt
-from utils import RespExcept
+from utils import RespExcept, is_tel, is_email
 from email_smtp import EmailClientSMTP
 import filestore
 import gettext
+from mobile_msg import CebMobileMsg
 from magic_defines import *
 
 logger = logging.getLogger(__name__)
@@ -61,6 +62,13 @@ class AppController(object):
         payload = jwt.decode(encoded_jwt.encode('UTF-8'), JWT_SECRET_KEY, JWT_ALGORITHM)
         return payload
 
+    def get_club_user_by_tel_or_email(self, club_name, tel_email):
+        if is_tel(tel_email):
+            return self.get_club_user_by_tel(club_name, tel_email)
+        elif is_email(tel_email):
+            return self.get_club_user_by_email(club_name, tel_email)
+        return None
+
     def get_club_user_by_jwt(self, club_name, encoded_jwt):
         u = None
         try:
@@ -101,8 +109,18 @@ class AppController(object):
             raise RespExcept("Activation code is not right!")
         return user
 
+    def resend_activate_code_by_tel(self, club_name, mobile):
+        logger.debug("club_name")
+        logger.debug(mobile)
+        user = self.db_model.get_club_user_by_tel(club_name, mobile)
+        if not user:
+            raise RespExcept("User does not exist")
+        code = self.generate_club_user_activate_code(club_name, user)
+        club = user.club
+        content =  _("{} activation code is: {}").format(S_CLUBNAME, code)
+        CebMobileMsg().send(mobile, content)
+
     def resend_active_code_by_email(self, club_name, email_address):
-        logger.debug("resend link")
         logger.debug("club_name")
         logger.debug(email_address)
         user = self.db_model.get_club_user_by_email(club_name, email_address)
@@ -163,11 +181,6 @@ class AppController(object):
         user = self.db_model.get_club_user_by_tel(club_name, tel)
         return user
 
-    def get_club_user_by_tel_or_email(self, club_name, tel_or_email):
-        if "@" in tel_or_email:
-            return self.get_club_user_by_email(tel_or_email)
-        else:
-            return self.get_club_user_by_tel(tel_or_email)
 
     def verify_club_user(self, club_name, user_data):
         user = self.db_model.verify_club_user(club_name, user_data)

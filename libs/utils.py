@@ -116,3 +116,11 @@ def utc_2_local(u):
     timestamp =  calendar.timegm((datetime.datetime.strptime( utc, TIME_FORMAT)).timetuple())
     local = datetime.datetime.fromtimestamp(timestamp)
     return local
+
+def is_tel(s):
+    s_str = str(s)
+    return len(s_str) >= 6 and s_str.isdigit()
+
+def is_email(s):
+    return "@" in s and len(s) >= 3
+

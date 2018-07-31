@@ -27,6 +27,8 @@ DUMMY_ID = "dummy_id"
 
 
 #  id string defines
+MOBILE_EMAIL = "mobile_email"
+MOBILE = "mobile"
 EMAIL = "email"
 PASSWD = "passwd"
 PASSWD_CONFIRM = "passwd-confirm"
@@ -77,9 +79,9 @@ S_ACTIVE_YES = _("Active")
 S_LOGOUT = _("Logout")
 S_CHECKOUT= _("Checkout")
 S_CONTINUE_SHOP = _("Continue Shopping")
-
-
-
+S_INPUT_MOBILE = _("Please input your mobile number!")
+S_CLUBNAME = _("haoduoyu")
+S_INPUT_MOBILE_EMAIL = _("Please input your mobile or email address!")
 
 
 # wechat related

@@ -18,7 +18,7 @@ from magic_defines import (locale_d, EMAIL, LOGIN,
                            STORAGE_R, STORAGE_W,
                            S_INPUT_PWD, S_INPUT_EMAIL, REDIRECT,
                            S_USER_NOT_EXIST, CLUB_NAME,
-                           USER_STORAGE
+                           USER_STORAGE, MOBILE_EMAIL
                            )
 
 
@@ -43,9 +43,9 @@ login_title_row = html.Div(className="row", children=[
         html.Hr()
     ])
 ])
-email_row = html.Div(className="row", children=[
+tel_email_row = html.Div(className="row", children=[
     html.Div(className="col-md-3 field-label-responsive", children=[
-        html.Label(_("E-Mail Address"), htmlFor="email")
+        html.Label(_("Mobile or E-Mail Address"), htmlFor="tel_email")
     ]),
     html.Div(className="col-md-6", children=[
         html.Div(className="form-group", children=[
@@ -54,10 +54,10 @@ email_row = html.Div(className="row", children=[
                     html.I(className="fa fa-at")
                 ]),
                 dcc.Input(type="text",
-                          name="email",
+                          name="tel_email",
                           className="form-control",
-                          id=gen_id(EMAIL),
-                          placeholder="you@example.com",
+                          id=gen_id(MOBILE_EMAIL),
+                          placeholder=_("mobile or email"),
                           required="true",
                           autofocus="true")
             ])
@@ -117,7 +117,7 @@ def layout():
     logger.debug("login layout")
     return html.Div(className="container", children=[
         login_title_row,
-        email_row,
+        tel_email_row,
         password_row,
         login_button_row,
         html.Div(id=gen_id(HIDDEN_DIV)),
@@ -142,17 +142,17 @@ def show_snackbar(msg):
 
 @app.callback(Output(gen_id(SNACK_BAR), 'message'),
               [Input(gen_id(LOGIN), "n_clicks")],
-              [State(gen_id(EMAIL), "value"),
+              [State(gen_id(MOBILE_EMAIL), "value"),
                State(gen_id(PASSWD), "value")])
-def change_message(n_clicks, email, pwd):
+def change_message(n_clicks, mobile_email, pwd):
     logger.debug("change message")
-    if not email:
-        logger.debug("input email is {}".format(email))
-        return S_INPUT_EMAIL
+    if not mobile_email:
+        logger.debug("input email is {}".format(mobile_email))
+        return S_INPUT_MOBILE_EMAIL
     if not pwd:
         return S_INPUT_PWD
 
-    user = app_controller.get_club_user_by_email(CLUB_NAME, email)
+    user = app_controller.get_club_user_by_tel_or_email(CLUB_NAME, mobile_email)
     if not user:
         return S_USER_NOT_EXIST
     if not pwd:
