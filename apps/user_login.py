@@ -18,7 +18,7 @@ from magic_defines import (locale_d, EMAIL, LOGIN,
                            STORAGE_R, STORAGE_W,
                            S_INPUT_PWD, S_INPUT_EMAIL, REDIRECT,
                            S_USER_NOT_EXIST, CLUB_NAME,
-                           USER_STORAGE, MOBILE_EMAIL
+                           USER_STORAGE, MOBILE_EMAIL, S_INPUT_MOBILE_EMAIL
                            )
 
 
@@ -147,7 +147,7 @@ def show_snackbar(msg):
 def change_message(n_clicks, mobile_email, pwd):
     logger.debug("change message")
     if not mobile_email:
-        logger.debug("input email is {}".format(mobile_email))
+        logger.debug("input mobile or email is {}".format(mobile_email))
         return S_INPUT_MOBILE_EMAIL
     if not pwd:
         return S_INPUT_PWD
@@ -163,14 +163,15 @@ def change_message(n_clicks, mobile_email, pwd):
 
 @app.callback(Output(gen_id(STORAGE_W), 'value'),
               [Input(gen_id(SNACK_BAR), "message")],
-              [State(gen_id(EMAIL), "value"),
+              [State(gen_id(MOBILE_EMAIL), "value"),
                State(gen_id(PASSWD), "value")])
-def store_user_info(msg, email, password):
+def store_user_info(msg, mobile_email, password):
     logger.debug("store user info")
     if msg:
         raise PreventUpdate()
 
-    user = app_controller.get_club_user_by_email(CLUB_NAME, email)
+    user = app_controller.get_club_user_by_tel_or_email(CLUB_NAME,
+                                                        mobile_email)
     if not user:
         raise PreventUpdate()
 

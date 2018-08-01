@@ -217,25 +217,29 @@ def show_message(n_clicks, mobile, email, pwd, pwd_confirm):
                State(gen_id(PASSWD), "value"),
                State(gen_id(PASSWD_CONFIRM), "value")])
 def register_user(n_clicks, mobile, email, password, password_confirm):
+    logger.debug("register user real process")
     if not n_clicks or n_clicks <= 0:
         raise PreventUpdate()
+
     if not mobile or not str(mobile).isdigit():
+        logger.debug("mobile is not valid")
         raise PreventUpdate()
     if password != password_confirm:
+        logger.debug("password not valid")
         raise PreventUpdate()
     user_data = {
         'email': email,
         'tel': mobile,
         'password': password,
-        'roles': None
+        'roles':["user"]
     }
-    try:
-        user = app_controller.create_club_user(CLUB_NAME, user_data)
-    except Exception as e:
-        logger.debug(str(e))
-        raise PreventUpdate()
+    logger.debug("create club user")
+    user = app_controller.create_club_user(CLUB_NAME, user_data)
+    logger.debug("create club user successful")
+
     if user.tel:
-        raise PreventUpdate()
-    if user.tel:
-        app_controller.resend_active_code_by_tel(CLUB_NAME, user.tel)
+        logger.debug("send code by tel")
+        app_controller.resend_activate_code_by_tel(CLUB_NAME, user.tel)
+
+    logger.debug("redirect to login")
     return "/user/login"

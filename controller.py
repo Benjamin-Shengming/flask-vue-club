@@ -110,7 +110,7 @@ class AppController(object):
         return user
 
     def resend_activate_code_by_tel(self, club_name, mobile):
-        logger.debug("club_name")
+        logger.debug("send activated code by tel")
         logger.debug(mobile)
         user = self.db_model.get_club_user_by_tel(club_name, mobile)
         if not user:
@@ -120,7 +120,7 @@ class AppController(object):
         content =  _("{} activation code is: {}").format(S_CLUBNAME, code)
         CebMobileMsg().send(mobile, content)
 
-    def resend_active_code_by_email(self, club_name, email_address):
+    def resend_activatee_code_by_email(self, club_name, email_address):
         logger.debug("club_name")
         logger.debug(email_address)
         user = self.db_model.get_club_user_by_email(club_name, email_address)

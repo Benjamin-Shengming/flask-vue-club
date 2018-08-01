@@ -14,6 +14,11 @@ import filestore
 from uuid import uuid1
 from magic_defines import *
 
+import gettext
+zh = gettext.translation("models", locale_d(), languages=["zh_CN"])
+zh.install(True)
+_ = zh.gettext
+
 logger = logging.getLogger(__name__)
 coloredlogs.install(level='DEBUG', logger=logger)
 
@@ -337,6 +342,15 @@ class AppModel(object):
 
     def create_club_user(self, club_name, user_dict):
         club = self._find_club_and_error(club_name)
+        # check tel
+        if user_dict['tel']:
+            # check whether user already exist or email, tel has been used
+            user = self.get_club_user_by_tel(club_name, user_dict['tel'])
+            if user:
+                logger.debug(user.tel)
+                logger.debug(user.id)
+                raise AlreadyExist(_("Your mobile already has been used!"))
+        # check email
         if user_dict['email']:
             # check whether user already exist or email, tel has been used
             user = self.get_club_user_by_email(club_name, user_dict['email'])
