@@ -159,7 +159,7 @@ class AppController(object):
         if not user_data.get('roles', None):
             # by default, the role is user
             user_data['roles'] = ['user']
-        new_user = self.db_model.create_club_user(club_name ,user_data)
+        new_user = self.db_model.create_club_user(club_name, user_data)
         return new_user
 
     def get_club_user_by_id(self, club_name, user_id):
