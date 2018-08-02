@@ -12,15 +12,16 @@ from localstorage_reader import LocalStorageReader
 import gettext
 import coloredlogs
 import logging
-from utils import g_id
+from utils import g_id, assert_button_clicks, is_tel, is_email
 from magic_defines import (locale_d, EMAIL, LOGIN,
-                           PASSWD, SNACK_BAR, HIDDEN_DIV,
+                           PASSWD, SNACK_BAR, SNACK_BAR2, HIDDEN_DIV,
                            STORAGE_R, STORAGE_W,
                            S_INPUT_PWD, S_INPUT_EMAIL, REDIRECT,
                            S_USER_NOT_EXIST, CLUB_NAME,
-                           USER_STORAGE, MOBILE_EMAIL, S_INPUT_MOBILE_EMAIL
+                           USER_STORAGE, MOBILE_EMAIL, S_INPUT_MOBILE_EMAIL,
+                           FORGET, S_INPUT_PWD_NOT_MATCH
                            )
-
+from mobile_msg import CebMobileMsg
 
 logger = logging.getLogger(__name__)
 coloredlogs.install(level='DEBUG', logger=logger)
@@ -106,9 +107,25 @@ login_button_row = html.Div(className="row",
                                     login_button,
                                 ]),
 ])
+
+forget_button = html.Button(type="submit",
+                           id=gen_id(FORGET),
+                           className="btn btn-warning",
+                           children=[
+                                _("Forget password, use one time password"),
+                                html.I(className="fas fa-key")
+                           ])
+forget_pass_row = html.Div(className="row",
+                            children=[
+                                html.Div(className="col-md-3"),
+                                html.Div(className="col-md-3", children=[
+                                   forget_button
+                                ]),
+])
 err_msg_row = Snackbar(id=gen_id(SNACK_BAR), open=False, message=_("fill login information"))
 user_storage_w = LocalStorageWriter(id=gen_id(STORAGE_W), label=USER_STORAGE)
 auto_redirect = Redirect(id=gen_id(REDIRECT))
+err_msg_row2 = Snackbar(id=gen_id(SNACK_BAR2), open=False, message="")
 
 user_storage_r = LocalStorageReader(id=gen_id(STORAGE_R), label=USER_STORAGE)
 
@@ -120,8 +137,11 @@ def layout():
         tel_email_row,
         password_row,
         login_button_row,
+        html.Br(),
+        forget_pass_row,
         html.Div(id=gen_id(HIDDEN_DIV)),
         err_msg_row,
+        err_msg_row2,
         auto_redirect,
         user_storage_w,
         user_storage_r
@@ -129,6 +149,16 @@ def layout():
 
 
 # callbacks
+@app.callback(Output(gen_id(SNACK_BAR2), 'open'),
+              [Input(gen_id(SNACK_BAR2), "message")])
+def show_snackbar2(msg):
+    if msg:
+        logger.debug("show snackbar2")
+        return True
+    else:
+        logger.debug("hide snackbar2")
+        return False
+
 @app.callback(Output(gen_id(SNACK_BAR), 'open'),
               [Input(gen_id(SNACK_BAR), "message")])
 def show_snackbar(msg):
@@ -139,6 +169,22 @@ def show_snackbar(msg):
         logger.debug("hide snackbar")
         return False
 
+
+@app.callback(Output(gen_id(SNACK_BAR2), 'message'),
+              [Input(gen_id(FORGET), "n_clicks")],
+              [State(gen_id(MOBILE_EMAIL), "value")])
+def prompt_otp_message(n_click, tel_email):
+    assert_button_clicks(n_click)
+    if not tel_email:
+        return S_INPUT_MOBILE_EMAIL
+    if not is_tel(tel_email) and not is_email(tel_email):
+        return S_INPUT_MOBILE_EMAIL
+    user = app_controller.get_club_user_by_tel_or_email(CLUB_NAME, tel_email)
+    if not user:
+        return S_USER_NOT_EXIST
+
+    app_controller.resend_user_otp(user)
+    return  _("Please check you mobile for one time password!")
 
 @app.callback(Output(gen_id(SNACK_BAR), 'message'),
               [Input(gen_id(LOGIN), "n_clicks")],
@@ -158,6 +204,10 @@ def change_message(n_clicks, mobile_email, pwd):
     if not pwd:
         logger.debug(S_INPUT_PWD)
         return S_INPUT_PWD
+
+    if not user.verify_passwd(pwd):
+        return S_INPUT_PWD_NOT_MATCH
+
     return ""
 
 
@@ -174,6 +224,8 @@ def store_user_info(msg, mobile_email, password):
                                                         mobile_email)
     if not user:
         raise PreventUpdate()
+
+
 
     jwt = app_controller.generate_user_jwt(CLUB_NAME, user)
     logger.debug("store jwt " + jwt)

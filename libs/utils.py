@@ -6,6 +6,7 @@ import calendar
 from dash.exceptions import PreventUpdate
 import coloredlogs, logging
 from collections import OrderedDict
+from random import randint
 
 logger = logging.getLogger(__name__)
 coloredlogs.install(level='DEBUG', logger=logger)
@@ -46,6 +47,16 @@ class LoginExpireMsg(RespExcept):
 
 class CodeNotMatch(RespExcept):
     def __init__(self, message="Activate code does not match!"):
+       super(NotFound, self).__init__(message, 404)
+       self._debug = caller_info()
+
+class PasswordExpire(RespExcept):
+    def __init__(self, message="your password expired!"):
+       super(NotFound, self).__init__(message, 404)
+       self._debug = caller_info()
+
+class PasswordInvalid(RespExcept):
+    def __init__(self, message="your password not correct!"):
        super(NotFound, self).__init__(message, 404)
        self._debug = caller_info()
 
@@ -123,4 +134,11 @@ def is_tel(s):
 
 def is_email(s):
     return "@" in s and len(s) >= 3
+
+
+def random_digits(length):
+    code = ""
+    for i in range(0, length):
+        code += str(randint(0, 9))
+    return code
 

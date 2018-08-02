@@ -63,9 +63,9 @@ class User(Base, BaseMixin, UserMixin):
     email = Column(String, unique=False)
     tel = Column(String, unique=False)
     password_hash = Column(String, nullable=False)
-    email_confirmed = Column(Boolean, default=False)
-    tel_confirmed = Column(Boolean, default=False)
     activate_code = Column(String)
+    otp = Column(String)
+    otp_timestamp = Column(DateTime)
     last_active_time = Column(DateTime, default=datetime.datetime.utcnow)
 
     club_id = Column(Integer, ForeignKey('club.id', ondelete='CASCADE'), nullable=False)
@@ -75,11 +75,48 @@ class User(Base, BaseMixin, UserMixin):
                          back_populates="users")
     orders = relationship("Order", backref="user", cascade="all, delete", order_by="desc(Order.time)")
 
+    def has_otp(self):
+        return self.otp and self.otp_timestamp
+
+
+    def is_otp_expire(self):
+        now = datetime.datetime.utcnow()
+        total_secs = (now - self.otp_timestamp).total_seconds()
+        logger.debug("seconds passed")
+        logger.debug(total_secs)
+        if total_secs > 600:
+            return True
+        else:
+            return False
+
+    def generate_otp(self):
+        self.otp = random_digits(6)
+        self.otp_timestamp = datetime.datetime.utcnow()
+
+    def use_one_time_password(self, otp):
+        if not self.otp_timestamp:
+            raise ValueError(_("Invalid one time password"))
+        now = datetime.datetime.utcnow()
+        if (now - self.otp_timestamp).total_seconds() > 600:
+            raise PasswordExpire()
+
+        if otp != self.otp:
+            raise PasswordInvalid()
+
+        if otp == self.otp:
+            self.one_time_password = None
+            self.otp_timestamp = None
+
     def total_order_value(self):
         total = 0
         for o in self.orders:
             total +=  o.total_price()
         return total
+
+    def verify_passwd(self, passwd):
+        if self.password_hash == passwd:
+            return True
+        return False
 
     def is_active(self):
         return False if self.activate_code else True
@@ -534,8 +571,6 @@ class AppModel(object):
 
     def search_ip_activity(self):
         return self.search_history_activity("IP")
-
-
 
 
 

@@ -299,3 +299,14 @@ class AppController(object):
 
     def get_remote_ip_activity(self):
         return self.db_model.search_ip_activity()
+
+    def resend_user_otp(self, user):
+        if not user.has_otp() or user.is_otp_expire():
+            user.generate_otp()
+            self.db_model.save(user)
+            content = _("Your one time password is {}").format(user.otp)
+            CebMobileMsg().send(user.tel, content)
+
+
+
+

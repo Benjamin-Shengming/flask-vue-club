@@ -27,12 +27,14 @@ DUMMY_ID = "dummy_id"
 
 
 #  id string defines
+FORGET = "forget"
 MOBILE_EMAIL = "mobile_email"
 MOBILE = "mobile"
 EMAIL = "email"
 PASSWD = "passwd"
 PASSWD_CONFIRM = "passwd-confirm"
 SNACK_BAR = "snackbar"
+SNACK_BAR2 = "snackbar2"
 REDIRECT = "redirect"
 SUBMIT = "submit"
 LOGIN = "login"
