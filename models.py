@@ -22,7 +22,9 @@ _ = zh.gettext
 logger = logging.getLogger(__name__)
 coloredlogs.install(level='DEBUG', logger=logger)
 
-engine = create_engine('sqlite:////home/ubuntu/test.db', convert_unicode=True)
+db_connc_str = "sqlite:///{db_path}/{db_name}".format(db_path=os.path.abspath(os.path.dirname(__file__)), db_name="haoduoyu_db.db")
+logger.debug(db_connc_str)
+engine = create_engine(db_connc_str,  convert_unicode=True)
 
 db_session = scoped_session(sessionmaker(autocommit=False,
                                          autoflush=False,
