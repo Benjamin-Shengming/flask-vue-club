@@ -264,7 +264,7 @@ def update_service(n_clicks,
                        online,
                        headline,
                        *img_txt):
-    print("update service " + service_id)
+    logger.debug("update service " + service_id)
     if n_clicks <= 0:
         return ""
     assert(service_id)
@@ -281,12 +281,15 @@ def update_service(n_clicks,
     txt_list = img_txt[10:]
     # save img to file
     # save major img
+    logger.debug("update service update major image")
     filestore.save_service_img(service_id, "major", img_major_src)
     # save all other imgs
+    logger.debug("update service save all other images")
     for i, img_content in enumerate(img_list):
         filestore.save_service_img(service_id, i, img_content)
 
     # save txt to file
+    logger.debug("save text file")
     for i, txt_content in enumerate(txt_list):
         filestore.save_service_txt(service_id, i, txt_content)
     return html.Label(_("service updated successfully"))

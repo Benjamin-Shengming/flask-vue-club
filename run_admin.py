@@ -20,6 +20,7 @@ import pandas as pd
 import numpy as np
 import plotly
 from sd_material_ui import Snackbar
+import dash_table_experiments as dt
 # add current folder and lib to syspath
 sys.path.append(os.path.join(os.path.dirname(__file__)))
 sys.path.append(os.path.join(os.path.dirname(__file__), "libs"))
@@ -124,6 +125,17 @@ total = html.Div(className="container-fluid", children=[
 
 app.layout = html.Div(children=[
     # walkalround that let client download js bundle, *bugs* in dash
+    html.Div(style={"display":"none"}, children=[
+        dt.DataTable(
+            id='global-datatable-component',
+            rows=[{"No": "No"}],
+            row_selectable=True,
+            filterable=True,
+            sortable=True,
+            editable=False,
+            selected_row_indices=[]
+        )
+    ]),
     Redirect("click me to redirect", href="", style={"display": "none"}),
     LocalStorageReader(id="user-local-storage-reader", label=USER_STORAGE),
     LocalStorageReader(id="cart-local-storage-reader", label=CART_STORAGE),
@@ -140,6 +152,7 @@ app.layout = html.Div(children=[
     Output("content-container-root", "children"),
     [Input("url", "pathname")])
 def display_page(pathname):
+    logger.debug(pathname)
     if not pathname:
         pathname = "/"
 
@@ -162,7 +175,6 @@ def display_page(pathname):
     elif "user/analyse" in p:
         return club_user_analyse.layout()
 
-    print("other layout! {}".format(pathname))
     return club_monitor.layout()
 
 if __name__ == "__main__":
@@ -171,7 +183,6 @@ if __name__ == "__main__":
     args = parser.parse_args()
     if args.init:
         init_all()
-        pass
     else:
         for rule in app.server.url_map.iter_rules():
             logger.debug(rule)

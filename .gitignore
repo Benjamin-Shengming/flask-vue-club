@@ -19,3 +19,4 @@ backend/venv
 backend/app/filestore/haoduoyu/service/5b4304e9-7890-49f3-a147-8393341fef8a/3.jpg
 
 push.py
+*.db

@@ -19,6 +19,9 @@ zh = gettext.translation("client_list", locale_d(), languages=["zh_CN"])
 zh.install(True)
 _ = zh.gettext
 
+import coloredlogs, logging
+logger = logging.getLogger(__name__)
+coloredlogs.install(level="DEBUG", logger=logger)
 
 def filter_and_map_dict(d):
     #change column name
@@ -52,25 +55,30 @@ def generate_client_card(user_id):
 
 def layout():
     all_clients = app_controller.get_club_user_list(CLUB_NAME)
+    logger.debug(all_clients)
     users = [item.to_dict() for item in all_clients]
     user_data = [filter_and_map_dict(item) for item in users]
-    return html.Div([
-        html.H4(_("All registered users")),
-        dt.DataTable(
-            rows=user_data,
-            row_selectable=True,
-            filterable=True,
-            sortable=True,
-            editable=False,
-            selected_row_indices=[],
-            id='datatable-client-list'
-        ),
-        html.Hr(),
-        html.Div(_("choose users to view details")),
-        html.Div(id="client_list_details"),
-        html.Hr()
-    ])
-
+    if user_data:
+        return html.Div([
+            html.H4(_("All registered users")),
+            dt.DataTable(
+                rows=user_data ,
+                row_selectable=True,
+                filterable=True,
+                sortable=True,
+                editable=False,
+                selected_row_indices=[],
+                id='datatable-client-list'
+            ),
+            html.Hr(),
+            html.Div(_("choose users to view details")),
+            html.Div(id="client_list_details"),
+            html.Hr()
+        ])
+    else:
+        return html.Div([
+            html.H4(_("No registered users")),
+        ])
 
 @app.callback(
     Output('client_list_details', 'children'),

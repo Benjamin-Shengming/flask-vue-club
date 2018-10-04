@@ -69,9 +69,11 @@ def get_service_img_path(service_id, img_index):
 def save_service_img(service_id, img_index, base64_content):
     if not base64_content:
         return
+    logger.debug(base64_content)
     try:
         content_type, content_string = base64_content.split(',')
     except Exception as e:
+        logger.debug("save image failed!" + str(e))
         return
     if "image" not in  content_type:
         return

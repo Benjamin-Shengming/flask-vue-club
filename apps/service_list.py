@@ -15,6 +15,9 @@ from magic_defines import *
 
 
 
+import coloredlogs, logging
+logger = logging.getLogger(__name__)
+coloredlogs.install(level="DEBUG", logger=logger)
 
 import gettext
 zh = gettext.translation("service_list", locale_d(), languages=["zh_CN"])
@@ -57,28 +60,33 @@ def generate_service_card(service_id):
 
 def layout():
     all_services = app_controller.get_club_service_list(CLUB_NAME)
+    logger.debug(all_services)
     s_data = [item.to_dict() for item in all_services]
     services_data = [filter_and_map_dict(item) for item in s_data]
-    return html.Div([
-        html.H4(_('All services')),
-        dt.DataTable(
-            rows= services_data if services_data else [{_("No service"):_("No Service")}],
+    if services_data:
+        return html.Div([
+            html.H4(_('All services')),
+            dt.DataTable(
+                rows= services_data,
+                # optional - sets the order of columns
+                #columns=sorted(DF_GAPMINDER.columns),
 
-            # optional - sets the order of columns
-            #columns=sorted(DF_GAPMINDER.columns),
-
-            row_selectable=True,
-            filterable=True,
-            sortable=True,
-            editable=False,
-            selected_row_indices=[],
-            id='datatable-gapminder'
-        ),
-        html.Hr(),
-        html.Div(_("click one service to edit")),
-        html.Div(id="service_list_service_cards"),
-        html.Hr()
-    ])
+                row_selectable=True,
+                filterable=True,
+                sortable=True,
+                editable=False,
+                selected_row_indices=[],
+                id='datatable-gapminder'
+            ),
+            html.Hr(),
+            html.Div(_("click one service to edit")),
+            html.Div(id="service_list_service_cards"),
+            html.Hr()
+        ])
+    else:
+        return html.Div([
+            html.H4(_('No services')),
+        ])
 
 
 @app.callback(
