@@ -25,7 +25,8 @@ zh.install(True)
 _ = zh.gettext
 
 
-SUCCESS_UPDATE =_("Service updated successfully")
+SUCCESS_UPDATE = _("Service updated successfully")
+
 
 def gen_id(name):
     return g_id(__name__, name)
@@ -112,6 +113,7 @@ snack_bar = Snackbar(id=gen_id(SNACK_BAR),
                      message=_("message show here"))
 auto_link = Redirect(id=gen_id("redirect-to-list"), href="")
 auto_link_update = Redirect(id=gen_id(REDIRECT), href="")
+
 
 def layout(service_id):
     service = app_controller.get_club_service(CLUB_NAME, service_id)
@@ -342,6 +344,7 @@ def redirect_to_list(msg, open_snack_bar):
     if msg == SUCCESS_UPDATE and open_snack_bar is False:
         return "/service/list"
     raise PreventUpdate()
+
 
 @app.callback(Output(gen_id(SNACK_BAR), 'open'),
               [Input(gen_id(SNACK_BAR), 'message')])
