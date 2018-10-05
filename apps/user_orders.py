@@ -34,6 +34,10 @@ def gen_id(name):
     return s_id
 
 def generate_layout(orders):
+    if not orders:
+        return html.Div([
+            html.H4(_("No orders")),
+        ])
     orders_data = [{"id":item.id, "time":item.time} for item in orders]
 
     return html.Div([
