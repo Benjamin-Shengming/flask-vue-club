@@ -118,6 +118,14 @@ class User(Base, BaseMixin, UserMixin):
     def verify_passwd(self, passwd):
         if self.password_hash == passwd:
             return True
+
+        # try otp
+        if self.has_otp():
+            try:
+                self.use_one_time_password(passwd)
+                return True
+            finally:
+                pass
         return False
 
     def is_active(self):
@@ -596,5 +604,3 @@ def init_all():
                             })
     role_user1 = m.create_club_role(haoduoyu.name,
                                     {'name':'user', 'description':"normal usr"})
-    m._add(haoduoyu)
-    m._commit()

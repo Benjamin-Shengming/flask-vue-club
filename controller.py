@@ -93,7 +93,7 @@ class AppController(object):
         user = self.get_club_user_by_jwt(club_name, encoded_jwt)
         if not user:
             raise LoginExpireMsg()
-        user.activate_code(code)
+        user.activate(code)
         self.db_model.save(user)
 
     def activate_club_user_by_email(self, club_name, email, activate_code):
@@ -102,6 +102,7 @@ class AppController(object):
         email = confirm_serializer.loads(token, salt=EMAIL_SALT, max_age=36000)
         '''
         user = self.get_club_user_by_email(club_name, email)
+        user.activate(activate_code)
         if user.activate_code == activate_code:
             user.email_confirmed = True
             self.db_model._add_commit(user)
@@ -119,7 +120,7 @@ class AppController(object):
         content = _("{} activation code is: {}").format(S_CLUBNAME, code)
         CebMobileMsg().send(mobile, content)
 
-    def resend_activatee_code_by_email(self, club_name, email_address):
+    def resend_activate_code_by_email(self, club_name, email_address):
         logger.debug("club_name")
         logger.debug(email_address)
         user = self.db_model.get_club_user_by_email(club_name, email_address)
@@ -171,7 +172,7 @@ class AppController(object):
         return user
 
     def get_club_user_by_tel(self, club_name, user_tel):
-        user = self.db_model.get_club_user_by_email(club_name, user_tel)
+        user = self.db_model.get_club_user_by_tel(club_name, user_tel)
         return user
 
     def get_club_user_by_email_or_tel(self, club_name, tel_or_email):
