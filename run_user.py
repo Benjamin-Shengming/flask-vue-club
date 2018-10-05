@@ -1,7 +1,12 @@
 #!/usr/bin/python3
 import sys
 import os
-from flask import Flask, render_template, jsonify, abort, make_response, request
+# add current folder and lib to syspath
+sys.path.append(os.path.join(os.path.dirname(__file__)))
+sys.path.append(os.path.join(os.path.dirname(__file__), "libs"))
+sys.path.append(os.path.join(os.path.dirname(__file__), "apps"))
+
+from flask import (abort, make_response, request)
 import cherrypy
 import argparse
 from dash.dependencies import Input, State, Output
@@ -13,16 +18,9 @@ from wechatpy import parse_message
 from wechatpy.replies import TextReply, VoiceReply, create_reply, ImageReply, ArticlesReply
 from wechatpy.crypto import WeChatCrypto
 from wechatpy import WeChatClient
-
-# add current folder and lib to syspath
-sys.path.append(os.path.join(os.path.dirname(__file__)))
-sys.path.append(os.path.join(os.path.dirname(__file__), "libs"))
-sys.path.append(os.path.join(os.path.dirname(__file__), "apps"))
-
-import coloredlogs, logging
-logger = logging.getLogger(__name__)
-coloredlogs.install(level="DEBUG", logger=logger)
-
+import coloredlogs
+import logging
+import gettext
 import user_service_list
 import user_service_book
 import user_register
@@ -34,14 +32,16 @@ from app import app, server
 from app import app_controller
 from models import init_all, del_all_users
 from navbar import NavBarDropMenu
-from magic_defines import *
-from utils import *
 from autolink import Redirect
 from localstorage_writer import LocalStorageWriter
 from localstorage_reader import LocalStorageReader
 import dash_table_experiments as dt
+from magic_defines import *
+from utils import *
 
-import gettext
+logger = logging.getLogger(__name__)
+coloredlogs.install(level="DEBUG", logger=logger)
+
 zh = gettext.translation("run_user", locale_d(), languages=["zh_CN"])
 zh.install(True)
 _ = zh.gettext

@@ -27,7 +27,7 @@ logger.debug(db_connc_str)
 engine = create_engine(db_connc_str,  convert_unicode=True)
 
 db_session = scoped_session(sessionmaker(autocommit=False,
-                                         autoflush=False,
+                                         autoflush=True,
                                          bind=engine))
 
 Base = declarative_base()
