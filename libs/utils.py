@@ -10,6 +10,19 @@ from random import randint
 
 logger = logging.getLogger(__name__)
 coloredlogs.install(level='DEBUG', logger=logger)
+
+
+def method_log(log_obj):
+    def decorator(fn):
+        def decorated(*args, **kwargs):
+            log_obj.info("start: {} \n ".format(fn.__name__))
+            result = fn(*args, **kwargs)
+            log_obj.info("end: {} \n".format(fn.__name__))
+            return result
+        return decorated
+    return decorator
+
+
 def caller_info():
     frame = inspect.currentframe().f_back
     func = frame.f_code
