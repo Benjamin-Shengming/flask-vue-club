@@ -1,11 +1,8 @@
 #!/usr/bin/python
 from random import randint
 from models import AppModel
-from werkzeug.security import generate_password_hash, check_password_hash
-from itsdangerous import (TimestampSigner, Serializer,
-                          URLSafeSerializer, URLSafeTimedSerializer
-                          )
-import coloredlogs, logging
+import coloredlogs
+import logging
 from datetime import datetime, timedelta
 import jwt
 from utils import RespExcept, is_tel, is_email
@@ -13,7 +10,10 @@ from email_smtp import EmailClientSMTP
 import filestore
 import gettext
 from mobile_msg import CebMobileMsg
-from magic_defines import *
+from utils import LoginExpireMsg
+from magic_defines import (JWT_ALGORITHM, JWT_EXP_DELTA_HOURS, JWT_SECRET_KEY,
+                           MAJOR_IMG, S_CLUBNAME, CLUB_NAME, locale_d
+                           )
 
 logger = logging.getLogger(__name__)
 coloredlogs.install(level='DEBUG', logger=logger)
@@ -53,13 +53,14 @@ class AppController(object):
     def get_user_by_id(self, user_id):
         return self.db_model.get_user_by_id(user_id)
 
-
     def get_club_user_list(self, club_name):
         user_list = self.db_model.get_club_user_list(club_name)
         return user_list
 
     def _decode_user_jwt(self, encoded_jwt):
-        payload = jwt.decode(encoded_jwt.encode('UTF-8'), JWT_SECRET_KEY, JWT_ALGORITHM)
+        payload = jwt.decode(encoded_jwt.encode('UTF-8'),
+                             JWT_SECRET_KEY,
+                             JWT_ALGORITHM)
         return payload
 
     def get_club_user_by_tel_or_email(self, club_name, tel_email):
@@ -74,19 +75,19 @@ class AppController(object):
         try:
             user_dict = self._decode_user_jwt(encoded_jwt)
             u = self.get_club_user_by_id(club_name, user_dict['user_id'])
-        except:
-            pass
+        except Exception as e:
+            logger.debug(str(e))
+
         return u
 
     def generate_user_jwt(self, club_name, user):
         payload = {
             'user_id': user.id,
             'club_name': club_name,
-            'exp':datetime.utcnow() + timedelta(hours=JWT_EXP_DELTA_HOURS)
+            'exp': datetime.utcnow() + timedelta(hours=JWT_EXP_DELTA_HOURS)
         }
         jwt_token = jwt.encode(payload, JWT_SECRET_KEY, JWT_ALGORITHM)
         return jwt_token.decode(encoding='UTF-8')
-
 
     def activate_club_user_by_jwt(self, club_name, encoded_jwt, code):
         user = self.get_club_user_by_jwt(club_name, encoded_jwt)
@@ -94,7 +95,6 @@ class AppController(object):
             raise LoginExpireMsg()
         user.activate_code(code)
         self.db_model.save(user)
-
 
     def activate_club_user_by_email(self, club_name, email, activate_code):
         '''
@@ -116,8 +116,7 @@ class AppController(object):
         if not user:
             raise RespExcept("User does not exist")
         code = self.generate_club_user_activate_code(club_name, user)
-        club = user.club
-        content =  _("{} activation code is: {}").format(S_CLUBNAME, code)
+        content = _("{} activation code is: {}").format(S_CLUBNAME, code)
         CebMobileMsg().send(mobile, content)
 
     def resend_activatee_code_by_email(self, club_name, email_address):
@@ -154,6 +153,7 @@ class AppController(object):
         token = confirm_serializer.dumps(user.email, salt=EMAIL_SALT)
         return ("/{}/email/activate/{}".format(club_name, token))
         '''
+
     def create_club_user(self, club_name, user_data):
         logger.debug(user_data)
         if not user_data.get('roles', None):
@@ -163,28 +163,24 @@ class AppController(object):
         return new_user
 
     def get_club_user_by_id(self, club_name, user_id):
-        user = self.db_model.get_club_user_by_id(club_name, user_id);
+        user = self.db_model.get_club_user_by_id(club_name, user_id)
         return user
 
     def get_club_user_by_email(self, club_name, user_email):
         user = self.db_model.get_club_user_by_email(club_name, user_email)
-        return  user
+        return user
 
     def get_club_user_by_tel(self, club_name, user_tel):
         user = self.db_model.get_club_user_by_email(club_name, user_tel)
-        return  user
-
-    def get_club_user_by_email_or_tel(self, club_name, tel_or_email):
-        return self.db_model.get_club_user_by_email_or_tel(club_name, tel_or_email)
-
-    def get_club_user_by_tel(self, club_name, tel):
-        user = self.db_model.get_club_user_by_tel(club_name, tel)
         return user
 
+    def get_club_user_by_email_or_tel(self, club_name, tel_or_email):
+        return self.db_model.get_club_user_by_email_or_tel(club_name,
+                                                           tel_or_email)
 
     def verify_club_user(self, club_name, user_data):
         user = self.db_model.verify_club_user(club_name, user_data)
-        return  user
+        return user
 
     def delete_club_user_by_email(self, club_name, user_email):
         return self.db_model.delete_club_user(club_name, user_email)
@@ -208,18 +204,48 @@ class AppController(object):
     def delete_club_role_by_name(self, club_name, role_name):
         return self.db_model.delete_club_role_by_name(club_name, role_name)
 
-
     def allow_file(self, filename):
-      allow_ext = set(['txt','png', 'jpg', 'jpeg', 'gif'])
-      return '.' in filename and filename.rsplit('.', 1)[1] in allow_ext
+        allow_ext = set(['txt', 'png', 'jpg', 'jpeg', 'gif'])
+        return '.' in filename and filename.rsplit('.', 1)[1] in allow_ext
+
+    def _save_service_files(self,
+                            service_id,
+                            major_img,
+                            img_list,
+                            txt_list):
+        filestore.save_service_img(service_id, MAJOR_IMG, major_img)
+        # save all other imgs
+        for i, img_content in enumerate(img_list):
+            filestore.save_service_img(service_id, i, img_content)
+
+        # save txt to file
+        for i, txt_content in enumerate(txt_list):
+            filestore.save_service_txt(service_id, i, txt_content)
 
     # service related functions
-    def create_club_service(self, club_name, service_data):
+    def create_club_service(self,
+                            club_name,
+                            service_data,
+                            major_img,
+                            img_list,
+                            txt_list):
         logger.debug(service_data)
+        service_id = service_data["id"]
+        self._save_service_files(service_id, major_img, img_list, txt_list)
         return self.db_model.create_club_service(club_name, service_data)
 
-    def update_club_service(self, club_name, service_id, service_data):
-        return self.db_model.update_club_service(club_name, service_id, service_data)
+    def update_club_service(self,
+                            club_name,
+                            service_id,
+                            service_data,
+                            major_img,
+                            img_list,
+                            txt_list):
+
+        self._save_service_files(service_id, major_img, img_list, txt_list)
+        return self.db_model.update_club_service(club_name,
+                                                 service_id,
+                                                 service_data)
 
     def get_club_service_list(self, club_name):
         logger.debug(club_name)
@@ -235,7 +261,7 @@ class AppController(object):
         return self.db_model.get_club_headline_service(club_name)
 
     def get_club_top_one_service_id(self, club_name):
-        services= self.db_model.get_club_headline_service(club_name)
+        services = self.db_model.get_club_headline_service(club_name)
         if services:
             return services[0].id
 
@@ -243,13 +269,15 @@ class AppController(object):
         return service[0].id
 
     def get_club_service_paginate_date(self, club_name, start, numbers=20):
-        return self.db_model.get_club_service_paginate_date(club_name, start, numbers)
+        return self.db_model.get_club_service_paginate_date(club_name,
+                                                            start,
+                                                            numbers)
 
     def delete_club_service(self, club_name, service_id):
         return self.db_model.delete_club_service(club_name, service_id)
 
     def create_club_user_order(self, club_name, jwt, quantity_service):
-        if len(quantity_service)<=0:
+        if len(quantity_service) <= 0:
             return
         user = self.get_club_user_by_jwt(club_name, jwt)
         order = self.db_model.create_club_user_order(club_name,
@@ -265,18 +293,19 @@ class AppController(object):
     def get_club_order_list(self, club_name):
         return self.db_model.get_club_order_list(club_name)
 
-
     # check one service has special keywords
+
     def _service_has_keyword(self, service, key_words):
-        #check name
+        # check name
         for key in key_words:
             if key in service.name:
                 return True
-        #check description
+        # check description
         for key in key_words:
             if key in service.description:
                 return True
         return False
+
     def service_to_article(self, service, club_name):
         article = {}
         article['title'] = service.name
@@ -285,11 +314,13 @@ class AppController(object):
                                                           MAJOR_IMG)
         article['url'] = "/service/book/{}".format(service.id)
         return article
-    # given a set of keywords and search the service contains the key word
-    # if keyword is empty, just return most important
+
     def search_club_service_article(self, club_name, key_words):
+        # given a set of keywords and search the service contains the key word
+        # if keyword is empty, just return most important
         services = self.get_club_service_list(club_name)
-        ret = [item for item in services if self._service_has_keyword(item , key_words)]
+        ret = [item for item in services
+               if self._service_has_keyword(item, key_words)]
         if not ret:
             ret = services[:min(5, len(services))]
         return [self.service_to_article(item, club_name) for item in ret]
@@ -306,7 +337,3 @@ class AppController(object):
             self.db_model.save(user)
             content = _("Your one time password is {}").format(user.otp)
             CebMobileMsg().send(user.tel, content)
-
-
-
-
